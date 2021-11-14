@@ -113,8 +113,11 @@ type KonachanSource (opts) =
                     $"{opts.BaseUrl}{opts.PostListJson}"
 
 
-let konachan: ISource =
-    KonachanSource 
+let create x = KonachanSource (x) :> ISource
+
+
+let konachan =
+    create 
         { Name = "Konachan"
           BaseUrl = "https://konachan.net"
           PostListJson = "/post.json"
