@@ -13,7 +13,7 @@ type Rating =
     | Safe
     | Questionable
     | Explicit
-    | Rating of string
+    | Rating' of string
 
 
 type DownloadMethod =
@@ -30,8 +30,8 @@ type Post =
       Source: ISource
       
       Rating: Async<Rating>
-      SourceUrl: Async<string list>
-      Tags: Async<Tag list>
+      SourceUrl: AsyncSeq<string>
+      Tags: AsyncSeq<Tag>
       
       PreviewImage: Content option
       Images: AsyncSeq<Content> }
