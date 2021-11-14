@@ -5,6 +5,7 @@ open FSharp.Control
 
 type Order =
     | Popular 
+    | Date
 
 
 type SearchPart =
@@ -14,6 +15,7 @@ type SearchPart =
     | Order of Order
 
 
-type ISearchable =
+type ISearch =
     inherit ISource
     abstract Search: SearchPart -> AsyncSeq<PostPage>
+

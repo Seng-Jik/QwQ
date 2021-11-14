@@ -29,15 +29,15 @@ type Post =
     { Id: PostId
       Source: ISource
       
-      Rating: Rating 
-      SourceUrl: string list
-      Tags: Tag list
+      Rating: Async<Rating>
+      SourceUrl: Async<string list>
+      Tags: Async<Tag list>
       
       PreviewImage: Content option
-      Images: Content list }
+      Images: AsyncSeq<Content> }
 
 
-and PostPage = Post list
+and PostPage = AsyncSeq<Post>
 
 
 and ISource = 
@@ -45,4 +45,8 @@ and ISource =
     abstract AllPosts: AsyncSeq<PostPage>
 
 
+type IGetByPostId =
+    inherit ISource
+    abstract GetPostById: PostId -> Async<Post option>
 
+    

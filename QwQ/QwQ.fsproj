@@ -5,7 +5,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Source.fs" />
+    <Compile Include="Tags.fs" />
     <Compile Include="Search.fs" />
+    <Compile Include="Favorite.fs" />
+    <Compile Include="Login.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
