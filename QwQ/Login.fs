@@ -3,6 +3,7 @@ namespace QwQ
 
 type LoginError =
     | WrongUserInfo
+    | Otherwise of exn
 
 
 type ILogin<'a> =

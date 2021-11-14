@@ -16,8 +16,15 @@ type Rating =
     | Rating' of string
 
 
+type HttpsOptions =
+    { UserAgent: string option }
+    with 
+        static member Default = 
+            { UserAgent = None }
+
+
 type DownloadMethod =
-    | Https of url: string * userAgent: string
+    | Https of url: string * opt: HttpsOptions
 
 
 type Content =
@@ -34,19 +41,19 @@ type Post =
       Tags: AsyncSeq<Tag>
       
       PreviewImage: Content option
-      Images: AsyncSeq<Content> }
+      Content: AsyncSeq<Content> }
 
 
-and PostPage = AsyncSeq<Post>
+and PostPage = Post seq
 
 
 and ISource = 
     abstract Name: string
-    abstract AllPosts: AsyncSeq<PostPage>
+    abstract AllPosts: AsyncSeq<Result<PostPage, exn>>
 
 
 type IGetByPostId =
     inherit ISource
-    abstract GetPostById: PostId -> Async<Post option>
+    abstract GetPostById: PostId -> Async<Result<Post option, exn>>
 
     

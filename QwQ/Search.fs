@@ -17,5 +17,5 @@ type SearchPart =
 
 type ISearch =
     inherit ISource
-    abstract Search: SearchPart -> AsyncSeq<PostPage>
+    abstract Search: SearchPart -> AsyncSeq<Result<PostPage, exn>>
 
