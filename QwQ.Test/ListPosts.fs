@@ -33,3 +33,5 @@ let [<Test>] ``list: Yandere`` () = list10Pages Sources.Moebooru.yandere
 let [<Test>] ``list: Lolibooru`` () = list10Pages Sources.Moebooru.lolibooru
 let [<Test>] ``list: HypnoHub`` () = list10Pages Sources.Moebooru.hypnohub
 
+let [<Test>] ``list: Danbooru`` () = list10Pages Sources.Danbooru.danbooru
+let [<Test>] ``list: ATFBooru`` () = list10Pages Sources.Danbooru.atfbooru

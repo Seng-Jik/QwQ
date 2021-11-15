@@ -1,6 +1,15 @@
 module QwQ.Utils
 
 
+module String =
+
+
+    let nullOrWhitespace x =
+        if System.String.IsNullOrWhiteSpace x
+        then None
+        else Some x
+
+
 module Result =
 
     let protect f =

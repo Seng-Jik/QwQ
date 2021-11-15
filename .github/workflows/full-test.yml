@@ -11,7 +11,13 @@ jobs:
     
     strategy:
       matrix:
-        source: [ 'Konachan', 'Yandere', 'Lolibooru', 'HypnoHub' ]
+        source: 
+          - 'Konachan'
+          - 'Yandere'
+          - 'Lolibooru'
+          - 'HypnoHub'
+          - 'Danbooru'
+          - 'ATFBooru'
 
     steps:
     - uses: actions/checkout@v2

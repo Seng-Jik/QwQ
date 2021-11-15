@@ -24,3 +24,5 @@ let [<Test>] ``tags: Yandere`` () = list100Tags Sources.Moebooru.yandere
 let [<Test>] ``tags: Lolibooru`` () = list100Tags Sources.Moebooru.lolibooru
 let [<Test>] ``tags: HypnoHub`` () = list100Tags Sources.Moebooru.hypnohub
 
+let [<Test>] ``tags: Danbooru`` () = list100Tags Sources.Danbooru.danbooru
+let [<Test>] ``tags: ATFBooru`` () = list100Tags Sources.Danbooru.atfbooru

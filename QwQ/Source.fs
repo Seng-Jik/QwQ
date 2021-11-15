@@ -39,7 +39,7 @@ type Post =
     { Id: PostId
       Source: ISource
       
-      Rating: Async<Rating>
+      Rating: Rating
       SourceUrl: AsyncSeq<string>
       Tags: AsyncSeq<Tag>
       

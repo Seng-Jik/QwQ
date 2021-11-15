@@ -47,30 +47,29 @@ let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =
     { Id = uint64 post.Id
       Source = source 
 
-      Rating = async { return mapRating post.Rating }
+      Rating = mapRating post.Rating
       SourceUrl = 
-        [ yield (sourceUrlGen <| uint64 post.Id)
-          yield! (
-              match post.Source with
-              | Some x when not <| System.String.IsNullOrWhiteSpace x ->
-                [x]
-              | _ -> []) ] 
-        |> AsyncSeq.ofSeq
+          [ yield (sourceUrlGen <| uint64 post.Id)
+            yield! (
+                match post.Source with
+                | Some x when not <| System.String.IsNullOrWhiteSpace x ->
+                  [x]
+                | _ -> []) ] 
+          |> AsyncSeq.ofSeq
 
       Tags = post.Tags.Split(' ') |> AsyncSeq.ofSeq
       
       PreviewImage = 
-        if System.String.IsNullOrWhiteSpace post.PreviewUrl
-        then None
-        else Some <| mapHttpsContent httpsOpts post.PreviewUrl
+          String.nullOrWhitespace post.PreviewUrl
+          |> Option.map (mapHttpsContent httpsOpts)
 
       Content = 
-        [ post.SampleUrl
-          post.JpegUrl
-          post.FileUrl ]
-        |> AsyncSeq.ofSeq
-        |> AsyncSeq.filter (not << System.String.IsNullOrWhiteSpace)
-        |> AsyncSeq.map (mapHttpsContent httpsOpts >> AsyncSeq.singleton) }
+          [ post.SampleUrl
+            post.JpegUrl
+            post.FileUrl ]
+          |> AsyncSeq.ofSeq
+          |> AsyncSeq.choose String.nullOrWhitespace
+          |> AsyncSeq.map (mapHttpsContent httpsOpts >> AsyncSeq.singleton) }
 
 
 let requestPosts httpsOpts source sourceUrlGen url =
@@ -82,11 +81,13 @@ let requestPosts httpsOpts source sourceUrlGen url =
         return
             json
             |> Result.map (
-                Seq.map 
-                    (mapPost 
-                        httpsOpts 
-                        source 
-                        sourceUrlGen))
+                Seq.choose (fun json ->
+                    Option.protect (fun () -> 
+                        mapPost 
+                            httpsOpts 
+                            source 
+                            sourceUrlGen
+                            json)))
     } : Async<Result<PostPage, exn>>
 
 
@@ -107,7 +108,7 @@ let enumAllPages getPage =
         asyncSeq {
             match! getPage curPage with
             | Ok x when Seq.isEmpty x && errors < 5 -> 
-                yield Ok (x: PostPage)
+                yield Ok x
                 yield! enumPages (errors + 1) (curPage)
             | Ok x when Seq.isEmpty x -> yield Ok x
             | Ok x -> 

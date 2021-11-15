@@ -12,6 +12,8 @@
     <Compile Include="Login.fs" />
     <Compile Include="Sources/Moebooru.fsi" />
     <Compile Include="Sources/Moebooru.fs" />
+    <Compile Include="Sources/Danbooru.fsi" />
+    <Compile Include="Sources/Danbooru.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>

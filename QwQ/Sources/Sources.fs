@@ -4,5 +4,6 @@ open QwQ.Sources
 
 
 let sources =
-    [ Moebooru.sources ]
+    [ Moebooru.sources
+      Danbooru.sources ]
     |> List.concat

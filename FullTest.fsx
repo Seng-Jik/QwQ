@@ -39,16 +39,6 @@ let source =
             exit -1
 
 
-if source :? ITags 
-then 
-    source :?> ITags
-    |> Tags.allTags 
-    |> AsyncSeq.map Result.unwrap
-    |> AsyncSeq.length
-    |> Async.RunSynchronously
-    |> printfn "Get %d tags."
-
-
 Source.allPosts source
 |> AsyncSeq.map Result.unwrap
 |> AsyncSeq.iteriAsync (fun i x -> async {
