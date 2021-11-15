@@ -9,6 +9,23 @@ open QwQ.Utils
 type PostListJson = JsonProvider<"https://konachan.net/post.json">
 
 
+type TagListJson = JsonProvider<"https://konachan.net/tag.json?limit=10000">
+
+
+let mapTag from (json: TagListJson.Root) =
+    { Tag = json.JsonValue.["name"].AsString()
+      Count = uint64 json.Count
+      TagFromSource = from
+      Type = 
+        match json.Type with
+        | 1 -> Artist
+        | 3 -> Copyright
+        | 4 -> Character
+        | 5 -> Style
+        | 6 -> Circle
+        | _ -> General }
+
+
 let mapRating =
     function
     | "s" -> Safe
@@ -17,11 +34,21 @@ let mapRating =
     | x -> Rating' x
 
 
+let normalizeFileName (x: string) = 
+    [":";"*";"!";"#";"?";"%";"<";">";"|";"\"";"\\";"/";"\"";"\'"]
+    |> List.fold (fun (s: string) (c: string) -> s.Replace (c,"")) x
+    |> fun x -> x.Trim()
+
+
 let getFileNameFromUrl (url: string) =
-    let mutable url = url
-    if url.IndexOf '?' <> -1
-    then url <- url.[..url.IndexOf '?' - 1]
-    url.[url.LastIndexOf '/' + 1 ..]
+    let nameWithParam =
+        let url = url.Replace('\\', '/')
+        url.[1 + url.LastIndexOf '/'..] 
+        |> System.Web.HttpUtility.UrlDecode
+    let paramStart = nameWithParam.IndexOf '?'
+    if paramStart < 0 then nameWithParam
+    else nameWithParam.[..paramStart-1]
+    |> normalizeFileName
 
 
 let mapHttpsContent httpsOpts url =
@@ -170,6 +197,20 @@ type MoebooruSource (opts) =
                 sourceUrlGen
                 (f pageId)
 
+    let requestTags this (urlPostfix: string) =
+        asyncSeq {
+                match!
+                    TagListJson.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}")
+                    |> Async.protect
+                    |> Async.retryResult 3 500
+                with
+                | Error x -> yield Error x
+                | Ok x -> 
+                    yield! 
+                        AsyncSeq.ofSeq x
+                        |> AsyncSeq.map (mapTag this >> Ok)
+            }
+
     interface ISource with
         member _.Name = opts.Name
         member this.AllPosts = 
@@ -182,6 +223,12 @@ type MoebooruSource (opts) =
             requestPosts this <| fun pageId ->
                 $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&tags={tagString}"
 
+    interface ITags with
+        member this.Tags = requestTags this ""
+
+    interface ISearchTag with
+        member this.SearchTag name = requestTags this $"&name={name}"
+            
 
 let create x = MoebooruSource (x) :> ISource
 

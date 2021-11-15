@@ -5,8 +5,8 @@ open QwQ
 open FSharp.Control
 
 
-let showList3Pages =
-    AsyncSeq.take 3
+let show10Pages =
+    AsyncSeq.take 10
     >> AsyncSeq.iteriAsync (fun i x -> 
         async {
             printfn ""
@@ -29,8 +29,8 @@ let showList3Pages =
     >> Async.RunSynchronously
 
 
-let list3Pages source = Source.allPosts source |> showList3Pages
+let list10Pages source = Source.allPosts source |> show10Pages
 
 
-let [<Test>] konachan () = list3Pages Sources.Moebooru.konachan
+let [<Test>] listKonachan () = list10Pages Sources.Moebooru.konachan
 
