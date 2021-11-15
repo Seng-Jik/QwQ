@@ -1,4 +1,4 @@
-module QwQ.Sources.Konachan
+module QwQ.Sources.Moebooru
 
 open QwQ
 

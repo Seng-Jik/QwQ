@@ -56,4 +56,7 @@ type IGetByPostId =
     inherit ISource
     abstract GetPostById: PostId -> Async<Result<Post option, exn>>
 
-    
+
+module Source =
+    let name (source: ISource) = source.Name
+    let allPosts (source: ISource) = source.AllPosts

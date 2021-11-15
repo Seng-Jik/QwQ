@@ -5,17 +5,21 @@ open FSharp.Control
 
 type Order =
     | Popular 
-    | Date
+    | Default
 
 
-type SearchPart =
-    | Tag of Tag
-    | NonTag of Tag
-    | Rating of Rating
-    | Order of Order
+type SearchOptions =
+    { Tags: Tag seq
+      NonTags: Tag seq 
+      Rating: Rating seq
+      Order: Order }
 
 
 type ISearch =
     inherit ISource
-    abstract Search: SearchPart -> AsyncSeq<Result<PostPage, exn>>
+    abstract Search: SearchOptions -> AsyncSeq<Result<PostPage, exn>>
 
+
+module Search =
+    let search (x: ISearch) searchOpt = x.Search searchOpt
+    
