@@ -3,7 +3,6 @@ module QwQ.Utils
 
 module Result =
 
-
     let protect f =
         try Ok <| f ()
         with e -> Error e
@@ -26,7 +25,6 @@ let result = Result.ResultBuilder ()
 
 module Option =
 
-
     let protect a = Result.protect a |> Result.toOption
 
 
@@ -43,7 +41,6 @@ let option = Option.OptionBuilder ()
 
 
 module Async =
-
 
     let protect f = 
         async {
