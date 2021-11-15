@@ -70,7 +70,7 @@ let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =
           post.FileUrl ]
         |> AsyncSeq.ofSeq
         |> AsyncSeq.filter (not << System.String.IsNullOrWhiteSpace)
-        |> AsyncSeq.map (mapHttpsContent httpsOpts) }
+        |> AsyncSeq.map (mapHttpsContent httpsOpts >> AsyncSeq.singleton) }
 
 
 let requestPosts httpsOpts source sourceUrlGen url =
@@ -96,7 +96,10 @@ type MoebooruSourceOptions =
     PostListJson: string
     SourceUrlGen: string -> PostId -> string
     HttpsOpts: HttpsOptions
-    StartPageIndex: int }
+    StartPageIndex: int
+    OrderPopular: string
+    OrderDate: string
+    OrderScore: string }
 
 
 let enumAllPages getPage =
@@ -159,18 +162,20 @@ let mapSearchRating r =
     else raise <| exn $"Can not process {r}"
 
 
-let mapOrder =
+let mapOrder opts =
     function
     | Default -> None
-    | Popular -> Some "order:score"
+    | Popular -> Some opts.OrderPopular
+    | Date -> Some opts.OrderDate
+    | Score -> Some opts.OrderScore
 
 
-let mapSearchOptions searchOpt =
+let mapSearchOptions opts searchOpt =
     searchOpt.NonTags
     |> Seq.map nonTag
     |> Seq.append searchOpt.Tags
     |> Seq.append (mapSearchRating searchOpt.Rating |> Option.toList)
-    |> Seq.append (mapOrder searchOpt.Order |> Option.toList)
+    |> Seq.append (mapOrder opts searchOpt.Order |> Option.toList)
     |> Seq.fold (fun a b -> a + " " + b) ""
 
 
@@ -225,7 +230,7 @@ type MoebooruSource (opts) =
 
     interface ISearch with
         member this.Search search =
-            let tagString = mapSearchOptions search
+            let tagString = mapSearchOptions opts search
             requestPosts' this <| fun pageId ->
                 $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&tags={tagString}&limit={limit}"
 
@@ -245,7 +250,10 @@ let konachanLike name baseUrl =
       PostListJson = "/post.json"
       SourceUrlGen = sprintf "%s/post/show/%d"
       HttpsOpts = HttpsOptions.Default
-      StartPageIndex = 1 }
+      StartPageIndex = 1
+      OrderPopular = "order:popular"
+      OrderDate = "order:date"
+      OrderScore = "order:score" }
 
 
 let konachan = create <| konachanLike "Konachan" "https://konachan.com"

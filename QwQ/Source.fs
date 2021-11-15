@@ -32,6 +32,9 @@ type Content =
       DownloadMethod: DownloadMethod }
 
 
+type Mipmaps = AsyncSeq<Content>
+
+
 type Post =
     { Id: PostId
       Source: ISource
@@ -41,7 +44,7 @@ type Post =
       Tags: AsyncSeq<Tag>
       
       PreviewImage: Content option
-      Content: AsyncSeq<Content> }
+      Content: AsyncSeq<Mipmaps> }
 
 
 and PostPage = Post seq

@@ -5,6 +5,8 @@ open FSharp.Control
 
 type Order =
     | Popular 
+    | Date
+    | Score
     | Default
 
 
