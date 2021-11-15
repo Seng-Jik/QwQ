@@ -174,6 +174,9 @@ let mapSearchOptions searchOpt =
     |> Seq.fold (fun a b -> a + " " + b) ""
 
 
+let limit = 500
+
+
 type MoebooruSource (opts) =
     let sourceUrlGen = opts.SourceUrlGen opts.BaseUrl
     let requestPosts' this f = 
@@ -184,7 +187,7 @@ type MoebooruSource (opts) =
                 sourceUrlGen
                 (f pageId)
 
-    let requestTags this (urlPostfix: string) =
+    let requestTags (urlPostfix: string) =
         asyncSeq {
                 match!
                     JsonValue.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}")
@@ -203,7 +206,7 @@ type MoebooruSource (opts) =
         member _.Name = opts.Name
         member this.AllPosts = 
             requestPosts' this <| fun pageId ->
-                $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}"
+                $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&limit={limit}"
 
     interface IGetPostById with
         member this.GetPostById x =
@@ -224,13 +227,13 @@ type MoebooruSource (opts) =
         member this.Search search =
             let tagString = mapSearchOptions search
             requestPosts' this <| fun pageId ->
-                $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&tags={tagString}"
+                $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&tags={tagString}&limit={limit}"
 
     interface ITags with
-        member this.Tags = requestTags this ""
+        member _.Tags = requestTags ""
 
     interface ISearchTag with
-        member this.SearchTag name = requestTags this $"&name={name}"
+        member _.SearchTag name = requestTags $"&name={name}"
             
 
 let create x = MoebooruSource (x) :> ISource
