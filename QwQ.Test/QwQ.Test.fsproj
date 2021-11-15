@@ -5,9 +5,9 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="GetPostById.fs" />
     <Compile Include="ListTags.fs" />
     <Compile Include="SearchTags.fs" />
+    <Compile Include="GetPostById.fs" />
     <Compile Include="ListPosts.fs" />
     <Compile Include="SearchPosts.fs" />
     <Compile Include="Program.fs" />

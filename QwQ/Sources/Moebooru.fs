@@ -9,21 +9,8 @@ open QwQ.Utils
 type PostListJson = JsonProvider<"https://konachan.net/post.json">
 
 
-type TagListJson = JsonProvider<"https://konachan.net/tag.json?limit=10000">
-
-
-let mapTag from (json: TagListJson.Root) =
-    { Tag = json.JsonValue.["name"].AsString()
-      Count = uint64 json.Count
-      TagFromSource = from
-      Type = 
-        match json.Type with
-        | 1 -> Artist
-        | 3 -> Copyright
-        | 4 -> Character
-        | 5 -> Style
-        | 6 -> Circle
-        | _ -> General }
+let mapTag (json: JsonValue) =
+    json.["name"].AsString()
 
 
 let mapRating =
@@ -200,15 +187,16 @@ type MoebooruSource (opts) =
     let requestTags this (urlPostfix: string) =
         asyncSeq {
                 match!
-                    TagListJson.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}")
+                    JsonValue.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}")
                     |> Async.protect
                     |> Async.retryResult 3 500
                 with
                 | Error x -> yield Error x
                 | Ok x -> 
                     yield! 
-                        AsyncSeq.ofSeq x
-                        |> AsyncSeq.map (mapTag this >> Ok)
+                        x.AsArray ()
+                        |> AsyncSeq.ofSeq 
+                        |> AsyncSeq.map (mapTag >> Ok)
             }
 
     interface ISource with
@@ -248,16 +236,24 @@ type MoebooruSource (opts) =
 let create x = MoebooruSource (x) :> ISource
 
 
-let konachan =
-    create 
-        { Name = "Konachan"
-          BaseUrl = "https://konachan.com"
-          PostListJson = "/post.json"
-          SourceUrlGen = sprintf "%s/post/show/%d"
-          HttpsOpts = HttpsOptions.Default
-          StartPageIndex = 1 }
+let konachanLike name baseUrl = 
+    { Name = name
+      BaseUrl = baseUrl
+      PostListJson = "/post.json"
+      SourceUrlGen = sprintf "%s/post/show/%d"
+      HttpsOpts = HttpsOptions.Default
+      StartPageIndex = 1 }
+
+
+let konachan = create <| konachanLike "Konachan" "https://konachan.com"
+let yandere = create <| konachanLike "Yandere" "https://yande.re"
+let lolibooru = create <| konachanLike "Lolibooru" "https://lolibooru.moe"
+let hypnohub = create { konachanLike "HypnoHub" "https://hypnohub.net" with PostListJson = "/post/index.json" }
 
 
 let sources =
-    [ konachan ]
+    [ konachan
+      yandere
+      lolibooru
+      hypnohub ]
     

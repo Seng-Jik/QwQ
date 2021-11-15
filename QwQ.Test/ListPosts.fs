@@ -29,4 +29,7 @@ let list10Pages source = Source.allPosts source |> show10Pages
 
 
 let [<Test>] ``list: Konachan`` () = list10Pages Sources.Moebooru.konachan
+let [<Test>] ``list: Yandere`` () = list10Pages Sources.Moebooru.yandere
+let [<Test>] ``list: Lolibooru`` () = list10Pages Sources.Moebooru.lolibooru
+let [<Test>] ``list: HypnoHub`` () = list10Pages Sources.Moebooru.hypnohub
 
