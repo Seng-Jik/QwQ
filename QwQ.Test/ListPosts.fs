@@ -2,6 +2,7 @@ module QwQ.Test.ListPosts
 
 open NUnit.Framework
 open QwQ
+open QwQ.Utils
 open FSharp.Control
 
 
@@ -13,18 +14,13 @@ let show10Pages =
             printfn $"===== Page: {i}"
             printfn ""
 
-            match x with
-            | Error e -> 
-                printfn "%A" e
-                Assert.Fail ()
-            | Ok x -> 
-                x
-                |> Seq.iter (fun post ->
-                    printfn $"{post.Id} {AsyncSeq.toListSynchronously post.Tags}"
-                    printfn $"{post.PreviewImage}"
-                    printfn $"Contents: {AsyncSeq.toListSynchronously post.Content}"
-                    printfn ""
-                )
+            Result.unwrap x
+            |> Seq.iter (fun post ->
+                printfn $"{post.Id} {AsyncSeq.toListSynchronously post.Tags}"
+                printfn $"{post.PreviewImage}"
+                printfn $"Contents: {AsyncSeq.toListSynchronously post.Content}"
+                printfn ""
+            )
         })
     >> Async.RunSynchronously
 
@@ -32,5 +28,5 @@ let show10Pages =
 let list10Pages source = Source.allPosts source |> show10Pages
 
 
-let [<Test>] listKonachan () = list10Pages Sources.Moebooru.konachan
+let [<Test>] ``list: Konachan`` () = list10Pages Sources.Moebooru.konachan
 

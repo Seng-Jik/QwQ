@@ -13,6 +13,12 @@ module Result =
         | Ok x -> Some x
         | Error _ -> None
 
+
+    let unwrap = 
+        function
+        | Ok x -> x
+        | Error x -> raise x
+
     
     type ResultBuilder () =
         member _.Bind(x, f) = Result.bind f x
@@ -29,6 +35,12 @@ module Option =
 
 
     let ofResult = Result.toOption
+
+
+    let unwrap =
+        function
+        | Some x -> x
+        | None -> raise <| System.NullReferenceException ()
 
 
     type OptionBuilder () =

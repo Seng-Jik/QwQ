@@ -52,7 +52,7 @@ and ISource =
     abstract AllPosts: AsyncSeq<Result<PostPage, exn>>
 
 
-type IGetByPostId =
+type IGetPostById =
     inherit ISource
     abstract GetPostById: PostId -> Async<Result<Post option, exn>>
 
@@ -60,3 +60,4 @@ type IGetByPostId =
 module Source =
     let name (source: ISource) = source.Name
     let allPosts (source: ISource) = source.AllPosts
+    let getPostById (source: IGetPostById) id = source.GetPostById id

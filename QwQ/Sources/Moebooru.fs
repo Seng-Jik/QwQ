@@ -189,7 +189,7 @@ let mapSearchOptions searchOpt =
 
 type MoebooruSource (opts) =
     let sourceUrlGen = opts.SourceUrlGen opts.BaseUrl
-    let requestPosts this f = 
+    let requestPosts' this f = 
         enumAllPages <| fun pageId -> 
             requestPosts 
                 opts.HttpsOpts
@@ -214,13 +214,28 @@ type MoebooruSource (opts) =
     interface ISource with
         member _.Name = opts.Name
         member this.AllPosts = 
-            requestPosts this <| fun pageId ->
+            requestPosts' this <| fun pageId ->
                 $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}"
+
+    interface IGetPostById with
+        member this.GetPostById x =
+            async {
+                match! 
+                    requestPosts 
+                        opts.HttpsOpts
+                        this
+                        sourceUrlGen
+                        $"{opts.BaseUrl}{opts.PostListJson}?tags=id:{x}"
+                with
+                | Ok x -> return Ok <| Seq.tryHead x
+                | Error e -> return Error e
+            }
+            
 
     interface ISearch with
         member this.Search search =
             let tagString = mapSearchOptions search
-            requestPosts this <| fun pageId ->
+            requestPosts' this <| fun pageId ->
                 $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&tags={tagString}"
 
     interface ITags with

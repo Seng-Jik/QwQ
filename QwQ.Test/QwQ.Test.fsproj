@@ -5,6 +5,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GetPostById.fs" />
     <Compile Include="ListTags.fs" />
     <Compile Include="SearchTags.fs" />
     <Compile Include="ListPosts.fs" />

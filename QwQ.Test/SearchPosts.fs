@@ -17,4 +17,4 @@ let searchOpt =
       Order = Default }
 
 
-let [<Test>] searchKonachan () = search10Pages searchOpt Sources.Moebooru.konachan
+let [<Test>] ``search: Konachan`` () = search10Pages searchOpt Sources.Moebooru.konachan

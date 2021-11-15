@@ -10,4 +10,4 @@ let search100Tags (source: ISource) =
     | _ -> failwith "Do not support tags."
 
 
-let [<Test>] searchTagKonachan () = search100Tags Sources.Moebooru.konachan
+let [<Test>] ``searchTag: Konachan`` () = search100Tags Sources.Moebooru.konachan
