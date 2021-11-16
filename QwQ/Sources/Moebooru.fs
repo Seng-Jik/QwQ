@@ -188,18 +188,18 @@ type MoebooruSource (opts) =
 
     let requestTags (urlPostfix: string) =
         asyncSeq {
-                match!
-                    JsonValue.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}")
-                    |> Async.protect
-                    |> Async.retryResult 3 500
-                with
-                | Error x -> yield Error x
-                | Ok x -> 
-                    yield! 
-                        x.AsArray ()
-                        |> AsyncSeq.ofSeq 
-                        |> AsyncSeq.map (mapTag >> Ok)
-            }
+            match!
+                JsonValue.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}")
+                |> Async.protect
+                |> Async.retryResult 3 500
+            with
+            | Error x -> yield Error x
+            | Ok x -> 
+                yield! 
+                    x.AsArray ()
+                    |> AsyncSeq.ofSeq 
+                    |> AsyncSeq.map (mapTag >> Ok)
+        }
 
     let requestPostsWithPostfix this p =
         requestPosts' this <| fun pageId ->

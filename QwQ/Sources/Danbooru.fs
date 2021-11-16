@@ -64,7 +64,7 @@ type DanbooruSource (name, baseUrl) =
             (mapPost this baseUrl)
 
     let requestPostsWithUrlPostfix this p =
-        enumAllPages <| fun pageId ->
+       enumAllPages <| fun pageId ->
             requestPosts' this $"{baseUrl}/posts.json?limit={limit}&page={pageId + 1}{p}"
 
     let responseTagsWithUrlPostfix p =
@@ -94,7 +94,7 @@ type DanbooruSource (name, baseUrl) =
             |> Seq.append searchOpts.Tags
 
         Seq.fold (fun a b -> a + " " + b) "" tags
-        |> (+) "?tags="
+        |> (+) "&tags="
         |> requestPostsWithUrlPostfix this 
         |> AsyncSeq.map (
             Result.map (
@@ -107,7 +107,7 @@ type DanbooruSource (name, baseUrl) =
 
     let normalSearcher this = 
         mapSearchOptions
-        >> (+) "?tags="
+        >> (+) "&tags="
         >> requestPostsWithUrlPostfix this
 
     let searcher =

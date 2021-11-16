@@ -26,5 +26,9 @@ let [<Test>] ``search: HypnoHub`` () =
         { searchOpt with Tags = ["ke-ta"]; NonTags = ["ass"] }
         Sources.Moebooru.hypnohub 
         
-let [<Test>] ``search: Danbooru`` () = search10Pages searchOpt Sources.Danbooru.danbooru 
+let [<Test>] ``search: Danbooru`` () = 
+    search10Pages 
+        { searchOpt with Tags = ["ke-ta"] } 
+        Sources.Danbooru.danbooru 
+
 let [<Test>] ``search: ATFBooru`` () = search10Pages searchOpt Sources.Danbooru.atfbooru 

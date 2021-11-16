@@ -3,7 +3,6 @@ module QwQ.Utils
 
 module String =
 
-
     let nullOrWhitespace x =
         if System.String.IsNullOrWhiteSpace x
         then None
