@@ -57,7 +57,10 @@ let requestTagsDanbooruXml xmlUrlFromPageId =
     requestTags <| fun pageId ->
         requestPosts 
             (TagsProvider.AsyncLoad(xmlUrlFromPageId pageId))
-            (Result.map (fun x -> x.Tags))
+            (function
+                | Ok x -> Ok x.Tags
+                | Error (:? System.Xml.XmlException) -> Ok [||]
+                | Error e -> Error e)
             (fun x -> Result.protect (fun () -> x.Name))
 
 
