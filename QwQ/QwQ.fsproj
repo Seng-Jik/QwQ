@@ -16,9 +16,12 @@
     <Compile Include="Sources/Danbooru.fs" />
     <Content Include="Sources/DanbooruSample.json" />
     <Compile Include="Sources/Gelbooru.fsi" />
-    <Compile Include="Sources/Gelbooru.fs" />
+    <Compile Include="Sources/Gelbooru.fs" />    
     <Content Include="Sources/GelbooruSample.json" />
     <Content Include="Sources/GelbooruTagsSample.xml" />
+    <Compile Include="Sources/SankakuComplex.fsi" />
+    <Compile Include="Sources/SankakuComplex.fs" />
+    <Content Include="Sources/SankakuComplexSample.json" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>
