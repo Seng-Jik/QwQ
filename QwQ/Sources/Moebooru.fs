@@ -93,10 +93,7 @@ type MoebooruSourceOptions =
     PostListJson: string
     SourceUrlGen: string -> PostId -> string
     HttpsOpts: HttpsOptions
-    StartPageIndex: int
-    OrderPopular: string
-    OrderDate: string
-    OrderScore: string }
+    StartPageIndex: int }
 
 
 let enumAllPages getPageByIndex =
@@ -159,20 +156,20 @@ let mapSearchRating r =
     else raise <| exn $"Can not process {r}"
 
 
-let mapOrder opts =
+let mapOrder =
     function
     | Default -> None
-    | Popular -> Some opts.OrderPopular
-    | Date -> Some opts.OrderDate
-    | Score -> Some opts.OrderScore
+    | Popular -> Some "order:popular"
+    | Date -> Some "order:date"
+    | Score -> Some "order:score"
 
 
-let mapSearchOptions opts searchOpt =
+let mapSearchOptions searchOpt =
     searchOpt.NonTags
     |> Seq.map nonTag
     |> Seq.append searchOpt.Tags
     |> Seq.append (mapSearchRating searchOpt.Rating |> Option.toList)
-    |> Seq.append (mapOrder opts searchOpt.Order |> Option.toList)
+    |> Seq.append (mapOrder searchOpt.Order |> Option.toList)
     |> Seq.fold (fun a b -> a + " " + b) ""
 
 
@@ -229,7 +226,7 @@ type MoebooruSource (opts) =
             
     interface ISearch with
         member this.Search search =
-            requestPostsWithPostfix this $"&tags={mapSearchOptions opts search}"
+            requestPostsWithPostfix this $"&tags={mapSearchOptions search}"
 
     interface ITags with
         member _.Tags = requestTags ""
@@ -247,10 +244,7 @@ let konachanLike name baseUrl =
       PostListJson = "/post.json"
       SourceUrlGen = sprintf "%s/post/show/%d"
       HttpsOpts = HttpsOptions.Default
-      StartPageIndex = 1
-      OrderPopular = "order:popular"
-      OrderDate = "order:date"
-      OrderScore = "order:score" }
+      StartPageIndex = 1 }
 
 
 let konachan = create <| konachanLike "Konachan" "https://konachan.com"

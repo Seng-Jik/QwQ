@@ -17,6 +17,8 @@ val mapRating: string -> Rating
 val getFileNameFromUrl: string -> string
 val mapHttpsContent: HttpsOptions -> string -> Content
 val mapSearchRating: Rating seq -> string Option
+val mapOrder: Order -> string option
+val mapSearchOptions: SearchOptions -> string
 
 
 val enumAllPages<'a,'b,'c when 'a :> seq<'b>> : 

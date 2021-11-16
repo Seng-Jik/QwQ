@@ -50,7 +50,12 @@ let danbooruMapError: Result<_, exn> -> Result<_, exn> =
 let limit = 500
 
 
-type DanbooruSource (name, baseUrl, mapJson) =
+type DanbooruSource (name, baseUrl) =
+
+    let mapJson =
+        if name = "Danbooru" 
+        then danbooruMapError
+        else id
 
     let requestPosts' this url =
         requestPosts 
@@ -82,12 +87,41 @@ type DanbooruSource (name, baseUrl, mapJson) =
         
         AsyncSeq.append oks exns
 
+    let danbooruSearcher this searchOpts =
+        let tags = 
+            mapOrder searchOpts.Order 
+            |> Option.toList
+            |> Seq.append searchOpts.Tags
+
+        Seq.fold (fun a b -> a + " " + b) "" tags
+        |> (+) "?tags="
+        |> requestPostsWithUrlPostfix this 
+        |> AsyncSeq.map (
+            Result.map (
+                Seq.filter (fun x -> 
+                    let postTags = AsyncSeq.toBlockingSeq x.Tags
+                    Seq.exists ((=) x.Rating) searchOpts.Rating
+                    && Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) postTags) searchOpts.NonTags)
+            )
+        )
+
+    let normalSearcher this = 
+        mapSearchOptions
+        >> (+) "?tags="
+        >> requestPostsWithUrlPostfix this
+
+    let searcher =
+        if name = "Danbooru"
+        then danbooruSearcher
+        else normalSearcher
+
     interface ISource with
         member _.Name = name
         member this.AllPosts = requestPostsWithUrlPostfix this ""      
 
-    //interface ISearch with
-    
+    interface ISearch with
+        member this.Search searchOpts = searcher this searchOpts
+            
     interface ITags with 
         member _.Tags = responseTagsWithUrlPostfix ""
             
@@ -103,8 +137,8 @@ type DanbooruSource (name, baseUrl, mapJson) =
         member _.SearchTag p = responseTagsWithUrlPostfix $"&search[fuzzy_name_matches]={p}"
 
 
-let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us", danbooruMapError) :> ISource
-let atfbooru = DanbooruSource ("ATFBooru", "https://booru.allthefallen.moe/", id) :> ISource
+let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us") :> ISource
+let atfbooru = DanbooruSource ("ATFBooru", "https://booru.allthefallen.moe/") :> ISource
 
 
 let sources = 
