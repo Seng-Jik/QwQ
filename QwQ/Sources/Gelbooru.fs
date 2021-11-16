@@ -68,7 +68,10 @@ type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
             requestPosts 
                 (PostListJson.AsyncLoad(
                     $"{baseUrl}/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid={pageId}{urlPostfix}"))
-                id
+                (function
+                    | Ok x -> Ok x
+                    | Error e when e.Message.Contains "Holy fuck" -> Ok [||]
+                    | Error e -> Error e)
                 (mapPost this baseUrl imgSrvBaseUrl)
 
     let requestTags' urlPostfix =

@@ -90,7 +90,7 @@ match testTarget with
                     asyncSeq {
                         let! down = download x.DownloadMethod
                         match down with
-                        | Ok () -> printfn $"{Source.name source} (Page {pageId}, Post {post}) downloaded."
+                        | Ok () -> printfn $"{Source.name source} (Page {pageId}, Post {post.Id}) downloaded."
                         | Error response -> 
                             printfn $"{Source.name source} (Page {pageId}, Post {post}, Response {response.StatusCode}) failed:"
                             printfn "    %A" x.DownloadMethod
@@ -106,12 +106,15 @@ match testTarget with
     |> AsyncSeq.concat
     |> AsyncSeq.toListAsync
     |> Async.RunSynchronously
-    |> List.iter (fun errPosts -> 
+    |> List.map (fun errPosts -> 
         printfn ""
         printfn "===="
         printfn "%A" errPosts
         printfn "===="
         printfn "")
+    |> function 
+        | [] -> ()
+        | _ -> failwith "↑↑↑ Here is some errors ↑↑↑"
 
 | x -> printfn "Here is no test target %A." x
 
