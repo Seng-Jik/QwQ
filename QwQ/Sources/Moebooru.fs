@@ -204,11 +204,14 @@ type MoebooruSource (opts) =
                         |> AsyncSeq.map (mapTag >> Ok)
             }
 
+    let requestPostsWithPostfix this p =
+        requestPosts' this <| fun pageId ->
+            $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&limit={limit}{p}"
+
     interface ISource with
         member _.Name = opts.Name
-        member this.AllPosts = 
-            requestPosts' this <| fun pageId ->
-                $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&limit={limit}"
+        member this.AllPosts = requestPostsWithPostfix this ""
+            
 
     interface IGetPostById with
         member this.GetPostById x =
@@ -218,18 +221,15 @@ type MoebooruSource (opts) =
                         (PostListJson.AsyncLoad(
                             $"{opts.BaseUrl}{opts.PostListJson}?tags=id:{x}"))
                         id
-                        (mapPost this)                       
+                        (mapPost this)
                 with
                 | Ok x -> return Ok <| Seq.tryHead x
                 | Error e -> return Error e
             }
             
-
     interface ISearch with
         member this.Search search =
-            let tagString = mapSearchOptions opts search
-            requestPosts' this <| fun pageId ->
-                $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&tags={tagString}&limit={limit}"
+            requestPostsWithPostfix this $"&tags={mapSearchOptions opts search}"
 
     interface ITags with
         member _.Tags = requestTags ""

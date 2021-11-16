@@ -14,3 +14,6 @@ let [<Test>] ``searchTag: Konachan`` () = search100Tags Sources.Moebooru.konacha
 let [<Test>] ``searchTag: Yandere`` () = search100Tags Sources.Moebooru.yandere
 let [<Test>] ``searchTag: Lolibooru`` () = search100Tags Sources.Moebooru.lolibooru
 let [<Test>] ``searchTag: HypnoHub`` () = search100Tags Sources.Moebooru.hypnohub
+
+let [<Test>] ``searchTag: Danbooru`` () = search100Tags Sources.Danbooru.danbooru
+let [<Test>] ``searchTag: ATFBooru`` () = search100Tags Sources.Danbooru.atfbooru

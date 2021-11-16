@@ -58,32 +58,49 @@ type DanbooruSource (name, baseUrl, mapJson) =
             mapJson
             (mapPost this baseUrl)
 
+    let requestPostsWithUrlPostfix this p =
+        enumAllPages <| fun pageId ->
+            requestPosts' this $"{baseUrl}/posts.json?limit={limit}&page={pageId + 1}{p}"
+
+    let responseTagsWithUrlPostfix p =
+        let response =
+            enumAllPages <| fun pageId ->
+                requestPosts 
+                    (JsonValue.AsyncLoad($"{baseUrl}/tags.json?limit=1000&page={pageId + 1}{p}"))
+                    (Result.map JsonExtensions.AsArray)
+                    (fun x -> Option.protect (fun () -> x.["name"].AsString()))
+            |> AsyncSeq.map (Result.map (Seq.choose id))
+
+        let exns = 
+            AsyncSeq.choose (function Ok _ -> None | Error e -> Some e) response
+            |> AsyncSeq.map Error
+
+        let oks = 
+            AsyncSeq.choose (function Ok x -> Some x | Error e -> None) response
+            |> AsyncSeq.concatSeq
+            |> AsyncSeq.map Ok
+        
+        AsyncSeq.append oks exns
+
     interface ISource with
         member _.Name = name
-        member this.AllPosts =
-            enumAllPages <| fun pageId ->
-                requestPosts' this $"{baseUrl}/posts.json?limit={limit}&page={pageId + 1}"
+        member this.AllPosts = requestPostsWithUrlPostfix this ""      
+
+    //interface ISearch with
     
     interface ITags with 
-        member _.Tags = 
-            let response =
-                enumAllPages <| fun pageId ->
-                    requestPosts 
-                        (JsonValue.AsyncLoad($"{baseUrl}/tags.json?limit=1000&page={pageId + 1}"))
-                        (Result.map JsonExtensions.AsArray)
-                        (fun x -> Option.protect (fun () -> x.["name"].AsString()))
-                |> AsyncSeq.map (Result.map (Seq.choose id))
-
-            let exns = 
-                AsyncSeq.choose (function Ok _ -> None | Error e -> Some e) response
-                |> AsyncSeq.map Error
-
-            let oks = 
-                AsyncSeq.choose (function Ok x -> Some x | Error e -> None) response
-                |> AsyncSeq.concatSeq
-                |> AsyncSeq.map Ok
+        member _.Tags = responseTagsWithUrlPostfix ""
             
-            AsyncSeq.append oks exns
+    interface IGetPostById with
+        member this.GetPostById id = 
+            async {
+                match! requestPosts' this $"{baseUrl}/posts.json?tags=id:{id}" with
+                | Ok x -> return Ok <| Seq.tryHead x
+                | Error e -> return Error e
+            }
+
+    interface ISearchTag with
+        member _.SearchTag p = responseTagsWithUrlPostfix $"&search[fuzzy_name_matches]={p}"
 
 
 let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us", danbooruMapError) :> ISource
