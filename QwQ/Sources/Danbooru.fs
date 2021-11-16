@@ -50,12 +50,12 @@ let danbooruMapError: Result<_, exn> -> Result<_, exn> =
 let limit = 500
 
 
-type DanbooruSource (name, baseUrl) =
+type DanbooruSource (name, baseUrl, mapJson) =
 
     let requestPosts' this url =
         requestPosts 
             (PostListJson.AsyncLoad(url))
-            danbooruMapError
+            mapJson
             (mapPost this baseUrl)
 
     interface ISource with
@@ -86,8 +86,8 @@ type DanbooruSource (name, baseUrl) =
             AsyncSeq.append oks exns
 
 
-let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us") :> ISource
-let atfbooru = DanbooruSource ("ATFBooru", "https://booru.allthefallen.moe/") :> ISource
+let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us", danbooruMapError) :> ISource
+let atfbooru = DanbooruSource ("ATFBooru", "https://booru.allthefallen.moe/", id) :> ISource
 
 
 let sources = 
