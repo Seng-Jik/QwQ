@@ -7,7 +7,6 @@ type LoginError =
 
 
 type ILogin<'a> =
-    inherit ISource
     abstract Login: 'a -> Async<Result<unit, LoginError>>
 
 

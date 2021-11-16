@@ -41,3 +41,12 @@ let [<Test>] ``search: Safebooru`` () =
 
 let [<Test>] ``search: XBooru`` () = search10Pages searchOpt Sources.Gelbooru.xbooru
 let [<Test>] ``search: Rule34`` () = search10Pages searchOpt Sources.Gelbooru.rule34
+
+let [<Test>] ``search: Sankaku Channel`` () = search10Pages searchOpt Sources.SankakuComplex.sankakuChannel
+let [<Test>] ``search: Idol Complex`` () = 
+    search10Pages
+        { Tags = ["cosplay"; "asian"]
+          NonTags = ["touhou"]
+          Rating = [Explicit]
+          Order = Popular }
+        Sources.SankakuComplex.idolComplex

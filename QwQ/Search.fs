@@ -18,7 +18,6 @@ type SearchOptions =
 
 
 type ISearch =
-    inherit ISource
     abstract Search: SearchOptions -> AsyncSeq<Result<PostPage, exn>>
 
 

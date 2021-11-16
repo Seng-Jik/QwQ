@@ -56,7 +56,6 @@ and ISource =
 
 
 type IGetPostById =
-    inherit ISource
     abstract GetPostById: PostId -> Async<Result<Post option, exn>>
 
 

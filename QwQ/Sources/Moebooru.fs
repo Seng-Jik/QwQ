@@ -173,6 +173,7 @@ let mapSearchOptions searchOpt =
     |> Seq.append (mapSearchRating searchOpt.Rating |> Option.toList)
     |> Seq.append (mapOrder searchOpt.Order |> Option.toList)
     |> Seq.fold (fun a b -> a + " " + b) ""
+    |> String.trim
 
 
 let limit = 500

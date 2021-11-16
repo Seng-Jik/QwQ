@@ -25,3 +25,5 @@ let [<Test>] ``searchTag: TBIB`` () = search100Tags Sources.Gelbooru.tbib
 let [<Test>] ``searchTag: Safebooru`` () = search100Tags Sources.Gelbooru.safebooru
 let [<Test>] ``searchTag: XBooru`` () = search100Tags Sources.Gelbooru.xbooru
 let [<Test>] ``searchTag: Rule34`` () = search100Tags Sources.Gelbooru.rule34
+
+let [<Test>] ``searchTag: Sankaku Channel`` () = search100Tags Sources.SankakuComplex.sankakuChannel

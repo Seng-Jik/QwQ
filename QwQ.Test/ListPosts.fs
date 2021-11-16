@@ -43,3 +43,6 @@ let [<Test>] ``list: TBIB`` () = list10Pages Sources.Gelbooru.tbib
 let [<Test>] ``list: Safebooru`` () = list10Pages Sources.Gelbooru.safebooru
 let [<Test>] ``list: XBooru`` () = list10Pages Sources.Gelbooru.xbooru
 let [<Test>] ``list: Rule34`` () = list10Pages Sources.Gelbooru.rule34
+
+let [<Test>] ``list: Sankaku Channel`` () = list10Pages Sources.SankakuComplex.sankakuChannel
+let [<Test>] ``list: Idol Complex`` () = list10Pages Sources.SankakuComplex.idolComplex

@@ -9,6 +9,9 @@ module String =
         else Some x
 
 
+    let trim (x: string) = x.Trim()
+
+
 module Result =
 
     let protect f =
