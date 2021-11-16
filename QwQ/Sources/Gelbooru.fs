@@ -12,6 +12,8 @@ type PostListJson = JsonProvider<"./Sources/GelbooruSample.json">
 
 
 let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
+    let imageHash = json.JsonValue.["hash"].AsString ()
+
     { Id = uint64 json.Id
       Source = src
       Rating = mapRating json.Rating
@@ -29,13 +31,13 @@ let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
       PreviewImage = 
           mapHttpsContent 
               HttpsOptions.Default 
-              $"{imgServerBaseUrl}/thumbnails/{json.Directory}/thumbnail_{json.Hash}.jpg"
+              $"{imgServerBaseUrl}/thumbnails/{json.Directory}/thumbnail_{imageHash}.jpg"
           |> Some
               
       Content = 
           asyncSeq {
               if json.Sample
-              then $"{imgServerBaseUrl}/samples/{json.Directory}/sample_{json.Hash}.jpg"
+              then $"{imgServerBaseUrl}/samples/{json.Directory}/sample_{imageHash}.jpg"
 
               json.FileUrl
               |> Option.defaultValue $"{imgServerBaseUrl}/images/{json.Directory}/{json.Image}"
