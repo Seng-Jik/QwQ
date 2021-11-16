@@ -47,6 +47,18 @@ let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
 
 let limit = 500
 
+
+type TagsProvider = XmlProvider<"./Sources/GelbooruTagsSample.xml">
+
+
+let requestTagsDanbooruXml xmlUrlFromPageId =
+    requestTags <| fun pageId ->
+        requestPosts 
+            (TagsProvider.AsyncLoad(xmlUrlFromPageId pageId))
+            (Result.map (fun x -> x.Tags))
+            (fun x -> Result.protect (fun () -> x.Name))
+
+
 type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
 
     let requestPostListWithUrlPostfix this urlPostfix =
@@ -57,14 +69,35 @@ type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
                 id
                 (mapPost this baseUrl imgSrvBaseUrl)
 
+    let requestTags' urlPostfix =
+        requestTagsDanbooruXml
+            (fun pid -> $"{baseUrl}/index.php?page=dapi&s=tag&q=index&limit={limit}&pid={pid}{urlPostfix}")
+
     interface ISource with
         member _.Name = name
         member x.AllPosts = requestPostListWithUrlPostfix x ""
 
     interface ITags with
-        member _.Tags =
-            requestTags "tag" 
-                (fun pid -> $"{baseUrl}/index.php?page=dapi&s=tag&q=index&json=1&limit={limit}&pid={pid}")
+        member _.Tags = requestTags' ""
+            
+    interface ISearchTag with
+        member _.SearchTag search = requestTags' $"&name_pattern=%%{search}%%"
+
+    interface ISearch with
+        member x.Search search = 
+            requestPostListWithUrlPostfix x <| "&tags=" + mapSearchOptions search
+
+    interface IGetPostById with
+        member x.GetPostById id =
+            async {
+                match!
+                    requestPostListWithUrlPostfix x $"&tags=id:{id}"
+                    |> AsyncSeq.map (Result.map Seq.tryHead)
+                    |> AsyncSeq.tryFirst
+                with
+                | Some x -> return x
+                | None -> return Ok None
+            }
 
 
 let gelbooru = GelbooruSource ("Gelbooru", "https://gelbooru.com", "https://img3.gelbooru.com") :> ISource

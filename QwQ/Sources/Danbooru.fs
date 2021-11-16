@@ -49,14 +49,10 @@ let danbooruMapError: Result<_, exn> -> Result<_, exn> =
 let limit = 500
 
 
-let requestTags tagKey jsonUrlFromPage =
+let requestTags pageLoader =
     let response =
-        enumAllPages <| fun pageId ->
-            requestPosts 
-                (JsonValue.AsyncLoad(jsonUrlFromPage pageId))
-                (Result.map JsonExtensions.AsArray)
-                (fun x -> Result.protect (fun () -> x.[tagKey: string].AsString()))
-
+        enumAllPages pageLoader
+            
     let exns = 
         AsyncSeq.choose (function Ok _ -> None | Error e -> Some e) response
         |> AsyncSeq.map Error
@@ -68,6 +64,14 @@ let requestTags tagKey jsonUrlFromPage =
     
     AsyncSeq.append oks exns
     |> AsyncSeq.map (Result.bind id)
+
+
+let requestTagsJson tagKey jsonUrlFromPage = 
+    requestTags <| fun pageId ->
+        requestPosts 
+            (JsonValue.AsyncLoad(jsonUrlFromPage pageId))
+            (Result.map JsonExtensions.AsArray)
+            (fun x -> Result.protect (fun () -> x.[tagKey: string].AsString()))
 
 
 type DanbooruSource (name, baseUrl) =
@@ -88,7 +92,7 @@ type DanbooruSource (name, baseUrl) =
             requestPosts' this $"{baseUrl}/posts.json?limit={limit}&page={pageId + 1}{p}"
 
     let responseTagsWithUrlPostfix p =
-        requestTags "name" (fun pageId -> $"{baseUrl}/tags.json?limit=1000&page={pageId + 1}{p}")
+        requestTagsJson "name" (fun pageId -> $"{baseUrl}/tags.json?limit=1000&page={pageId + 1}{p}")
 
     let danbooruSearcher this searchOpts =
         let tags = 

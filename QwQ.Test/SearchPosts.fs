@@ -32,3 +32,13 @@ let [<Test>] ``search: Danbooru`` () =
         Sources.Danbooru.danbooru 
 
 let [<Test>] ``search: ATFBooru`` () = search10Pages searchOpt Sources.Danbooru.atfbooru 
+
+let [<Test>] ``search: Gelbooru`` () = search10Pages searchOpt Sources.Gelbooru.gelbooru
+let [<Test>] ``search: TBIB`` () = search10Pages searchOpt Sources.Gelbooru.tbib
+let [<Test>] ``search: Safebooru`` () = 
+    search10Pages 
+        { searchOpt with Tags = ["ke-ta"]; Rating = [Safe] } 
+        Sources.Gelbooru.safebooru
+
+let [<Test>] ``search: XBooru`` () = search10Pages searchOpt Sources.Gelbooru.xbooru
+let [<Test>] ``search: Rule34`` () = search10Pages searchOpt Sources.Gelbooru.rule34

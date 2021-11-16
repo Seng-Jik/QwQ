@@ -22,3 +22,9 @@ let [<Test>] ``getPostById: HypnoHub`` () = getPostById 130894UL Sources.Moeboor
 
 let [<Test>] ``getPostById: Danbooru`` () = getPostById 4917687UL Sources.Danbooru.danbooru
 let [<Test>] ``getPostById: ATFBooru`` () = getPostById 366626UL Sources.Danbooru.atfbooru
+
+let [<Test>] ``getPostById: Gelbooru`` () = getPostById 6653855UL Sources.Gelbooru.gelbooru
+let [<Test>] ``getPostById: TBIB`` () = getPostById 9867580UL Sources.Gelbooru.tbib
+let [<Test>] ``getPostById: Safebooru`` () = getPostById 3722213UL Sources.Gelbooru.safebooru
+let [<Test>] ``getPostById: XBooru`` () = getPostById 885166UL Sources.Gelbooru.xbooru
+let [<Test>] ``getPostById: Rule34`` () = getPostById 5289582UL Sources.Gelbooru.rule34

@@ -17,3 +17,9 @@ let [<Test>] ``searchTag: HypnoHub`` () = search100Tags Sources.Moebooru.hypnohu
 
 let [<Test>] ``searchTag: Danbooru`` () = search100Tags Sources.Danbooru.danbooru
 let [<Test>] ``searchTag: ATFBooru`` () = search100Tags Sources.Danbooru.atfbooru
+
+let [<Test>] ``searchTag: Gelbooru`` () = search100Tags Sources.Gelbooru.gelbooru
+let [<Test>] ``searchTag: TBIB`` () = search100Tags Sources.Gelbooru.tbib
+let [<Test>] ``searchTag: Safebooru`` () = search100Tags Sources.Gelbooru.safebooru
+let [<Test>] ``searchTag: XBooru`` () = search100Tags Sources.Gelbooru.xbooru
+let [<Test>] ``searchTag: Rule34`` () = search100Tags Sources.Gelbooru.rule34

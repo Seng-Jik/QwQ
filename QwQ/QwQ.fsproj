@@ -14,8 +14,11 @@
     <Compile Include="Sources/Moebooru.fs" />
     <Compile Include="Sources/Danbooru.fsi" />
     <Compile Include="Sources/Danbooru.fs" />
+    <Content Include="Sources/DanbooruSample.json" />
     <Compile Include="Sources/Gelbooru.fsi" />
     <Compile Include="Sources/Gelbooru.fs" />
+    <Content Include="Sources/GelbooruSample.json" />
+    <Content Include="Sources/GelbooruTagsSample.xml" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>
