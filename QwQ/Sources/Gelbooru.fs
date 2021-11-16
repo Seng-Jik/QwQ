@@ -85,7 +85,7 @@ type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
 
     interface ISearch with
         member x.Search search = 
-            requestPostListWithUrlPostfix x <| "&tags=" + mapSearchOptions search
+            requestPostListWithUrlPostfix x <| "&tags=" + mapSearchOptions { search with Order = Default }
 
     interface IGetPostById with
         member x.GetPostById id =

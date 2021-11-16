@@ -10,7 +10,7 @@ let search10Pages searchOpt source =
     | _ -> failwith "Do not support search."
 
 
-// booru tags: order:score rating:e ke-ta uncensored -sex -nipples
+// booru tags: order:popular rating:e ke-ta uncensored -sex -nipples
 let searchOpt =
     { Tags = ["ke-ta"; "uncensored"]
       NonTags = ["sex"; "nipples"]

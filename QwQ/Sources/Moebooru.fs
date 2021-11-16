@@ -120,9 +120,9 @@ let enumAllPages getPageByIndex =
 
 let mapRatingToMetaTag =
     function
-    | Explicit -> "e"
-    | Safe -> "s"
-    | Questionable -> "q"
+    | Explicit -> "explicit"
+    | Safe -> "safe"
+    | Questionable -> "questionable"
     | Rating' x -> x
     >> (+) "rating:"
 
