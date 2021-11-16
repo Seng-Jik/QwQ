@@ -65,9 +65,8 @@ module Async =
 
     let protect f = 
         async {
-            match! Async.Catch f with
-            | Choice1Of2 x -> return Ok x
-            | Choice2Of2 x -> return Error x
+            try let! r = f in return Ok r
+            with e -> return Error e
         }
 
 

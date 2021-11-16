@@ -48,6 +48,10 @@ let requestPosts source baseUrl url =
 
         return 
             json
+            |> function
+                | Ok x -> Ok x
+                | Error (:? System.Net.WebException) -> Ok [||]
+                | Error e -> Error e
             |> Result.map (
                 Seq.choose (fun json ->
                     Option.protect (fun () ->
@@ -72,7 +76,7 @@ type DanbooruSource (name, url) =
                 enumAllPages <| fun pageId ->
                     async {
                         let! json = 
-                            JsonValue.AsyncLoad($"{url}/tags.json?limit=1000&page={pageId}")
+                            JsonValue.AsyncLoad($"{url}/tags.json?limit=1000&page={pageId + 1}")
                             |> Async.protect
                             |> Async.retryResult 3 1500
 
