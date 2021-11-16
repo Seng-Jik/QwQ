@@ -17,26 +17,25 @@ let mapPost src baseUrl (json: PostListJson.Root) =
       Rating = mapRating json.Rating
       SourceUrl = 
           asyncSeq {
-              yield $"{baseUrl}/posts/{json.Id}"
+              $"{baseUrl}/posts/{json.Id}"
               if not <| System.String.IsNullOrWhiteSpace json.Source
-              then yield json.Source
+              then json.Source
           }
 
-      Tags = json.TagString.Split(' ') |> AsyncSeq.ofSeq
+      Tags = parseTags json.TagString
       PreviewImage = 
           json.PreviewFileUrl
           |> Option.bind String.nullOrWhitespace
           |> Option.map (mapHttpsContent HttpsOptions.Default)
 
       Content = 
-          asyncSeq { 
-              asyncSeq {
-                  yield json.LargeFileUrl
-                  yield json.FileUrl
-              } 
-              |> AsyncSeq.choose (Option.bind String.nullOrWhitespace)
-              |> AsyncSeq.map (mapHttpsContent HttpsOptions.Default)
-          }
+          asyncSeq {
+              json.LargeFileUrl
+              json.FileUrl
+          } 
+          |> AsyncSeq.choose (Option.bind String.nullOrWhitespace)
+          |> AsyncSeq.map (mapHttpsContent HttpsOptions.Default)
+          |> AsyncSeq.singleton
     }
 
 
@@ -48,6 +47,27 @@ let danbooruMapError: Result<_, exn> -> Result<_, exn> =
 
 
 let limit = 500
+
+
+let requestTags tagKey jsonUrlFromPage =
+    let response =
+        enumAllPages <| fun pageId ->
+            requestPosts 
+                (JsonValue.AsyncLoad(jsonUrlFromPage pageId))
+                (Result.map JsonExtensions.AsArray)
+                (fun x -> Result.protect (fun () -> x.[tagKey: string].AsString()))
+
+    let exns = 
+        AsyncSeq.choose (function Ok _ -> None | Error e -> Some e) response
+        |> AsyncSeq.map Error
+
+    let oks = 
+        AsyncSeq.choose (function Ok x -> Some x | Error e -> None) response
+        |> AsyncSeq.concatSeq
+        |> AsyncSeq.map Ok
+    
+    AsyncSeq.append oks exns
+    |> AsyncSeq.map (Result.bind id)
 
 
 type DanbooruSource (name, baseUrl) =
@@ -68,24 +88,7 @@ type DanbooruSource (name, baseUrl) =
             requestPosts' this $"{baseUrl}/posts.json?limit={limit}&page={pageId + 1}{p}"
 
     let responseTagsWithUrlPostfix p =
-        let response =
-            enumAllPages <| fun pageId ->
-                requestPosts 
-                    (JsonValue.AsyncLoad($"{baseUrl}/tags.json?limit=1000&page={pageId + 1}{p}"))
-                    (Result.map JsonExtensions.AsArray)
-                    (fun x -> Option.protect (fun () -> x.["name"].AsString()))
-            |> AsyncSeq.map (Result.map (Seq.choose id))
-
-        let exns = 
-            AsyncSeq.choose (function Ok _ -> None | Error e -> Some e) response
-            |> AsyncSeq.map Error
-
-        let oks = 
-            AsyncSeq.choose (function Ok x -> Some x | Error e -> None) response
-            |> AsyncSeq.concatSeq
-            |> AsyncSeq.map Ok
-        
-        AsyncSeq.append oks exns
+        requestTags "name" (fun pageId -> $"{baseUrl}/tags.json?limit=1000&page={pageId + 1}{p}")
 
     let danbooruSearcher this searchOpts =
         let tags = 

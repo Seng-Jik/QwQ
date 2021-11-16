@@ -18,6 +18,12 @@ jobs:
           - 'HypnoHub'
           - 'Danbooru'
           - 'ATFBooru'
+          - 'Gelbooru'
+          - '"The Big ImageBoard (TBIB)"'
+          - 'Safebooru'
+          - 'XBooru'
+          - 'Rule34'
+          
         targets:
           - 'list-posts'
           - 'list-tags'

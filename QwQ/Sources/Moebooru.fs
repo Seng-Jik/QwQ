@@ -9,10 +9,6 @@ open QwQ.Utils
 type PostListJson = JsonProvider<"https://konachan.net/post.json">
 
 
-let mapTag (json: JsonValue) =
-    json.["name"].AsString()
-
-
 let mapRating =
     function
     | "s" -> Safe
@@ -43,6 +39,10 @@ let mapHttpsContent httpsOpts url =
       FileName = getFileNameFromUrl url }
 
 
+let parseTags (x: string) = 
+    x.Split(' ') |> AsyncSeq.ofSeq
+
+
 let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =
     { Id = uint64 post.Id
       Source = source 
@@ -57,19 +57,21 @@ let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =
                 | _ -> []) ] 
           |> AsyncSeq.ofSeq
 
-      Tags = post.Tags.Split(' ') |> AsyncSeq.ofSeq
+      Tags = parseTags post.Tags
       
       PreviewImage = 
           String.nullOrWhitespace post.PreviewUrl
           |> Option.map (mapHttpsContent httpsOpts)
 
       Content = 
-          [ post.SampleUrl
-            post.JpegUrl
-            post.FileUrl ]
-          |> AsyncSeq.ofSeq
+          asyncSeq {
+              post.SampleUrl
+              post.JpegUrl
+              post.FileUrl 
+          }
           |> AsyncSeq.choose String.nullOrWhitespace
-          |> AsyncSeq.map (mapHttpsContent httpsOpts >> AsyncSeq.singleton) }
+          |> AsyncSeq.map (mapHttpsContent httpsOpts)
+          |> AsyncSeq.singleton }
 
 
 let requestPosts loadJson map mapPost =
@@ -188,18 +190,16 @@ type MoebooruSource (opts) =
 
     let requestTags (urlPostfix: string) =
         asyncSeq {
-            match!
-                JsonValue.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}")
-                |> Async.protect
-                |> Async.retryResult 3 500
+            match! 
+                requestPosts 
+                    (JsonValue.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}"))
+                    (Result.map JsonExtensions.AsArray)
+                    (fun json -> Result.protect <| json.["name"].AsString)
             with
-            | Error x -> yield Error x
-            | Ok x -> 
-                yield! 
-                    x.AsArray ()
-                    |> AsyncSeq.ofSeq 
-                    |> AsyncSeq.map (mapTag >> Ok)
+            | Ok x -> yield! AsyncSeq.ofSeq x
+            | Error e -> yield Error e
         }
+        
 
     let requestPostsWithPostfix this p =
         requestPosts' this <| fun pageId ->
