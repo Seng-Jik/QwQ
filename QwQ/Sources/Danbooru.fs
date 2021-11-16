@@ -74,10 +74,10 @@ let requestTagsJson tagKey jsonUrlFromPage =
             (fun x -> Result.protect (fun () -> x.[tagKey: string].AsString()))
 
 
-type DanbooruSource (name, baseUrl) =
+type DanbooruSource (name, baseUrl, danbooruLimit) =
 
     let mapJson =
-        if name = "Danbooru" 
+        if danbooruLimit
         then danbooruMapError
         else id
 
@@ -118,7 +118,7 @@ type DanbooruSource (name, baseUrl) =
         >> requestPostsWithUrlPostfix this
 
     let searcher =
-        if name = "Danbooru"
+        if danbooruLimit
         then danbooruSearcher
         else normalSearcher
 
@@ -144,10 +144,14 @@ type DanbooruSource (name, baseUrl) =
         member _.SearchTag p = responseTagsWithUrlPostfix $"&search[fuzzy_name_matches]={p}"
 
 
-let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us") :> ISource
-let atfbooru = DanbooruSource ("ATFBooru", "https://booru.allthefallen.moe/") :> ISource
+let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us", true) :> ISource
+let atfbooru = DanbooruSource ("ATFBooru", "https://booru.allthefallen.moe", false) :> ISource
+let sonohara = DanbooruSource ("Sonohara", "https://sonohara.donmai.us", true) :> ISource
+let hijiribe = DanbooruSource ("Hijiribe", "https://hijiribe.donmai.us", true) :> ISource
 
 
 let sources = 
     [ danbooru
-      atfbooru ]
+      atfbooru
+      sonohara
+      hijiribe ]

@@ -11,4 +11,7 @@ val requestTags<'a,'b,'c when 'a :> seq<Result<'b, 'c>>> :
 
 val danbooru: ISource
 val atfbooru: ISource
+val sonohara: ISource
+val hijiribe: ISource 
+
 val sources: ISource list
