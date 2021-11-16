@@ -16,5 +16,16 @@ val mapTag: JsonValue -> string
 val mapRating: string -> Rating
 val getFileNameFromUrl: string -> string
 val mapHttpsContent: HttpsOptions -> string -> Content
-val enumAllPages<'a,'b,'c when 'a :> seq<'b>> : (int -> Async<Result<'a,'c>>) -> AsyncSeq<Result<'a,'c>>
 val mapSearchRating: Rating seq -> string Option
+
+
+val enumAllPages<'a,'b,'c when 'a :> seq<'b>> : 
+    getPageByIndex: (int -> Async<Result<'a,'c>>) 
+    -> AsyncSeq<Result<'a,'c>>
+
+
+val requestPosts<'a,'b,'c,'d,'e when 'b :> seq<'c>> : 
+    loadJson: Async<'a> -> 
+    map: (Result<'a,exn> -> Result<'b, 'd>) -> 
+    mapPost: ('c -> 'e) 
+    -> Async<Result<seq<'e>,'d>>

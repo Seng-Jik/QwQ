@@ -72,23 +72,19 @@ let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =
           |> AsyncSeq.map (mapHttpsContent httpsOpts >> AsyncSeq.singleton) }
 
 
-let requestPosts httpsOpts source sourceUrlGen url =
+let requestPosts loadJson map mapPost =
     async {
         let! json = 
-            Async.protect (PostListJson.AsyncLoad(url))
+            Async.protect loadJson
             |> Async.retryResult 3 1500
 
-        return
+        return 
             json
+            |> map
             |> Result.map (
-                Seq.choose (fun json ->
-                    Option.protect (fun () -> 
-                        mapPost 
-                            httpsOpts 
-                            source 
-                            sourceUrlGen
-                            json)))
-    } : Async<Result<PostPage, exn>>
+                Seq.choose (fun json -> 
+                    Option.protect (fun () -> mapPost json)))
+    }
 
 
 type MoebooruSourceOptions =
@@ -103,10 +99,10 @@ type MoebooruSourceOptions =
     OrderScore: string }
 
 
-let enumAllPages getPage =
+let enumAllPages getPageByIndex =
     let rec enumPages errors curPage =
         asyncSeq {
-            match! getPage curPage with
+            match! getPageByIndex curPage with
             | Ok x when Seq.isEmpty x && errors < 5 -> 
                 yield Ok x
                 yield! enumPages (errors + 1) (curPage)
@@ -185,13 +181,13 @@ let limit = 500
 
 type MoebooruSource (opts) =
     let sourceUrlGen = opts.SourceUrlGen opts.BaseUrl
+    let mapPost this = mapPost opts.HttpsOpts this sourceUrlGen
     let requestPosts' this f = 
         enumAllPages <| fun pageId -> 
             requestPosts 
-                opts.HttpsOpts
-                this
-                sourceUrlGen
-                (f pageId)
+                (PostListJson.AsyncLoad(f pageId))
+                id
+                (mapPost this)
 
     let requestTags (urlPostfix: string) =
         asyncSeq {
@@ -218,11 +214,11 @@ type MoebooruSource (opts) =
         member this.GetPostById x =
             async {
                 match! 
-                    requestPosts 
-                        opts.HttpsOpts
-                        this
-                        sourceUrlGen
-                        $"{opts.BaseUrl}{opts.PostListJson}?tags=id:{x}"
+                    requestPosts
+                        (PostListJson.AsyncLoad(
+                            $"{opts.BaseUrl}{opts.PostListJson}?tags=id:{x}"))
+                        id
+                        (mapPost this)                       
                 with
                 | Ok x -> return Ok <| Seq.tryHead x
                 | Error e -> return Error e

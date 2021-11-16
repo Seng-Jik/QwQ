@@ -40,54 +40,40 @@ let mapPost src baseUrl (json: PostListJson.Root) =
     }
 
 
-let requestPosts source baseUrl url =
-    async {
-        let! json = 
-            Async.protect (PostListJson.AsyncLoad(url))
-            |> Async.retryResult 3 1500
-
-        return 
-            json
-            |> function
-                | Ok x -> Ok x
-                | Error (:? System.Net.WebException) -> Ok [||]
-                | Error e -> Error e
-            |> Result.map (
-                Seq.choose (fun json ->
-                    Option.protect (fun () ->
-                        mapPost source baseUrl json)))
-    } : Async<Result<PostPage, exn>>
+let danbooruMapError: Result<_, exn> -> Result<_, exn> =
+    function
+    | Ok x -> Ok x
+    | Error (:? System.Net.WebException) -> Ok [||]
+    | Error e -> Error e
 
 
 let limit = 500
 
 
-type DanbooruSource (name, url) =
+type DanbooruSource (name, baseUrl) =
+
+    let requestPosts' this url =
+        requestPosts 
+            (PostListJson.AsyncLoad(url))
+            danbooruMapError
+            (mapPost this baseUrl)
 
     interface ISource with
         member _.Name = name
         member this.AllPosts =
             enumAllPages <| fun pageId ->
-                requestPosts this url $"{url}/posts.json?limit={limit}&page={pageId + 1}"
+                requestPosts' this $"{baseUrl}/posts.json?limit={limit}&page={pageId + 1}"
     
     interface ITags with 
         member _.Tags = 
             let response =
                 enumAllPages <| fun pageId ->
-                    async {
-                        let! json = 
-                            JsonValue.AsyncLoad($"{url}/tags.json?limit=1000&page={pageId + 1}")
-                            |> Async.protect
-                            |> Async.retryResult 3 1500
+                    requestPosts 
+                        (JsonValue.AsyncLoad($"{baseUrl}/tags.json?limit=1000&page={pageId + 1}"))
+                        (Result.map JsonExtensions.AsArray)
+                        (fun x -> Option.protect (fun () -> x.["name"].AsString()))
+                |> AsyncSeq.map (Result.map (Seq.choose id))
 
-                        return
-                            json
-                            |> Result.map (
-                                JsonExtensions.AsArray
-                                >> Seq.choose (fun x -> Option.protect (fun () -> x.["name"].AsString()))
-                            )
-                    }
-            
             let exns = 
                 AsyncSeq.choose (function Ok _ -> None | Error e -> Some e) response
                 |> AsyncSeq.map Error
