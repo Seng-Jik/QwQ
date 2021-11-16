@@ -70,7 +70,10 @@ type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
                     $"{baseUrl}/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid={pageId}{urlPostfix}"))
                 (function
                     | Ok x -> Ok x
-                    | Error e when e.Message.Contains "Holy fuck" -> Ok [||]
+                    | Error e when 
+                        e.Message.Contains "Holy fuck"
+                        || e.Message.Contains "Search error: API limited due to abuse."
+                        -> Ok [||]
                     | Error e -> Error e)
                 (mapPost this baseUrl imgSrvBaseUrl)
 
