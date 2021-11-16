@@ -12,7 +12,7 @@ type PostListJson = JsonProvider<"./Sources/GelbooruSample.json">
 
 
 let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
-    let imageHash = json.JsonValue.["hash"].AsString ()
+    let changeExtJpg x = System.IO.Path.ChangeExtension (x, ".jpg")
 
     { Id = uint64 json.Id
       Source = src
@@ -31,13 +31,13 @@ let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
       PreviewImage = 
           mapHttpsContent 
               HttpsOptions.Default 
-              $"{imgServerBaseUrl}/thumbnails/{json.Directory}/thumbnail_{imageHash}.jpg"
+              $"{imgServerBaseUrl}/thumbnails/{json.Directory}/thumbnail_{changeExtJpg json.Image}"
           |> Some
               
       Content = 
           asyncSeq {
               if json.Sample
-              then $"{imgServerBaseUrl}/samples/{json.Directory}/sample_{imageHash}.jpg"
+              then $"{imgServerBaseUrl}/samples/{json.Directory}/sample_{changeExtJpg json.Image}"
 
               json.FileUrl
               |> Option.defaultValue $"{imgServerBaseUrl}/images/{json.Directory}/{json.Image}"
@@ -105,8 +105,8 @@ type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
 let gelbooru = GelbooruSource ("Gelbooru", "https://gelbooru.com", "https://img3.gelbooru.com") :> ISource
 let tbib = GelbooruSource ("The Big ImageBoard (TBIB)", "https://tbib.org", "https://tbib.org") :> ISource
 let safebooru = GelbooruSource ("Safebooru", "https://safebooru.org", "https://safebooru.org") :> ISource
-let xbooru = GelbooruSource ("XBooru", "https://xbooru.com", "https://img.xbooru.com/") :> ISource
-let rule34 = GelbooruSource ("Rule34", "https://rule34.xxx", "https://us.rule34.xxx/") :> ISource
+let xbooru = GelbooruSource ("XBooru", "https://xbooru.com", "https://img.xbooru.com") :> ISource
+let rule34 = GelbooruSource ("Rule34", "https://rule34.xxx", "https://us.rule34.xxx") :> ISource
 
 
 let sources =
