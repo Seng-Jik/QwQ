@@ -17,10 +17,10 @@ type Rating =
 
 
 type HttpsOptions =
-    { UserAgent: string option }
+    { Headers: (string * string) list }
     with 
         static member Default = 
-            { UserAgent = None }
+            { Headers = [] }
 
 
 type DownloadMethod =

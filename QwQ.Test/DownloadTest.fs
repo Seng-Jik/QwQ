@@ -15,11 +15,10 @@ let ensureDir x =
 
 let downloadToDir content dir =
     match content.DownloadMethod with
-    | Https (url, { UserAgent = u }) ->
+    | Https (url, { Headers = h }) ->
         use ws = new HttpClient ()
-        match u with
-        | Some u -> ws.DefaultRequestHeaders.Add("User-Agent", u)
-        | None -> ()
+        for (k, v) in h do 
+            ws.DefaultRequestHeaders.Add(k, v)
 
         let b = ws.GetByteArrayAsync(url).Result
         File.WriteAllBytes (dir + "/" + content.FileName, b)

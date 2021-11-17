@@ -57,7 +57,7 @@ let download =
         async {
             let! stream =
                 FSharp.Data.Http.AsyncRequestStream 
-                    (url, headers = ["User-Agent", opt.UserAgent |> Option.defaultValue ""])
+                    (url, headers = opt.Headers |> List.toSeq |> Some)
 
             if stream.StatusCode = 200
             then return Ok ()
