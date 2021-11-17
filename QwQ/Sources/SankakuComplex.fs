@@ -68,7 +68,8 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr) =
             (PostListJson.AsyncLoad($"{apiUrl}?limit={limit}{loginStr}&page={pageId + 1}{urlPostfix}"))
             (function
                 | Error (:? System.Net.WebException as e) 
-                    when e.Message.Contains "sign in to view more!" -> Ok [||]
+                    when e.Message.Contains "sign in to view more!"
+                         || e.Message.Contains "You can only view up to" -> Ok [||]
                 | x -> x)
             (mapPost siteUrl this)
 
