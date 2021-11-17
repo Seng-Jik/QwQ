@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>QwQ</ToolCommandName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Console.fs" />
+    <Compile Include="State.fs" />
+    <Compile Include="Command.fs" />
+    <Compile Include="Command/Sources.fs" />
+    <Compile Include="Dispatcher.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QwQ\QwQ.fsproj" />
+  </ItemGroup>
+</Project>

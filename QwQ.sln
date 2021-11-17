@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "QwQ", "QwQ\QwQ.fsproj", "{5
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "QwQ.Test", "QwQ.Test\QwQ.Test.fsproj", "{DAAA582F-D96C-416C-B95E-835280A82143}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "QwQ.Console", "QwQ.Console\QwQ.Console.fsproj", "{F7C89BC7-18CB-4E3E-A3B9-0DED4448BB69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{DAAA582F-D96C-416C-B95E-835280A82143}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAAA582F-D96C-416C-B95E-835280A82143}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAAA582F-D96C-416C-B95E-835280A82143}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7C89BC7-18CB-4E3E-A3B9-0DED4448BB69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7C89BC7-18CB-4E3E-A3B9-0DED4448BB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7C89BC7-18CB-4E3E-A3B9-0DED4448BB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7C89BC7-18CB-4E3E-A3B9-0DED4448BB69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -26,7 +26,18 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -c Release
       
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal -c Release
+
+    - name: Pack
+      run: dotnet pack ./QwQ.Console/QwQ.Console.fsproj --no-build -c Release
+
+    - name: Upload
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: QwQ Console Nuget Package
+        path: ./QwQ.Console/bin/Release/*.nuget
+
+        
