@@ -137,7 +137,59 @@ type SankakuChannelSource () =
 
     interface ISearchTag with
         member _.SearchTag s = requestTagList $"&name={s}"
-    
+
+
+type SankakuChannelSourceLoggedIn (username, accessToken, refreshToken) =
+    inherit SankakuChannelSource ()
+
+    interface ILoggedIn<Username> with
+        member _.LoginInfo = async { return username }
+
+
+type SankakuChannelSourceGuest () =
+    inherit SankakuChannelSource ()
+
+    interface ILogin<Username, Password> with
+        member _.Login username password =
+            async {
+                let authUrl = "https://capi-v2.sankakucomplex.com/auth/token"
+                let authJson = 
+                    sprintf "{\"login\": \"%s\", \"password\": \"%s\"}"
+                        username password
+                
+                let operation =
+                    async {
+                        let! response =
+                            Http.AsyncRequestString(
+                                authUrl, 
+                                headers = 
+                                    [ "User-Agent", userAgent 
+                                      "Content-Type", "application/json" ],
+                                body = TextRequest authJson,
+                                httpMethod = "POST")
+
+                        let json = JsonValue.Parse response
+
+                        return 
+                            if json.["success"].AsBoolean ()
+                            then 
+                                Ok (json.["access_token"].AsString(),
+                                    json.["refresh_token"].AsString())
+                            else Error <| json.["error"].AsString()
+                    }
+                    |> Async.protect
+                    
+                match! operation with
+                | Ok (Ok (acc, refr)) -> 
+                    return Ok <| SankakuChannelSourceLoggedIn (username, acc, refr)
+                | Ok (Error err) when err.Contains "invalid login or password" -> 
+                    return Error WrongUserInfo
+                | Error err when err.Message.Contains "invalid login or password" ->
+                    return Error WrongUserInfo
+                | Ok (Error err) -> return Error <| LoginError (exn (err))
+                | Error err -> return Error <| LoginError err
+            }
+
 
 type IdolComplexSourceLoggedIn (username, loginStr) =
     inherit SankakuComplexSource (
@@ -181,7 +233,7 @@ type IdolComplexSource () =
             }
 
 
-let sankakuChannel = SankakuChannelSource () : ISource
+let sankakuChannel = SankakuChannelSourceGuest () : ISource
 let idolComplex = IdolComplexSource () :> ISource
 
 
