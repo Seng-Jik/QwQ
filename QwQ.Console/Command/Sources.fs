@@ -3,6 +3,8 @@ module QwQ.Console.Command.Sources
 open QwQ
 open QwQ.Sources.Sources
 open QwQ.Console.Console
+open QwQ.Utils
+open FSharp.Control
 
 
 exception SourceNotFoundException of string
@@ -95,5 +97,77 @@ let commands = [
                     | Error WrongUserInfo -> failwith "用户名或密码可能不正确。"
                     | Error (LoginError e) -> raise e
             | _ -> invalidArg "" ""
+    }
+
+    {
+        Name = "download"
+        ShortHelp = "搜索并下载到当前目录"
+        LongHelp = Some "download <tags...>"
+        Body = fun state tags ->
+            let search = 
+                { Tags = tags
+                  NonTags = []
+                  Rating = [Safe; Questionable; Explicit]
+                  Order = Default }
+
+            let dir = 
+                tags 
+                |> List.fold (fun a b -> a + " " + b) "" 
+                |> String.trim
+                |> String.nullOrWhitespace
+                |> Option.defaultValue "no_tags"
+
+            if System.IO.Directory.Exists dir |> not
+            then System.IO.Directory.CreateDirectory dir |> ignore
+
+            state.Value.Sources
+            |> List.choose (function
+                | :? ISearch as s -> Some (s.Name, AntiGuro.antiGuro (Search.search s search))
+                | _ -> None)
+            |> List.toArray
+            |> Array.Parallel.iter (fun (name, result) ->
+                AsyncSeq.iteriAsync (fun i x -> async {
+                    match x with
+                    | Error e ->
+                        lockConsole (fun () ->
+                            printfnc Color.Red "%s: Can not get page %d." name i
+                            printfnc Color.Red "%A" e
+                        )
+                        return ()
+                    | Ok page ->
+                        for post in page do
+                            post.Content
+                            |> AsyncSeq.iterAsync (fun mipmaps -> async {
+                                match! AsyncSeq.tryLast mipmaps with
+                                | Some content -> 
+                                    match content.DownloadMethod with
+                                    | Https (url, opt) ->
+                                        let! result =
+                                            Async.protect (async {
+                                                use w = new System.Net.Http.HttpClient ()
+                                                for (k, v) in opt.Headers do
+                                                    w.DefaultRequestHeaders.Add(k, v)
+                                                    
+                                                let b = w.GetByteArrayAsync(url).Result
+                                                System.IO.File.WriteAllBytes(dir + "/" + content.FileName, b) })
+                                            |> Async.retryResult 5 5000
+
+                                        match result with
+                                        | Error e -> 
+                                            lockConsole (fun () ->
+                                                printfnc Color.Red $"{name}: {post.Id} download error:"
+                                                printfnc Color.Red "%A" e)
+                                        | Ok () ->
+                                            lockConsole (fun () -> 
+                                                printfnc Color.Green $"{name}: {post.Id} downloaded.")
+                                        
+                                | _ -> return ()
+                            })
+                            |> Async.RunSynchronously
+                        return ()
+
+                }) result
+                |> Async.RunSynchronously
+            )
     }
 ]
