@@ -17,7 +17,7 @@ val mapHttpsContent: HttpsOptions -> string -> Content
 val mapSearchRating: Rating seq -> string Option
 val mapOrder: Order -> string option
 val mapSearchOptions: SearchOptions -> string
-val parseTags: string -> AsyncSeq<Tag>
+val parseTags: string -> Tag[]
 
 
 val enumAllPages<'a,'b,'c when 'a :> seq<'b>> : 

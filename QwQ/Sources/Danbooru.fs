@@ -106,9 +106,8 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
         |> AsyncSeq.map (
             Result.map (
                 Seq.filter (fun x -> 
-                    let postTags = AsyncSeq.toBlockingSeq x.Tags
                     Seq.exists ((=) x.Rating) searchOpts.Rating
-                    && Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) postTags) searchOpts.NonTags)
+                    && Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) x.Tags) searchOpts.NonTags)
             )
         )
 

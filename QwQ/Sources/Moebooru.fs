@@ -40,7 +40,7 @@ let mapHttpsContent httpsOpts url =
 
 
 let parseTags (x: string) = 
-    x.Split(' ') |> AsyncSeq.ofSeq
+    x.Split(' ')
 
 
 let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =

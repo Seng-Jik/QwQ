@@ -16,7 +16,7 @@ let show10Pages =
 
             Result.unwrap x
             |> Seq.iter (fun post ->
-                printfn $"{post.Id} {AsyncSeq.toListSynchronously post.Tags}"
+                printfn $"{post.Id} {post.Tags}"
                 printfn $"{post.PreviewImage}"
                 printfn $"Contents: {AsyncSeq.toListSynchronously post.Content}"
                 printfn ""

@@ -41,7 +41,7 @@ type Post =
       
       Rating: Rating
       SourceUrl: AsyncSeq<string>
-      Tags: AsyncSeq<Tag>
+      Tags: Tag seq
       
       PreviewImage: Content option
       Content: AsyncSeq<Mipmaps> }

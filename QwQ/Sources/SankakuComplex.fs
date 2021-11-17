@@ -42,7 +42,6 @@ let mapPost httpsOption siteUrl src (json: PostListJson.Root) =
               |> Option.bind String.nullOrWhitespace
               |> Option.orElse x.NameJa
               |> Option.bind String.nullOrWhitespace)
-          |> AsyncSeq.ofSeq
             
       PreviewImage = 
           json.PreviewUrl 
@@ -96,8 +95,7 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr, addtionalHttp
             |> x.RequestPostList
             |> AsyncSeq.map (Result.map (
                 Seq.filter (fun x -> 
-                    let postTags = AsyncSeq.toBlockingSeq x.Tags
-                    Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) postTags) search.NonTags)))
+                    Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) x.Tags) search.NonTags)))
 
 
 type SankakuChannelSource (addtionalHttpHeaders) =
