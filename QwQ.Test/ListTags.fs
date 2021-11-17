@@ -8,7 +8,7 @@ open FSharp.Control
 
 let show100Tags (x: AsyncSeq<Result<Tag, exn>>) =
     x
-    |> AsyncSeq.take 100
+    |> AsyncSeq.truncate 100
     |> AsyncSeq.iter (Result.unwrap >> printfn "%s")
     |> Async.RunSynchronously
 

@@ -62,7 +62,6 @@ let downloadTest (source: ISource) =
 
                                         downloadToDir x baseDir
                                     })
-                            
                         })
                     |> Async.RunSynchronously
                 )

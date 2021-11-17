@@ -7,7 +7,7 @@ open FSharp.Control
 
 
 let show10Pages =
-    AsyncSeq.take 10
+    AsyncSeq.truncate 10
     >> AsyncSeq.iteriAsync (fun i x -> 
         async {
             printfn ""

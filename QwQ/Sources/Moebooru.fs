@@ -201,7 +201,6 @@ type MoebooruSource (opts) =
             | Error e -> yield Error e
         }
         
-
     let requestPostsWithPostfix this p =
         requestPosts' this <| fun pageId ->
             $"{opts.BaseUrl}{opts.PostListJson}?page={pageId + opts.StartPageIndex}&limit={limit}{p}"
@@ -210,7 +209,6 @@ type MoebooruSource (opts) =
         member _.Name = opts.Name
         member this.AllPosts = requestPostsWithPostfix this ""
             
-
     interface IGetPostById with
         member this.GetPostById x =
             async {
