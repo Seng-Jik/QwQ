@@ -38,7 +38,7 @@ let downloadTest (source: ISource) =
         | Some (Error e) -> return raise e
         | Some (Ok posts) ->
             return
-                Seq.take 5 posts
+                Seq.truncate 5 posts
                 |> Seq.toArray
                 |> Array.Parallel.map (fun post -> 
                     let baseDir = $"download-test/{Source.name source}/{post.Id}"

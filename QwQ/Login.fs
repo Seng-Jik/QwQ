@@ -12,6 +12,7 @@ type ILoggedIn<'Public> =
 
 
 type ILogin<'Public, 'Secret> =
+    inherit ISource
     abstract Login: 'Public -> 'Secret -> Async<Result<ILoggedIn<'Public>, LoginError>>
 
 
