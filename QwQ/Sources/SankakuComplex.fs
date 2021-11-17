@@ -13,15 +13,12 @@ type PostListJson = JsonProvider<"./Sources/SankakuComplexSample.json">
 let userAgent = """Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.63"""
 
 
-let httpsOption =
-    { Headers = ["User-Agent", userAgent] }
-
 let fixUrlPrefix (x: string) =
     if x.StartsWith "//" then "https:" + x
     else x
 
 
-let mapPost siteUrl src (json: PostListJson.Root) =
+let mapPost httpsOption siteUrl src (json: PostListJson.Root) =
     { Id = uint64 json.Id
       Source = src
       Rating = mapRating json.Rating
@@ -61,17 +58,28 @@ let mapPost siteUrl src (json: PostListJson.Root) =
           |> AsyncSeq.singleton }
 
 
-type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr) =
+let loadJson parser httpsOptions uri =
+    async {
+        let! s = Http.AsyncRequestString(uri, headers = httpsOptions.Headers)
+        return parser s
+    }
+
+
+type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr, addtionalHttpHeaders) =
+
+    member _.HttpsOptions =
+        { Headers = ("User-Agent", userAgent) :: addtionalHttpHeaders }
 
     member this.RequestPage urlPostfix pageId =
         requestPosts 
-            (PostListJson.AsyncLoad($"{apiUrl}?limit={limit}{loginStr}&page={pageId + 1}{urlPostfix}"))
+            (loadJson PostListJson.Parse this.HttpsOptions
+                $"{apiUrl}?limit={limit}{loginStr}&page={pageId + 1}{urlPostfix}")
             (function
                 | Error (:? System.Net.WebException as e) 
                     when e.Message.Contains "sign in to view more!"
                          || e.Message.Contains "You can only view up to" -> Ok [||]
                 | x -> x)
-            (mapPost siteUrl this)
+            (mapPost this.HttpsOptions siteUrl this)
 
     member this.RequestPostList urlPostfix =
         enumAllPages <| this.RequestPage urlPostfix
@@ -90,18 +98,20 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr) =
                     Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) postTags) search.NonTags)))
 
 
-type SankakuChannelSource () =
+type SankakuChannelSource (addtionalHttpHeaders) =
     inherit SankakuComplexSource (
         "Sankaku Channel", 
         "https://chan.sankakucomplex.com",
         "https://capi-v2.sankakucomplex.com/posts",
         500,
-        "")
+        "",
+        addtionalHttpHeaders)
 
-    let requestTagList urlPostfix =
+    let requestTagList (this: SankakuChannelSource) urlPostfix =
         requestTags <| fun p ->
             requestPosts
-                (JsonValue.AsyncLoad($"https://capi-v2.sankakucomplex.com/tags?limit=500&page={p + 1}{urlPostfix}"))
+                (loadJson JsonValue.Parse this.HttpsOptions
+                    $"https://capi-v2.sankakucomplex.com/tags?limit=500&page={p + 1}{urlPostfix}")
                 (Result.map JsonExtensions.AsArray)
                 (fun json -> 
                     json.TryGetProperty "name"
@@ -133,21 +143,21 @@ type SankakuChannelSource () =
             }
 
     interface ITags with
-        member _.Tags = requestTagList ""
+        member x.Tags = requestTagList x ""
 
     interface ISearchTag with
-        member _.SearchTag s = requestTagList $"&name={s}"
+        member x.SearchTag s = requestTagList x $"&name={s}"
 
 
 type SankakuChannelSourceLoggedIn (username, accessToken, refreshToken) =
-    inherit SankakuChannelSource ()
+    inherit SankakuChannelSource (["authorization", "Bearer " + accessToken])
 
     interface ILoggedIn<Username> with
         member _.LoginInfo = async { return username }
 
 
 type SankakuChannelSourceGuest () =
-    inherit SankakuChannelSource ()
+    inherit SankakuChannelSource ([])
 
     interface ILogin<Username, Password> with
         member _.Login username password =
@@ -197,7 +207,8 @@ type IdolComplexSourceLoggedIn (username, loginStr) =
         "https://idol.sankakucomplex.com/",
         "https://iapi.sankakucomplex.com/post/index.json",
         60,
-        loginStr) 
+        loginStr,
+        []) 
 
     interface ILoggedIn<Username> with
         member _.LoginInfo = async { return username }
@@ -209,7 +220,8 @@ type IdolComplexSource () =
         "https://idol.sankakucomplex.com/",
         "https://iapi.sankakucomplex.com/post/index.json",
         60,
-        "")
+        "",
+        [])
 
     interface ILogin<Username, Password> with
         member _.Login username password =
