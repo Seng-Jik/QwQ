@@ -38,6 +38,6 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: QwQ Console Nuget Package
-        path: ./QwQ.Console/bin/Release/*.nuget
+        path: ./QwQ.Console/bin/Release/*.nupkg
 
         
