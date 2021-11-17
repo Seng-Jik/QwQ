@@ -3,17 +3,30 @@ namespace QwQ
 
 type LoginError =
     | WrongUserInfo
-    | Otherwise of exn
+    | LoginError of exn
 
 
-type ILogin<'a> =
-    abstract Login: 'a -> Async<Result<unit, LoginError>>
+type ILoggedIn<'Public> =
+    inherit ISource
+    abstract LoginInfo: Async<'Public>
 
 
-type UsernamePassword = 
-    { Username: string
-      Password: string }
+type ILogin<'Public, 'Secret> =
+    abstract Login: 'Public -> 'Secret -> Async<Result<ILoggedIn<'Public>, LoginError>>
 
 
-type ILoginUsernamePassword = ILogin<UsernamePassword>
+module Login =
+    
+    let login public' secret (source: ILogin<'Public, 'Secret>) =
+        source.Login public' secret
+
+    
+    let loginInfo (source: ILoggedIn<_>) =
+        source.LoginInfo
+
+
+type Username = string
+type Password = string
+
+
 

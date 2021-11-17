@@ -61,12 +61,12 @@ let mapPost siteUrl src (json: PostListJson.Root) =
           |> AsyncSeq.singleton }
 
 
-type SankakuComplexSource (name, siteUrl, apiUrl, limit) =
+type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr) =
 
     let requestPostList this urlPostfix =
         enumAllPages <| fun pageId ->
             requestPosts 
-                (PostListJson.AsyncLoad($"{apiUrl}?limit={limit}&page={pageId + 1}{urlPostfix}"))
+                (PostListJson.AsyncLoad($"{apiUrl}?limit={limit}{loginStr}&page={pageId + 1}{urlPostfix}"))
                 (function
                     | Error (:? System.Net.WebException as e) 
                         when e.Message.Contains "sign in to view more!" -> Ok [||]
@@ -92,7 +92,8 @@ type SankakuChannelSource () =
         "Sankaku Channel", 
         "https://chan.sankakucomplex.com",
         "https://capi-v2.sankakucomplex.com/posts",
-        500)
+        500,
+        "")
 
     let requestTagList urlPostfix =
         requestTags <| fun p ->
@@ -135,15 +136,60 @@ type SankakuChannelSource () =
         member _.SearchTag s = requestTagList $"&name={s}"
     
 
-let sankakuChannel = SankakuChannelSource () : ISource
-let idolComplex = 
-    SankakuComplexSource (
+type IdolComplexSourceLoggedIn (username, loginStr) =
+    inherit SankakuComplexSource (
         "Idol Complex", 
         "https://idol.sankakucomplex.com/",
         "https://iapi.sankakucomplex.com/post/index.json",
-        60) :> ISource
+        60,
+        loginStr) 
+
+    interface ILoggedIn<Username> with
+        member _.LoginInfo = async { return username }
+
+
+type IdolComplexSource () =
+    inherit SankakuComplexSource (
+        "Idol Complex", 
+        "https://idol.sankakucomplex.com/",
+        "https://iapi.sankakucomplex.com/post/index.json",
+        60,
+        "")
+
+    interface ILogin<Username, Password> with
+        member _.Login username password =
+            async {
+                use sha1 = System.Security.Cryptography.SHA1.Create ()
+                let pwHash =
+                    sha1.ComputeHash(
+                        $"choujin-steiner--{password}--"
+                        |> System.Text.Encoding.UTF8.GetBytes)
+                    |> Array.map (sprintf "%x")
+                    |> Array.reduce (+)
+
+                let loginStr = $"&login={username}&password_hash={pwHash}"
+
+                let source = IdolComplexSourceLoggedIn (username, loginStr)
+
+                match!
+                    source 
+                    |> Source.allPosts 
+                    |> AsyncSeq.skip 27
+                    |> AsyncSeq.tryFirst
+                with
+                | Some (Ok x) when Seq.isEmpty x -> return Error WrongUserInfo
+                | Some (Ok _) -> return Ok (source :> ILoggedIn<Username>)
+                | Some (Error e) -> return Error <| LoginError e
+                | None -> return exn "Can not verify user info." |> LoginError |> Error
+            }
+
+
+let sankakuChannel = SankakuChannelSource () : ISource
+let idolComplex = IdolComplexSource () :> ISource
 
 
 let sources =
     [ sankakuChannel
       idolComplex ]
+
+      
