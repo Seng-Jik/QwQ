@@ -21,12 +21,12 @@ jobs:
           - 'Sonohara'
           - 'Hijiribe'
           - 'Gelbooru'
-          - 'The Big ImageBoard (TBIB)'
-          - 'Safebooru'
+        # - 'The Big ImageBoard (TBIB)'
+        # - 'Safebooru'
           - 'XBooru'
           - 'Rule34'
-          - 'Sankaku Channel'
-        # - 'Idol Complex'
+        # - 'Sankaku Channel'
+          - 'Idol Complex'
 
     steps:
     - uses: actions/checkout@v2

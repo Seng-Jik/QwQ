@@ -67,7 +67,10 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit) =
         enumAllPages <| fun pageId ->
             requestPosts 
                 (PostListJson.AsyncLoad($"{apiUrl}?limit={limit}&page={pageId + 1}{urlPostfix}"))
-                id
+                (function
+                    | Error (:? System.Net.WebException as e) 
+                        when e.Message.Contains "sign in to view more!" -> Ok [||]
+                    | x -> x)
                 (mapPost siteUrl this)
     
     interface ISource with
