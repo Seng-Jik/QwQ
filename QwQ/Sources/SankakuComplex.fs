@@ -77,7 +77,8 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr, addtionalHttp
             (function
                 | Error (:? System.Net.WebException as e) 
                     when e.Message.Contains "sign in to view more!"
-                         || e.Message.Contains "You can only view up to" -> Ok [||]
+                         || e.Message.Contains "You can only view up to"
+                         || e.Message.Contains "snackbar__account_offset-forbidden" -> Ok [||]
                 | x -> x)
             (mapPost this.HttpsOptions siteUrl this)
 
