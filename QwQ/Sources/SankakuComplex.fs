@@ -63,24 +63,26 @@ let mapPost siteUrl src (json: PostListJson.Root) =
 
 type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr) =
 
-    let requestPostList this urlPostfix =
-        enumAllPages <| fun pageId ->
-            requestPosts 
-                (PostListJson.AsyncLoad($"{apiUrl}?limit={limit}{loginStr}&page={pageId + 1}{urlPostfix}"))
-                (function
-                    | Error (:? System.Net.WebException as e) 
-                        when e.Message.Contains "sign in to view more!" -> Ok [||]
-                    | x -> x)
-                (mapPost siteUrl this)
+    member this.RequestPage urlPostfix pageId =
+        requestPosts 
+            (PostListJson.AsyncLoad($"{apiUrl}?limit={limit}{loginStr}&page={pageId + 1}{urlPostfix}"))
+            (function
+                | Error (:? System.Net.WebException as e) 
+                    when e.Message.Contains "sign in to view more!" -> Ok [||]
+                | x -> x)
+            (mapPost siteUrl this)
+
+    member this.RequestPostList urlPostfix =
+        enumAllPages <| this.RequestPage urlPostfix
     
     interface ISource with
         member _.Name = name
-        member x.AllPosts = requestPostList x ""
+        member x.AllPosts = x.RequestPostList ""
 
     interface ISearch with
         member x.Search search = 
             "&tags=" + mapSearchOptions { search with NonTags = [] }
-            |> requestPostList x
+            |> x.RequestPostList
             |> AsyncSeq.map (Result.map (
                 Seq.filter (fun x -> 
                     let postTags = AsyncSeq.toBlockingSeq x.Tags
@@ -171,16 +173,10 @@ type IdolComplexSource () =
 
                 let source = IdolComplexSourceLoggedIn (username, loginStr)
 
-                match!
-                    source 
-                    |> Source.allPosts 
-                    |> AsyncSeq.skip 27
-                    |> AsyncSeq.tryFirst
-                with
-                | Some (Ok x) when Seq.isEmpty x -> return Error WrongUserInfo
-                | Some (Ok _) -> return Ok (source :> ILoggedIn<Username>)
-                | Some (Error e) -> return Error <| LoginError e
-                | None -> return exn "Can not verify user info." |> LoginError |> Error
+                match! source.RequestPage "" 26 with
+                | Ok x when Seq.isEmpty x -> return Error WrongUserInfo
+                | Ok _ -> return Ok (source :> ILoggedIn<Username>)
+                | Error e -> return Error <| LoginError e
             }
 
 
