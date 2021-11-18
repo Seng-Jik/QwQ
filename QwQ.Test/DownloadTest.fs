@@ -32,6 +32,7 @@ let downloadTest (source: ISource) =
     async {
         match! 
             Search.search source { Tags = []; NonTags = []; Rating = [Safe]; Order = Popular }
+            |> AntiGuro.antiGuro
             |> AsyncSeq.tryFirst
         with
         | None -> return failwith "No posts here!"
