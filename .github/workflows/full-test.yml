@@ -3,9 +3,9 @@ name: Full Test
 on: [ workflow_dispatch ]
 
 jobs:
-  build:
+  list-posts:
   
-    name: full-test
+    name: list-posts
 
     runs-on: ubuntu-latest
     
@@ -21,11 +21,51 @@ jobs:
           - 'Sonohara'
           - 'Hijiribe'
           - 'Gelbooru'
-        # - 'The Big ImageBoard (TBIB)'
-        # - 'Safebooru'
+          - 'The Big ImageBoard (TBIB)'
+          - 'Safebooru'
           - 'XBooru'
           - 'Rule34'
-        # - 'Sankaku Channel'
+          - 'Sankaku Channel'
+          - 'Idol Complex'
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet publish ./QwQ/QwQ.fsproj -c Release -f netstandard2.0
+      
+    - name: List All Posts
+      run: dotnet fsi FullTest.fsx "${{ matrix.source }}" --list-posts
+      
+      
+  list-tags:
+    name: list-tags
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        source: 
+          - 'Konachan'
+          - 'Yandere'
+          - 'Lolibooru'
+          - 'HypnoHub'
+          - 'Danbooru'
+          - 'ATFBooru'
+          - 'Sonohara'
+          - 'Hijiribe'
+          - 'Gelbooru'
+          - 'The Big ImageBoard (TBIB)'
+          - 'Safebooru'
+          - 'XBooru'
+          - 'Rule34'
+          - 'Sankaku Channel'
           - 'Idol Complex'
 
     steps:
@@ -42,10 +82,8 @@ jobs:
     - name: Build
       run: dotnet publish ./QwQ/QwQ.fsproj -c Release -f netstandard2.0
 
-    - name: Test All Tags
+    - name: List All Tags
       run: dotnet fsi FullTest.fsx "${{ matrix.source }}" --list-tags
       
-    - name: Test All Posts
-      run: dotnet fsi FullTest.fsx "${{ matrix.source }}" --list-posts
-      
+
     
