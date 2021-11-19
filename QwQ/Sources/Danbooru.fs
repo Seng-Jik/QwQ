@@ -104,11 +104,11 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
         Seq.fold (fun a b -> a + " " + b) "" tags
         |> (+) "&tags="
         |> requestPostsWithUrlPostfix this 
+        |> AntiGuro.antiThat searchOpts.NonTags
         |> AsyncSeq.map (
             Result.map (
                 Seq.filter (fun x -> 
-                    Set.contains x.Rating searchOpts.Rating
-                    && Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) x.Tags) searchOpts.NonTags)
+                    Set.contains x.Rating searchOpts.Rating)
             )
         )
 

@@ -13,7 +13,7 @@ let search10Pages searchOpt source =
 // booru tags: order:popular rating:e ke-ta uncensored -sex -nipples
 let searchOpt =
     { Tags = ["ke-ta"; "uncensored"]
-      NonTags = ["sex"; "nipples"]
+      NonTags = ["sex"; "rape"]
       Rating = set [Explicit]
       Order = Popular }
 
@@ -50,3 +50,15 @@ let [<Test>] ``search: Idol Complex`` () =
           Rating = set [Explicit]
           Order = Popular }
         Sources.SankakuComplex.idolComplex
+
+
+let searchOpt2 = { Tags = ["touhou"]; NonTags = []; Rating = set [Explicit;Safe;Questionable]; Order = Default }
+
+
+let [<Test>] ``search: All Girl`` () = search10Pages searchOpt2 Sources.TheBooruProject.allgirl
+let [<Test>] ``search: Foot Fetish Booru`` () = search10Pages searchOpt2 Sources.TheBooruProject.footfetishbooru
+let [<Test>] ``search: CGBooru`` () = search10Pages { searchOpt2 with Tags = ["happy"] } Sources.TheBooruProject.cgbooru
+let [<Test>] ``search: Touhou`` () = search10Pages { searchOpt2 with Tags = ["daiyousei"] } Sources.TheBooruProject.touhou
+let [<Test>] ``search: Anime Girls 2020`` () = search10Pages searchOpt2 Sources.TheBooruProject.animegirls2020
+let [<Test>] ``search: Character Library`` () = search10Pages searchOpt2 Sources.TheBooruProject.characterlib
+let [<Test>] ``search: Ecchi Booru`` () = search10Pages searchOpt2 Sources.TheBooruProject.ecchibooru

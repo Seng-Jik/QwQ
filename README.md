@@ -22,8 +22,15 @@ The Big ImageBoard (TBIB)  | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/mai
 Safebooru | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 XBooru    | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Rule34    | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
-Sankaku Channel | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>, ITags, ISearchTag, IGetPostById
-Idol Complex    | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>
+Sankaku Channel   | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>, ITags, ISearchTag, IGetPostById
+Idol Complex      | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>
+All Girl          | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+Foot Fetish Booru | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+CGBooru           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+Touhou            | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+Anime Girls 2020  | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+Character Library | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+Ecchi Booru       | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
 
 ## 安装QwQ命令行
 

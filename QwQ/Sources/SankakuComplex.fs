@@ -11,9 +11,6 @@ open QwQ.Sources.Danbooru
 type PostListJson = JsonProvider<"./Sources/SankakuComplexSample.json">
 
 
-let userAgent = """Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.63"""
-
-
 let fixUrlPrefix (x: string) =
     if x.StartsWith "//" then "https:" + x
     else x
@@ -69,7 +66,7 @@ let loadJson parser httpsOptions uri =
 type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr, addtionalHttpHeaders) =
 
     member _.HttpsOptions =
-        { Headers = ("User-Agent", userAgent) :: addtionalHttpHeaders }
+        { Headers = HttpsOptions.Default.Headers @ addtionalHttpHeaders }
 
     member this.RequestPage urlPostfix pageId =
         requestPosts 
@@ -94,9 +91,7 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr, addtionalHttp
         member x.Search search = 
             "&tags=" + mapSearchOptions { search with NonTags = [] }
             |> x.RequestPostList
-            |> AsyncSeq.map (Result.map (
-                Seq.filter (fun x -> 
-                    Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) x.Tags) search.NonTags)))
+            |> AntiGuro.antiThat search.NonTags
 
 
 type SankakuChannelSource (addtionalHttpHeaders) =
@@ -173,7 +168,7 @@ type SankakuChannelSourceGuest () =
                             Http.AsyncRequestString(
                                 authUrl, 
                                 headers = 
-                                    [ "User-Agent", userAgent 
+                                    [ "User-Agent", HttpsOptions.DefaultUserAgent 
                                       "Content-Type", "application/json" ],
                                 body = TextRequest authJson,
                                 httpMethod = "POST")

@@ -27,6 +27,13 @@ jobs:
           - 'Rule34'
           - 'Sankaku Channel'
           - 'Idol Complex'
+          - 'All Girl'
+          - 'Foot Fetish Booru'
+          - 'CGBooru'
+          - 'Touhou'
+          - 'Anime Girls 2020'
+          - 'Character Library'
+          - 'Ecchi Booru'
 
     steps:
     - uses: actions/checkout@v2

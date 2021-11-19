@@ -24,6 +24,8 @@
     <Compile Include="Sources/SankakuComplex.fsi" />
     <Compile Include="Sources/SankakuComplex.fs" />
     <Content Include="Sources/SankakuComplexSample.json" />
+    <Compile Include="Sources/TheBooruProject.fsi" />
+    <Compile Include="Sources/TheBooruProject.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>

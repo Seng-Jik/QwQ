@@ -89,3 +89,12 @@ let [<Test>] ``download: Rule34`` () = downloadTest Sources.Gelbooru.rule34
 
 let [<Test>] ``download: Sankaku Channel`` () = downloadTest Sources.SankakuComplex.sankakuChannel
 let [<Test>] ``download: Idol Complex`` () = downloadTest Sources.SankakuComplex.idolComplex
+
+let [<Test>] ``download: All Girl`` () = downloadTest Sources.TheBooruProject.allgirl
+let [<Test>] ``download: Foot Fetish Booru`` () = downloadTest Sources.TheBooruProject.footfetishbooru
+let [<Test>] ``download: CGBooru`` () = downloadTest Sources.TheBooruProject.cgbooru
+let [<Test>] ``download: Touhou`` () = downloadTest Sources.TheBooruProject.touhou
+let [<Test>] ``download: Anime Girls 2020`` () = downloadTest Sources.TheBooruProject.animegirls2020
+let [<Test>] ``download: Character Library`` () = downloadTest Sources.TheBooruProject.characterlib
+let [<Test>] ``download: Ecchi Booru`` () = downloadTest Sources.TheBooruProject.ecchibooru
+

@@ -44,23 +44,27 @@ let private guroTagsProcessed =
     |> List.map (fun x -> x.Trim().ToLower())
 
 
-let private isGuroTag (tag: string) =
+let private isThatTag thoseTags (tag: string) =
     let tag = tag.Trim().ToLower()
 
-    guroTagsProcessed
-    |> List.exists (fun x -> tag.Contains x)
+    thoseTags
+    |> Seq.exists (fun x -> tag.Contains x)
 
 
-let hasGuroTag = Seq.exists isGuroTag
+let hasThatTag thoseTags = Seq.exists <| isThatTag thoseTags
 
 
-let isGuroPost (post: Post) = hasGuroTag post.Tags
+let isThatPost thoseTags (post: Post) =  hasThatTag thoseTags post.Tags
 
 
-let antiGuroPage (postPage: PostPage) : PostPage =
-    Seq.filter (isGuroPost >> not) postPage
+let antiThatPage thoseTags (postPage: PostPage) : PostPage =
+    Seq.filter (isThatPost thoseTags >> not) postPage
 
 
-let antiGuro (r: AsyncSeq<Result<PostPage, exn>>) =
-    AsyncSeq.map (Result.map antiGuroPage) r
+let antiThat thoseTags (r: AsyncSeq<Result<PostPage, exn>>) =
+    AsyncSeq.map (Result.map <| antiThatPage thoseTags) r
+
+
+let antiGuro x = antiThat guroTagsProcessed x
+
 

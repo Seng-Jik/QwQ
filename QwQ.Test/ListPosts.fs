@@ -46,3 +46,12 @@ let [<Test>] ``list: Rule34`` () = list10Pages Sources.Gelbooru.rule34
 
 let [<Test>] ``list: Sankaku Channel`` () = list10Pages Sources.SankakuComplex.sankakuChannel
 let [<Test>] ``list: Idol Complex`` () = list10Pages Sources.SankakuComplex.idolComplex
+
+let [<Test>] ``list: All Girl`` () = list10Pages Sources.TheBooruProject.allgirl
+let [<Test>] ``list: Foot Fetish Booru`` () = list10Pages Sources.TheBooruProject.footfetishbooru
+let [<Test>] ``list: CGBooru`` () = list10Pages Sources.TheBooruProject.cgbooru
+let [<Test>] ``list: Touhou`` () = list10Pages Sources.TheBooruProject.touhou
+let [<Test>] ``list: Anime Girls 2020`` () = list10Pages Sources.TheBooruProject.animegirls2020
+let [<Test>] ``list: Character Library`` () = list10Pages Sources.TheBooruProject.characterlib
+let [<Test>] ``list: Ecchi Booru`` () = list10Pages Sources.TheBooruProject.ecchibooru
+
