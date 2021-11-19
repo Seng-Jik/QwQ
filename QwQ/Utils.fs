@@ -65,6 +65,8 @@ let option = Option.OptionBuilder ()
 
 module Async =
 
+    open System.Threading.Tasks
+
     let protect f = 
         async {
             try let! r = f in return Ok r
@@ -93,3 +95,6 @@ module Async =
             | None -> return None
         }
 
+
+    let ofDelayedTask (f: unit -> Task<'a>) : Async<'a> =
+        async { return! Async.AwaitTask <| f () }

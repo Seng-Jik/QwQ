@@ -36,3 +36,7 @@ let [<Test>] ``getPostById: Sankaku Channel`` () =
 
 let [<Test>] ``getPostById: Nekobooru`` () =
     getPostById 1796UL Sources.Nekobooru.nekobooru
+
+let [<Test>] ``getPostById: NHentai`` () =
+    getPostById 374305UL Sources.NHentaiSharp.nhentai
+    

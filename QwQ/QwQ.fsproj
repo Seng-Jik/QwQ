@@ -28,10 +28,13 @@
     <Compile Include="Sources/TheBooruProject.fs" />
     <Compile Include="Sources\Nekobooru.fsi" />
     <Compile Include="Sources\Nekobooru.fs" />
+    <Compile Include="Sources\NHentaiSharp.fsi" />
+    <Compile Include="Sources\NHentaiSharp.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
     <PackageReference Include="FSharp.Data" Version="4.2.5" />
+    <PackageReference Include="NHentaiSharp" Version="1.1.1" />
   </ItemGroup>
 </Project>

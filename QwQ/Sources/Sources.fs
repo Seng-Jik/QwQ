@@ -9,5 +9,7 @@ let sources =
       Gelbooru.sources
       SankakuComplex.sources
       TheBooruProject.sources
-      Nekobooru.sources ]
+      Nekobooru.sources
+      NHentaiSharp.sources ]
     |> List.concat
+

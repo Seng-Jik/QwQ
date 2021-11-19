@@ -136,33 +136,46 @@ let commands = [
                         return ()
                     | Ok page ->
                         for post in page do
-                            post.Content
-                            |> AsyncSeq.iterAsync (fun mipmaps -> async {
-                                match! AsyncSeq.tryLast mipmaps with
-                                | Some content -> 
-                                    match content.DownloadMethod with
-                                    | Https (url, opt) ->
-                                        let! result =
-                                            Async.protect (async {
-                                                use w = new System.Net.Http.HttpClient ()
-                                                for (k, v) in opt.Headers do
-                                                    w.DefaultRequestHeaders.Add(k, v)
-                                                    
-                                                let b = w.GetByteArrayAsync(url).Result
-                                                System.IO.File.WriteAllBytes(dir + "/" + content.FileName, b) })
-                                            |> Async.retryResult 5 5000
+                            let downloadContents dir =
+                                AsyncSeq.iteriAsync (fun index mipmaps -> async {
+                                    match! AsyncSeq.tryLast mipmaps with
+                                    | Some content -> 
+                                        match content.DownloadMethod with
+                                        | Https (url, opt) ->
+                                            let! result =
+                                                Async.protect (async {
+                                                    use w = new System.Net.Http.HttpClient ()
+                                                    for (k, v) in opt.Headers do
+                                                        w.DefaultRequestHeaders.Add(k, v)
+                                                        
+                                                    let b = w.GetByteArrayAsync(url).Result
+                                                    System.IO.File.WriteAllBytes(dir + "/" + content.FileName, b) })
+                                                |> Async.retryResult 5 5000
 
-                                        match result with
-                                        | Error e -> 
-                                            lockConsole (fun () ->
-                                                printfnc Color.Red $"{name}: {post.Id} download error:"
-                                                printfnc Color.Red "%A" e)
-                                        | Ok () ->
-                                            lockConsole (fun () -> 
-                                                printfnc Color.Green $"{name}: {post.Id} downloaded.")
-                                        
-                                | _ -> return ()
-                            })
+                                            match result with
+                                            | Error e -> 
+                                                lockConsole (fun () ->
+                                                    printfnc Color.Red $"{name}: {post.Id} ({index}) download error:"
+                                                    printfnc Color.Red "%A" e)
+                                            | Ok () ->
+                                                lockConsole (fun () -> 
+                                                    printfnc Color.Green $"{name}: {post.Id} ({index}) downloaded.")
+                                            
+                                    | _ -> return ()
+                                })
+
+                            let contents = AsyncSeq.cache post.Content
+
+                            let dir =
+                                if (AsyncSeq.length contents |> Async.RunSynchronously) = 1L
+                                then dir
+                                else dir + "/" + (Option.defaultValue ("") post.Title)
+
+                            if System.IO.Directory.Exists dir |> not
+                            then System.IO.Directory.CreateDirectory dir |> ignore
+
+                            contents
+                            |> downloadContents dir
                             |> Async.RunSynchronously
                         return ()
 
