@@ -107,7 +107,7 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
         |> AsyncSeq.map (
             Result.map (
                 Seq.filter (fun x -> 
-                    Seq.exists ((=) x.Rating) searchOpts.Rating
+                    Set.contains x.Rating searchOpts.Rating
                     && Seq.forall (fun nonTag -> Seq.forall ((<>) nonTag) x.Tags) searchOpts.NonTags)
             )
         )

@@ -13,7 +13,7 @@ type Order =
 type SearchOptions =
     { Tags: Tag seq
       NonTags: Tag seq 
-      Rating: Rating seq
+      Rating: Set<Rating>
       Order: Order }
 
 

@@ -14,7 +14,7 @@ let search10Pages searchOpt source =
 let searchOpt =
     { Tags = ["ke-ta"; "uncensored"]
       NonTags = ["sex"; "nipples"]
-      Rating = [Explicit]
+      Rating = set [Explicit]
       Order = Popular }
 
 
@@ -36,7 +36,7 @@ let [<Test>] ``search: Gelbooru`` () = search10Pages searchOpt Sources.Gelbooru.
 let [<Test>] ``search: TBIB`` () = search10Pages searchOpt Sources.Gelbooru.tbib
 let [<Test>] ``search: Safebooru`` () = 
     search10Pages 
-        { searchOpt with Tags = ["ke-ta"]; Rating = [Safe] } 
+        { searchOpt with Tags = ["ke-ta"]; Rating = set [Safe] } 
         Sources.Gelbooru.safebooru
 
 let [<Test>] ``search: XBooru`` () = search10Pages searchOpt Sources.Gelbooru.xbooru
@@ -47,6 +47,6 @@ let [<Test>] ``search: Idol Complex`` () =
     search10Pages
         { Tags = ["cosplay"; "asian"]
           NonTags = ["touhou"]
-          Rating = [Explicit]
+          Rating = set [Explicit]
           Order = Popular }
         Sources.SankakuComplex.idolComplex

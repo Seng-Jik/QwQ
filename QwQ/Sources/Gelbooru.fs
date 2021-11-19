@@ -74,8 +74,12 @@ type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
     let requestPostListWithUrlPostfix this urlPostfix =
         enumAllPages <| fun pageId ->
             requestPosts 
-                (PostListJson.AsyncLoad(
-                    $"{baseUrl}/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid={pageId}{urlPostfix}"))
+                (async {
+                    let url = 
+                        $"{baseUrl}/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid={pageId}{urlPostfix}"
+
+                    let! str = Http.AsyncRequestString (url, timeout = 5000)
+                    return PostListJson.Parse str })
                 (function
                     | Ok x -> Ok x
                     | Error e when 

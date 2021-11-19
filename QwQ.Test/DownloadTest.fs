@@ -19,7 +19,7 @@ let downloadToDir content dir =
         use ws = new HttpClient ()
         for (k, v) in h do 
             ws.DefaultRequestHeaders.Add(k, v)
-
+        
         let b = ws.GetByteArrayAsync(url).Result
         File.WriteAllBytes (dir + "/" + content.FileName, b)
 
@@ -31,7 +31,7 @@ let downloadTest (source: ISource) =
 
     async {
         match! 
-            Search.search source { Tags = []; NonTags = []; Rating = [Safe]; Order = Popular }
+            Search.search source { Tags = []; NonTags = []; Rating = set [Safe]; Order = Popular }
             |> AntiGuro.antiGuro
             |> AsyncSeq.tryFirst
         with

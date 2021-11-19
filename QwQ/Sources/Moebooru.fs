@@ -135,26 +135,26 @@ exception DoNotSupportRatingException of string
 
 
 let mapSearchRating r =
-    if Seq.length r = 1
+    if Set.count r = 1
     then Some <| mapRatingToMetaTag (Seq.exactlyOne r)
-    elif Seq.isEmpty r
+    elif Set.isEmpty r
     then None
-    elif Seq.exists (function Rating' x -> true | _ -> false) r
+    elif Set.exists (function Rating' x -> true | _ -> false) r
     then Seq.pick (function Rating' x -> Some x | _ -> None) r
          |> DoNotSupportRatingException
          |> raise
-    elif Seq.exists ((=) Explicit) r
-      && Seq.exists ((=) Questionable) r
-      && Seq.exists ((=) Safe) r
+    elif Set.contains Explicit r
+      && Set.contains Questionable r
+      && Set.contains Safe r
     then None
-    elif Seq.exists ((=) Safe) r
-      && Seq.exists ((=) Questionable) r
+    elif Set.contains Safe r
+      && Set.contains Questionable r
     then mapRatingToMetaTag Explicit |> nonTag |> Some
-    elif Seq.exists ((=) Safe) r
-      && Seq.exists ((=) Explicit) r
+    elif Set.contains Safe r
+      && Set.contains Explicit r
     then mapRatingToMetaTag Questionable |> nonTag |> Some
-    elif Seq.exists ((=) Questionable) r
-      && Seq.exists ((=) Explicit) r
+    elif Set.contains Questionable r
+      && Set.contains Explicit r
     then mapRatingToMetaTag Safe |> nonTag |> Some
     else raise <| exn $"Can not process {r}"
 
