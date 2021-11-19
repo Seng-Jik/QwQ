@@ -34,6 +34,8 @@ jobs:
           - 'Anime Girls 2020'
           - 'Character Library'
           - 'Ecchi Booru'
+          - 'Hina'
+          - 'RuleXXX'
 
     steps:
     - uses: actions/checkout@v2

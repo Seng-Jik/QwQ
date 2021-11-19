@@ -31,7 +31,7 @@ let downloadTest (source: ISource) =
 
     async {
         match! 
-            Search.search source { Tags = []; NonTags = []; Rating = set [Safe]; Order = Popular }
+            Source.allPosts source
             |> AntiGuro.antiGuro
             |> AsyncSeq.tryFirst
         with
@@ -97,4 +97,6 @@ let [<Test>] ``download: Touhou`` () = downloadTest Sources.TheBooruProject.touh
 let [<Test>] ``download: Anime Girls 2020`` () = downloadTest Sources.TheBooruProject.animegirls2020
 let [<Test>] ``download: Character Library`` () = downloadTest Sources.TheBooruProject.characterlib
 let [<Test>] ``download: Ecchi Booru`` () = downloadTest Sources.TheBooruProject.ecchibooru
+let [<Test>] ``download: Hina`` () = downloadTest Sources.TheBooruProject.hina
+let [<Test>] ``download: RuleXXX`` () = downloadTest Sources.TheBooruProject.rulexxx
 

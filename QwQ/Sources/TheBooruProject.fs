@@ -124,6 +124,8 @@ let touhou = TheBooruProjectSource("Touhou", "https://hakurei.booru.org") :> ISo
 let animegirls2020 = TheBooruProjectSource("Anime Girls 2020", "https://animegirls2020.booru.org") :> ISource
 let characterlib = TheBooruProjectSource("Character Library", "https://characterlibrary.booru.org") :> ISource
 let ecchibooru = TheBooruProjectSource("Ecchi Booru", "https://ecchi.booru.org") :> ISource
+let hina = TheBooruProjectSource("Hina", "https://hina.booru.org") :> ISource
+let rulexxx = TheBooruProjectSource("RuleXXX", "https://rulexxx.booru.org") :> ISource
 
 
 let sources = 
@@ -133,5 +135,7 @@ let sources =
       touhou
       animegirls2020
       characterlib
-      ecchibooru ]
+      ecchibooru
+      hina
+      rulexxx ]
 

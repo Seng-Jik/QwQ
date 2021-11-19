@@ -11,6 +11,7 @@ val touhou: ISource
 val animegirls2020: ISource
 val characterlib: ISource
 val ecchibooru: ISource
-
+val hina: ISource
+val rulexxx: ISource
 
 val sources: ISource list

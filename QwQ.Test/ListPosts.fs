@@ -54,4 +54,5 @@ let [<Test>] ``list: Touhou`` () = list10Pages Sources.TheBooruProject.touhou
 let [<Test>] ``list: Anime Girls 2020`` () = list10Pages Sources.TheBooruProject.animegirls2020
 let [<Test>] ``list: Character Library`` () = list10Pages Sources.TheBooruProject.characterlib
 let [<Test>] ``list: Ecchi Booru`` () = list10Pages Sources.TheBooruProject.ecchibooru
-
+let [<Test>] ``list: Hina`` () = list10Pages Sources.TheBooruProject.hina
+let [<Test>] ``list: RuleXXX`` () = list10Pages Sources.TheBooruProject.rulexxx
