@@ -12,6 +12,7 @@ type PostListJson = JsonProvider<"./Sources/DanbooruSample.json">
 
 let mapPost src baseUrl (json: PostListJson.Root) =
     { Id = json.Id |> Option.defaultValue 0 |> uint64
+      Title = None
       Source = src
 
       Rating = mapRating json.Rating

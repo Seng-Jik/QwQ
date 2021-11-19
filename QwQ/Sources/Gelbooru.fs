@@ -16,6 +16,11 @@ let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
 
     { Id = uint64 json.Id
       Source = src
+      Title = 
+          try json.Title.JsonValue.AsString ()
+              |> String.nullOrWhitespace
+          with _ -> None
+          
       Rating = mapRating json.Rating
       SourceUrl = 
           asyncSeq {

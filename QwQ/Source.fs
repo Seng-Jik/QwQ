@@ -37,6 +37,7 @@ type Mipmaps = AsyncSeq<Content>
 
 type Post =
     { Id: PostId
+      Title: string option
       Source: ISource
       
       Rating: Rating

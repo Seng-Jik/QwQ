@@ -22,6 +22,7 @@ let fixUrlPrefix (x: string) =
 let mapPost httpsOption siteUrl src (json: PostListJson.Root) =
     { Id = uint64 json.Id
       Source = src
+      Title = None
       Rating = mapRating json.Rating
       SourceUrl = 
           asyncSeq {

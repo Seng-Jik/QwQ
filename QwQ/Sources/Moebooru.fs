@@ -46,6 +46,7 @@ let parseTags (x: string) =
 let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =
     { Id = uint64 post.Id
       Source = source 
+      Title = None
 
       Rating = mapRating post.Rating
       SourceUrl = 
