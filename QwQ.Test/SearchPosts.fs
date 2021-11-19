@@ -65,5 +65,4 @@ let [<Test>] ``search: Ecchi Booru`` () = search10Pages searchOpt2 Sources.TheBo
 let [<Test>] ``search: Hina`` () = search10Pages { searchOpt2 with Tags = ["nsfw"] } Sources.TheBooruProject.hina
 let [<Test>] ``search: RuleXXX`` () = search10Pages { searchOpt2 with Tags = ["tagme"] } Sources.TheBooruProject.rulexxx
 
-
 let [<Test>] ``search: Nekobooru`` () = search10Pages { searchOpt2 with Tags = ["touhou"] } Sources.Nekobooru.nekobooru

@@ -7,8 +7,86 @@ open FSharp.Data
 open QwQ.Sources.Moebooru
 
 
-// TODO: 此源在搜索结果只有一个页面时会直接跳转到ViewPage，需要从ViewPage解析。
-// TODO: GetPostById可以通过硬爬ViewPage实现
+let getContentAndSourceUrl name baseUrl fullUrl postId (page: HtmlDocument) =
+    let img = 
+        page.CssSelect "#main_image"
+        |> List.tryExactlyOne
+        |> Option.bind (fun x -> x.TryGetAttribute "src")
+        |> Option.map (fun x -> x.Value())
+        |> Option.bind String.nullOrWhitespace
+        |> Option.map (
+            (+) baseUrl 
+            >> mapHttpsContent HttpsOptions.Default 
+            >> fun x -> { x with FileName = $"{name} {postId}{System.IO.Path.GetExtension x.FileName}"})
+
+    let source =
+        Option.protect (fun () ->
+            page.CssSelect ".image_info tr"
+            |> List.filter (fun x -> 
+                x.CssSelect "th"
+                |> List.exactlyOne
+                |> HtmlNodeExtensions.InnerText
+                |> (=) "Source")
+            |> List.exactlyOne
+            |> fun x -> CssSelectorExtensions.CssSelect (x, "a")
+            |> List.exactlyOne
+            |> HtmlNode.tryGetAttribute "href"
+            |> Option.unwrap
+            |> HtmlAttributeExtensions.Value)
+        |> Option.bind String.nullOrWhitespace
+
+
+    AsyncSeq.ofSeq <| Option.toList img, [fullUrl] @ Option.toList source
+
+
+let getPostByViewPage source name baseUrl (page: HtmlDocument) =
+    Option.protect (fun () ->
+        let postId =
+            page.CssSelect "input"
+            |> List.find (fun x -> x.AttributeValue "name" = "image_id")
+            |> fun x -> x.TryGetAttribute "value"
+            |> Option.unwrap
+            |> HtmlAttributeExtensions.Value
+            |> uint64
+
+        let fullUrl = $"{baseUrl}/post/view/{id}"
+
+        let content, sourceUrls = getContentAndSourceUrl name baseUrl fullUrl postId page
+
+        let infoTable =
+            page.CssSelect ".image_info tr"
+            |> List.map (fun x -> 
+                x.CssSelect("th").Head.InnerText().Trim(), x.CssSelect("td"))
+            |> dict
+
+        let tags = 
+            infoTable.["Tags"]
+            |> List.map (fun x -> x.InnerText ())
+
+        let rating =
+            match infoTable.["Rating"].Head.InnerText().Trim() with
+            | "Safe" -> Safe
+            | "Questionable" -> Questionable
+            | "Explicit" -> Explicit
+            | x -> Rating' x
+
+        let preview = 
+            page.Html().CssSelect "head meta"
+            |> List.tryFind (fun x -> 
+                match x.TryGetAttribute "property" with
+                | Some x -> x.Value () = "og:image"
+                | _ -> false)
+            |> Option.bind (fun x -> x.TryGetAttribute "content")
+            |> Option.map HtmlAttribute.value
+
+        { Id = postId 
+          Title = None 
+          Source = source
+          Rating = rating
+          SourceUrl = AsyncSeq.ofSeq sourceUrls
+          Tags = tags
+          PreviewImage = preview |> Option.map (mapHttpsContent HttpsOptions.Default)
+          Content = AsyncSeq.singleton content } )
 
 
 let mapViewPage name baseUrl id =
@@ -19,21 +97,8 @@ let mapViewPage name baseUrl id =
             |> Async.protect
 
         match page with
-        | Ok page ->         
-            let img = 
-                page.CssSelect "#main_image"
-                |> List.tryExactlyOne
-                |> Option.bind (fun x -> x.TryGetAttribute "src")
-                |> Option.map (fun x -> x.Value())
-                |> Option.bind String.nullOrWhitespace
-                |> Option.map (
-                    (+) baseUrl 
-                    >> mapHttpsContent HttpsOptions.Default 
-                    >> fun x -> { x with FileName = $"{name} {id}{System.IO.Path.GetExtension x.FileName}"})
-
-            return (AsyncSeq.ofSeq <| Option.toList img), [src]
-
-        | Error _ -> return AsyncSeq.empty, []
+        | Ok x -> return getContentAndSourceUrl name baseUrl src id x
+        | _ -> return AsyncSeq.empty, []
     }
 
 
@@ -77,7 +142,12 @@ type Nekobooru (name, baseUrl) =
                     |> Async.retryResult 3 1500
 
                 match doc with
-                | Ok doc -> return Ok <| mapPage this rating baseUrl doc
+                | Ok doc -> 
+                    return
+                        match getPostByViewPage this name baseUrl doc with
+                        | Some x -> Seq.singleton x
+                        | None -> mapPage this rating baseUrl doc
+                        |> Ok
                 | Error x when x.Message.Contains "No Images Found" -> return Ok Seq.empty
                 | Error x -> return Error x
             }
@@ -131,6 +201,15 @@ type Nekobooru (name, baseUrl) =
             |> AsyncSeq.filter (function
                 | Ok x when not <| x.Contains s -> false
                 | _ -> true)
+
+    interface IGetPostById with
+        member x.GetPostById id =
+            async {
+                let fullUrl = $"{baseUrl}/post/view/{id}"
+                let! html = HtmlDocument.AsyncLoad fullUrl
+                return getPostByViewPage x name baseUrl html
+            }
+            |> Async.protect
 
 
 let nekobooru = Nekobooru ("Nekobooru", "https://neko-booru.com") :> ISource

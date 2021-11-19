@@ -33,3 +33,6 @@ let [<Test>] ``getPostById: Rule34`` () = getPostById 5289582UL Sources.Gelbooru
 
 let [<Test>] ``getPostById: Sankaku Channel`` () = 
     getPostById 28595183UL Sources.SankakuComplex.sankakuChannel
+
+let [<Test>] ``getPostById: Nekobooru`` () =
+    getPostById 1796UL Sources.Nekobooru.nekobooru

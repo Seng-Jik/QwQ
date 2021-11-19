@@ -32,7 +32,7 @@ Anime Girls 2020  | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/mai
 Character Library | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
 Ecchi Booru       | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
 Hina              | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-RuleXXX           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+RuleXXX           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | IGetPostById, ISearch, ITags, ISearchTag
 
 ## 安装QwQ命令行
 
