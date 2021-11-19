@@ -14,20 +14,26 @@ open QwQ.Sources.Moebooru
 let mapViewPage name baseUrl id =
     async {
         let src = $"{baseUrl}/post/view/{id}"
-        let! page = HtmlDocument.AsyncLoad src
-        
-        let img = 
-            page.CssSelect "#main_image"
-            |> List.tryExactlyOne
-            |> Option.bind (fun x -> x.TryGetAttribute "src")
-            |> Option.map (fun x -> x.Value())
-            |> Option.bind String.nullOrWhitespace
-            |> Option.map (
-                (+) baseUrl 
-                >> mapHttpsContent HttpsOptions.Default 
-                >> fun x -> { x with FileName = $"{name} {id}{System.IO.Path.GetExtension x.FileName}"})
+        let! page = 
+            HtmlDocument.AsyncLoad src
+            |> Async.protect
 
-        return (AsyncSeq.ofSeq <| Option.toList img), [src]
+        match page with
+        | Ok page ->         
+            let img = 
+                page.CssSelect "#main_image"
+                |> List.tryExactlyOne
+                |> Option.bind (fun x -> x.TryGetAttribute "src")
+                |> Option.map (fun x -> x.Value())
+                |> Option.bind String.nullOrWhitespace
+                |> Option.map (
+                    (+) baseUrl 
+                    >> mapHttpsContent HttpsOptions.Default 
+                    >> fun x -> { x with FileName = $"{name} {id}{System.IO.Path.GetExtension x.FileName}"})
+
+            return (AsyncSeq.ofSeq <| Option.toList img), [src]
+
+        | Error _ -> return AsyncSeq.empty, []
     }
 
 
@@ -62,7 +68,7 @@ let mapPage source rating baseUrl (page: HtmlDocument) =
 
 type Nekobooru (name, baseUrl) =
 
-    let requestPostList this search rating =
+    let requestPostList this rating search =
         enumAllPages <| fun pageId ->
             async {
                 let! doc = 
@@ -96,24 +102,24 @@ type Nekobooru (name, baseUrl) =
         member _.Name = name
         member this.AllPosts =
             asyncSeq {
-                yield! requestPostList this "" Safe
-                yield! requestPostList this "" Questionable
-                yield! requestPostList this "" Explicit
+                yield! requestPostList this Safe ""
+                yield! requestPostList this Questionable ""
+                yield! requestPostList this Explicit ""
+                yield! requestPostList this (Rating' "unknown") ""
             }
 
     interface ISearch with
         member this.Search search =
-            let searchStr =
+            search.Rating
+            |> AsyncSeq.ofSeq
+            |> AsyncSeq.collect (fun rating ->
                 mapSearchOptions 
                     { search with 
-                        Rating = set [Safe; Questionable; Explicit]
+                        Rating = set [rating]
                         Order = Default
                         NonTags = [] }
                 |> (+) "/"
-
-            search.Rating
-            |> AsyncSeq.ofSeq
-            |> AsyncSeq.collect (requestPostList this searchStr)
+                |> requestPostList this rating)
             |> AntiGuro.antiThat search.NonTags
 
     interface ITags with

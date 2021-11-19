@@ -105,14 +105,14 @@ let enumAllPages getPageByIndex =
             match! getPageByIndex curPage with
             | Ok x when Seq.isEmpty x && errors < 5 -> 
                 yield Ok x
-                yield! enumPages (errors + 1) (curPage)
+                yield! enumPages (errors + 1) (curPage + 1)
             | Ok x when Seq.isEmpty x -> yield Ok x
             | Ok x -> 
                 yield Ok x
                 yield! enumPages 0 (curPage + 1)
             | Error x when errors < 3 -> 
                 yield Error x
-                yield! enumPages (errors + 1) (curPage + 1)
+                yield! enumPages (errors + 1) curPage
             | Error x -> yield Error x
         }
     

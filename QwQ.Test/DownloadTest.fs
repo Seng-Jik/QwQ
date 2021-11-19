@@ -23,6 +23,8 @@ let downloadToDir content dir =
         let b = ws.GetByteArrayAsync(url).Result
         File.WriteAllBytes (dir + "/" + content.FileName, b)
 
+    lock stdout (fun () -> printfn $"{dir}/{content.FileName}")
+
 
 let downloadTest (source: ISource) =
     ensureDir "download-test"
