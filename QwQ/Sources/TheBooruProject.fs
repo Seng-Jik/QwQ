@@ -7,9 +7,6 @@ open QwQ.Utils
 open QwQ.Sources.Moebooru
 
 
-// TODO: GetPostById可以被实现，需要解析ViewPage
-
-
 let processViewPage (url: string) =
     async {
         let! html = HtmlDocument.AsyncLoad url
