@@ -21,8 +21,8 @@ jobs:
           - 'Sonohara'
           - 'Hijiribe'
           - 'Gelbooru'
-        # - 'The Big ImageBoard (TBIB)'
-        # - 'Safebooru'
+          - 'The Big ImageBoard (TBIB)'
+          - 'Safebooru'
           - 'XBooru'
           - 'Rule34'
           - 'Sankaku Channel'
@@ -36,6 +36,7 @@ jobs:
           - 'Ecchi Booru'
           - 'Hina'
           - 'RuleXXX'
+          - 'Nekobooru'
 
     steps:
     - uses: actions/checkout@v2
@@ -70,12 +71,13 @@ jobs:
           - 'Sonohara'
           - 'Hijiribe'
           - 'Gelbooru'
-        # - 'The Big ImageBoard (TBIB)'
+          - 'The Big ImageBoard (TBIB)'
           - 'Safebooru'
           - 'XBooru'
           - 'Rule34'
-        # - 'Sankaku Channel'
+          - 'Sankaku Channel'
           - 'Idol Complex'
+          - 'Nekobooru'
 
     steps:
     - uses: actions/checkout@v2
