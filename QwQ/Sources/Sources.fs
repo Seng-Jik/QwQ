@@ -8,5 +8,6 @@ let sources =
       Danbooru.sources
       Gelbooru.sources
       SankakuComplex.sources
-      TheBooruProject.sources ]
+      TheBooruProject.sources
+      Nekobooru.sources ]
     |> List.concat

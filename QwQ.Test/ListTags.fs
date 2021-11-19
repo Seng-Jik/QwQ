@@ -36,3 +36,5 @@ let [<Test>] ``tags: XBooru`` () = list100Tags Sources.Gelbooru.xbooru
 let [<Test>] ``tags: Rule34`` () = list100Tags Sources.Gelbooru.rule34
 
 let [<Test>] ``tags: Sankaku Channel`` () = list100Tags Sources.SankakuComplex.sankakuChannel
+
+let [<Test>] ``tags: Nekobooru`` () = list100Tags Sources.Nekobooru.nekobooru

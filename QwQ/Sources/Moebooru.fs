@@ -18,7 +18,7 @@ let mapRating =
 
 
 let normalizeFileName (x: string) = 
-    [":";"*";"!";"#";"?";"%";"<";">";"|";"\"";"\\";"/";"\"";"\'"]
+    [";";":";"*";"!";"#";"?";"%";"<";">";"|";"\"";"\\";"/";"\"";"\'";"^"]
     |> List.fold (fun (s: string) (c: string) -> s.Replace (c,"")) x
     |> fun x -> x.Trim()
 

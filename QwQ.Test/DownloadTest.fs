@@ -25,7 +25,6 @@ let downloadToDir content dir =
 
 
 let downloadTest (source: ISource) =
-    let source = source :?> ISearch
     ensureDir "download-test"
     ensureDir $"download-test/{Source.name source}"
 
@@ -99,4 +98,6 @@ let [<Test>] ``download: Character Library`` () = downloadTest Sources.TheBooruP
 let [<Test>] ``download: Ecchi Booru`` () = downloadTest Sources.TheBooruProject.ecchibooru
 let [<Test>] ``download: Hina`` () = downloadTest Sources.TheBooruProject.hina
 let [<Test>] ``download: RuleXXX`` () = downloadTest Sources.TheBooruProject.rulexxx
+
+let [<Test>] ``download: Nekobooru`` () = downloadTest Sources.Nekobooru.nekobooru
 

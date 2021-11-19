@@ -55,3 +55,5 @@ let [<Test>] ``list: Character Library`` () = list10Pages Sources.TheBooruProjec
 let [<Test>] ``list: Ecchi Booru`` () = list10Pages Sources.TheBooruProject.ecchibooru
 let [<Test>] ``list: Hina`` () = list10Pages Sources.TheBooruProject.hina
 let [<Test>] ``list: RuleXXX`` () = list10Pages Sources.TheBooruProject.rulexxx
+
+let [<Test>] ``list: Nekobooru`` () = list10Pages Sources.Nekobooru.nekobooru
