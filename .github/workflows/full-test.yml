@@ -69,7 +69,7 @@ jobs:
           - 'HypnoHub'
           - 'Danbooru'
           - 'ATFBooru'
-          - 'Sonohara'
+        # - 'Sonohara'
           - 'Hijiribe'
           - 'Gelbooru'
           - 'The Big ImageBoard (TBIB)'
