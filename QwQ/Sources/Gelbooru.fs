@@ -61,7 +61,9 @@ type TagsProvider = XmlProvider<"./Sources/GelbooruTagsSample.xml">
 let requestTagsDanbooruXml xmlUrlFromPageId =
     requestTags <| fun pageId ->
         requestPosts 
-            (TagsProvider.AsyncLoad(xmlUrlFromPageId pageId))
+            (async { 
+                let! s = Http.AsyncRequestString(xmlUrlFromPageId pageId, timeout = 5000) 
+                return TagsProvider.Parse s })
             (function
                 | Ok x -> Ok x.Tags
                 | Error (:? System.Xml.XmlException) -> Ok [||]
