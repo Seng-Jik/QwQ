@@ -71,7 +71,10 @@ let requestTagsJson tagKey jsonUrlFromPage =
     requestTags <| fun pageId ->
         requestPosts 
             (JsonValue.AsyncLoad(jsonUrlFromPage pageId))
-            (Result.map JsonExtensions.AsArray)
+            (function
+                | Ok x -> Ok <| x.AsArray()
+                | Error (:? System.Net.WebException) -> Ok [||]
+                | Error e -> Error e)
             (fun x -> Result.protect (fun () -> x.[tagKey: string].AsString()))
 
 
