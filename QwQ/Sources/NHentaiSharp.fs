@@ -26,7 +26,10 @@ let mapElement src (e: GalleryElement) =
 
       Content = 
           e.pages
-          |> Array.map (fun x -> AsyncSeq.singleton <| mapHttpsContent HttpsOptions.Default (x.imageUrl.ToString()))
+          |> Array.map (fun x -> 
+              x.imageUrl.ToString()
+              |> mapHttpsContent HttpsOptions.Default
+              |> AsyncSeq.singleton)
           |> AsyncSeq.ofSeq }
 
 

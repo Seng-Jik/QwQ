@@ -115,8 +115,7 @@ type TheBooruProjectSource (name, baseUrl) =
             requestPostUrl' x $"&tags={mapSearchOptions { s with Order = Default; NonTags =[] } }"
             |> AntiGuro.antiThat s.NonTags
 
-
-            
+     
 let allgirl = TheBooruProjectSource ("All Girl", "https://allgirl.booru.org") :> ISource
 let footfetishbooru = TheBooruProjectSource("Foot Fetish Booru", "https://footfetishbooru.booru.org") :> ISource
 let cgbooru = TheBooruProjectSource("CGBooru", "https://cg.booru.org") :> ISource
