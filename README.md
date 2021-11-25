@@ -67,3 +67,22 @@ dotnet publish ./QwQ/QwQ.fsproj -c Release -f netstandard2.0
 dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-preview ]
 ```
 
+### 后续支持计划
+
+* EHentai / ExHentai
+* Pixiv
+* https://nozomi.la/
+* https://www.hbrowse.com/
+* https://www.luscious.net/
+* https://www.lolibaka.com/
+* https://thehentaiworld.com/
+* https://rule34.paheal.net/
+* https://hentai-cosplays.com/
+* https://kawaiihentai.com/category/animepics
+* https://sukebei.nyaa.si/
+* https://aryion.com/
+* http://www.booru.realmofastra.ca/
+* https://e-shuushuu.net/
+* https://www.zerochan.net/
+* https://anime-pictures.net/
+
