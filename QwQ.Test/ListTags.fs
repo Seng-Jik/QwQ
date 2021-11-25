@@ -7,10 +7,15 @@ open FSharp.Control
 
 
 let show100Tags (x: AsyncSeq<Result<Tag, exn>>) =
-    x
-    |> AsyncSeq.truncate 100
-    |> AsyncSeq.iter (Result.unwrap >> printfn "%s")
-    |> Async.RunSynchronously
+    let s =
+        x
+        |> AsyncSeq.truncate 100
+        |> AsyncSeq.cache
+        |> AsyncSeq.toBlockingSeq
+
+    if Seq.isEmpty s then failwith "No tags found!"
+
+    s |> Seq.iter (Result.unwrap >> printfn "%s")
 
 
 let list100Tags (source: ISource) =

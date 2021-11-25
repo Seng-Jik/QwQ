@@ -180,12 +180,15 @@ type ShimmieSource (name, baseUrl, ratingIfNotSupportRating) =
     interface ISource with
         member _.Name = name
         member this.AllPosts =
-            asyncSeq {
-                yield! requestPostList this (Rating' "unknown") "/rating:unknown"
-                yield! requestPostList this Explicit "/rating:explicit"
-                yield! requestPostList this Questionable "/rating:questionable"
-                yield! requestPostList this Safe "/rating:safe"
-            }
+            match ratingIfNotSupportRating with
+            | None ->
+                asyncSeq {
+                    yield! requestPostList this Explicit "/rating:explicit"
+                    yield! requestPostList this (Rating' "unknown") "/rating:unknown"
+                    yield! requestPostList this Questionable "/rating:questionable"
+                    yield! requestPostList this Safe "/rating:safe"
+                }
+            | Some r -> requestPostList this r ""
 
     interface ISearch with
         member this.Search search =

@@ -74,5 +74,5 @@ let [<Test>] ``search: Tentacle Rape`` () = search10Pages { searchOpt2 with Tags
 let [<Test>] ``search: Fan Service`` () = 
     search10Pages { searchOpt2 with Tags = ["Series:Yumeria"] } Sources.Shimmie.fanservice
 
-let [<Test>] ``search: NHentai`` () = search10Pages searchOpt2 Sources.NHentaiSharp.nhentai
+let [<Test>] ``search: NHentai`` () = search10Pages { searchOpt2 with Tags = ["loli"] } Sources.NHentaiSharp.nhentai
 

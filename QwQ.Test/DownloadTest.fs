@@ -27,6 +27,7 @@ let downloadToDir content dir =
 
 
 let downloadTest (source: ISource) =
+    let downloadTimes = ref 0
     ensureDir "download-test"
     ensureDir $"download-test/{Source.name source}"
 
@@ -63,6 +64,7 @@ let downloadTest (source: ISource) =
                                         ensureDir baseDir
 
                                         downloadToDir x baseDir
+                                        downloadTimes.Value <- downloadTimes.Value + 1
                                     })
                         })
                     |> Async.RunSynchronously
@@ -70,6 +72,9 @@ let downloadTest (source: ISource) =
     }
     |> Async.Ignore
     |> Async.RunSynchronously
+
+    if downloadTimes.Value <= 0 then
+        failwith "Download Nothing!!!"
 
 
 let [<Test>] ``download: Konachan`` () = downloadTest Sources.Moebooru.konachan

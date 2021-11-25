@@ -6,9 +6,10 @@ open QwQ.Utils
 open FSharp.Control
 
 
-let show10Pages =
-    AsyncSeq.truncate 10
-    >> AsyncSeq.iteriAsync (fun i x -> 
+let show10Pages x =
+    let items = ref 0
+    AsyncSeq.truncate 10 x
+    |> AsyncSeq.iteriAsync (fun i x -> 
         async {
             printfn ""
             printfn $"===== Page: {i}"
@@ -19,9 +20,13 @@ let show10Pages =
                 printfn $"{post.Id} {post.Tags}"
                 printfn $"{post.PreviewImage}"
                 printfn ""
+                items.Value <- items.Value + 1
             )
         })
-    >> Async.RunSynchronously
+    |> Async.RunSynchronously
+
+    if items.Value <= 0 then
+        failwith "Nothing to show."
 
 
 let list10Pages source = Source.allPosts source |> show10Pages

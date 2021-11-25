@@ -43,6 +43,8 @@ let processErrs def : Result<'a, exn> -> Result<'a, exn> =
     function
     | Ok x -> Ok x
     | Error (:? NHentaiSharp.Exception.EmptySearchException) -> Ok def
+    | Error e when e.Message.Contains "Your search didn't return any result, that probably mean one of the argument you provided is invalid" -> 
+        Ok def
     | Error x -> Error x
 
 
