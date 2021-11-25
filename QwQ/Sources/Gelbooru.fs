@@ -65,8 +65,8 @@ let requestTagsDanbooruXml xmlUrlFromPageId =
                 let! s = Http.AsyncRequestString(xmlUrlFromPageId pageId, timeout = 5000) 
                 return TagsProvider.Parse s })
             (function
-                | Ok x -> Ok x.Tags
-                | Error (:? System.Xml.XmlException) -> Ok [||]
+                | Ok x -> Ok <| Array.toList x.Tags
+                | Error (:? System.Xml.XmlException) -> Ok []
                 | Error e -> Error e)
             (fun x -> Result.protect (fun () -> x.Name))
 
@@ -83,11 +83,11 @@ type GelbooruSource (name, baseUrl, imgSrvBaseUrl) =
                     let! str = Http.AsyncRequestString (url, timeout = 5000)
                     return PostListJson.Parse str })
                 (function
-                    | Ok x -> Ok x
+                    | Ok x -> Ok <| Array.toList x
                     | Error e when 
                         e.Message.Contains "Holy fuck"
                         || e.Message.Contains "Search error: API limited due to abuse."
-                        -> Ok [||]
+                        -> Ok []
                     | Error e -> Error e)
                 (mapPost this baseUrl imgSrvBaseUrl)
 

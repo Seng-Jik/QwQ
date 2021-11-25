@@ -40,7 +40,7 @@ let mapHttpsContent httpsOpts url =
 
 
 let parseTags (x: string) = 
-    x.Split(' ')
+    x.Split(' ') |> Array.toList
 
 
 let mapPost httpsOpts source sourceUrlGen (post: PostListJson.Root) =
@@ -85,7 +85,7 @@ let requestPosts loadJson map mapPost =
             json
             |> map
             |> Result.map (
-                Seq.choose (fun json -> 
+                List.choose (fun json -> 
                     Option.protect (fun () -> mapPost json)))
     }
 
@@ -103,10 +103,10 @@ let enumAllPages getPageByIndex =
     let rec enumPages errors curPage =
         asyncSeq {
             match! getPageByIndex curPage with
-            | Ok x when Seq.isEmpty x && errors < 5 -> 
+            | Ok x when List.isEmpty x && errors < 5 -> 
                 yield Ok x
                 yield! enumPages (errors + 1) (curPage + 1)
-            | Ok x when Seq.isEmpty x -> yield Ok x
+            | Ok x when List.isEmpty x -> yield Ok x
             | Ok x -> 
                 yield Ok x
                 yield! enumPages 0 (curPage + 1)
@@ -187,7 +187,7 @@ type MoebooruSource (opts) =
         enumAllPages <| fun pageId -> 
             requestPosts 
                 (PostListJson.AsyncLoad(f pageId))
-                id
+                (Result.map Array.toList)
                 (mapPost this)
 
     let requestTags (urlPostfix: string) =
@@ -195,7 +195,7 @@ type MoebooruSource (opts) =
             match! 
                 requestPosts 
                     (JsonValue.AsyncLoad($"{opts.BaseUrl}/tag.json?limit=0{urlPostfix}"))
-                    (Result.map JsonExtensions.AsArray)
+                    (Result.map (JsonExtensions.AsArray >> Array.toList))
                     (fun json -> Result.protect <| json.["name"].AsString)
             with
             | Ok x -> yield! AsyncSeq.ofSeq x
@@ -217,7 +217,7 @@ type MoebooruSource (opts) =
                     requestPosts
                         (PostListJson.AsyncLoad(
                             $"{opts.BaseUrl}{opts.PostListJson}?tags=id:{x}"))
-                        id
+                        (Result.map Array.toList)
                         (mapPost this)
                 with
                 | Ok x -> return Ok <| Seq.tryHead x

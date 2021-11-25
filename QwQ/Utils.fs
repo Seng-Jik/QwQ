@@ -67,6 +67,21 @@ module Async =
 
     open System.Threading.Tasks
 
+
+    let bind f a =
+        async {
+            let! a = a
+            return! f a
+        }
+
+
+    let map f a =
+        async {
+            let! a = a
+            return f a
+        }
+
+
     let protect f = 
         async {
             try let! r = f in return Ok r

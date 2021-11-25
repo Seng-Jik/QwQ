@@ -74,8 +74,8 @@ let requestTagsJson tagKey jsonUrlFromPage =
                 let! str = Http.AsyncRequestString (jsonUrlFromPage pageId, headers = HttpsOptions.Default.Headers)
                 return JsonValue.Parse str })
             (function
-                | Ok x -> Ok <| x.AsArray()
-                | Error (:? System.Net.WebException) -> Ok [||]
+                | Ok x -> Ok <| Array.toList (x.AsArray())
+                | Error (:? System.Net.WebException) -> Ok []
                 | Error e -> Error e)
             (fun x -> Result.protect (fun () -> x.[tagKey: string].AsString()))
 
@@ -86,6 +86,7 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
         if danbooruLimit
         then danbooruMapError
         else id
+        >> Result.map List.ofArray
 
     let requestPosts' this url =
         requestPosts 
@@ -114,7 +115,7 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
         |> AntiGuro.antiThat searchOpts.NonTags
         |> AsyncSeq.map (
             Result.map (
-                Seq.filter (fun x -> 
+                List.filter (fun x -> 
                     Set.contains x.Rating searchOpts.Rating)
             )
         )

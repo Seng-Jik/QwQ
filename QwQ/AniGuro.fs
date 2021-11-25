@@ -58,7 +58,7 @@ let isThatPost thoseTags (post: Post) =  hasThatTag thoseTags post.Tags
 
 
 let antiThatPage thoseTags (postPage: PostPage) : PostPage =
-    Seq.filter (isThatPost thoseTags >> not) postPage
+    List.filter (isThatPost thoseTags >> not) postPage
 
 
 let antiThat thoseTags (r: AsyncSeq<Result<PostPage, exn>>) =

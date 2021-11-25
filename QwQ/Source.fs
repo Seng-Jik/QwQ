@@ -44,13 +44,13 @@ type Post =
       
       Rating: Rating
       SourceUrl: AsyncSeq<string>
-      Tags: Tag seq
+      Tags: Tag list
       
       PreviewImage: Content option
       Content: AsyncSeq<Mipmaps> }
 
 
-and PostPage = Post seq
+and PostPage = Post list
 
 
 and ISource = 

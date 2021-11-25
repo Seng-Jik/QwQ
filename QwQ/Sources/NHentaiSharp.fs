@@ -18,7 +18,7 @@ let mapElement src (e: GalleryElement) =
       Source = src 
       Rating = Explicit
       SourceUrl = e.url.ToString() |> AsyncSeq.singleton
-      Tags = e.tags |> Array.map (fun x -> x.name)
+      Tags = e.tags |> Seq.map (fun x -> x.name) |> List.ofSeq
       PreviewImage = 
           e.thumbnail.imageUrl.ToString()
           |> String.nullOrWhitespace
@@ -35,8 +35,8 @@ let mapElement src (e: GalleryElement) =
 
 let mapResult src (result: SearchResult) =
     result.elements
-    |> Array.map (mapElement src)
-    |> Array.toSeq
+    |> Seq.map (mapElement src)
+    |> List.ofSeq
 
 
 let processErrs def : Result<'a, exn> -> Result<'a, exn> =

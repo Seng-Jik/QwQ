@@ -79,7 +79,7 @@ let mapPostPage' (page: HtmlDocument) =
 
 let mapPostPage baseUrl source (page: HtmlDocument) =
     mapPostPage' page
-    |> Seq.map (fun (preview, (id, rating, tags)) ->
+    |> List.map (fun (preview, (id, rating, tags)) ->
         let details = processViewPage $"{baseUrl}/index.php?page=post&s=view&id={id}"
 
         { Id = id

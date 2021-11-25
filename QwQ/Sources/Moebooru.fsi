@@ -17,16 +17,16 @@ val mapHttpsContent: HttpsOptions -> string -> Content
 val mapSearchRating: Set<Rating> -> string Option
 val mapOrder: Order -> string option
 val mapSearchOptions: SearchOptions -> string
-val parseTags: string -> Tag[]
+val parseTags: string -> Tag list
 
 
-val enumAllPages<'a,'b,'c when 'a :> seq<'b>> : 
-    getPageByIndex: (int -> Async<Result<'a,'c>>) 
-    -> AsyncSeq<Result<'a,'c>>
+val enumAllPages<'a,'b> : 
+    getPageByIndex: (int -> Async<Result<'a list,'b>>) 
+    -> AsyncSeq<Result<'a list,'b>>
 
 
-val requestPosts<'a,'b,'c,'d,'e when 'b :> seq<'c>> : 
+val requestPosts<'a,'b,'c,'d> : 
     loadJson: Async<'a> -> 
-    map: (Result<'a,exn> -> Result<'b, 'd>) -> 
-    mapPost: ('c -> 'e) 
-    -> Async<Result<seq<'e>,'d>>
+    map: (Result<'a,exn> -> Result<'b list,'c>) -> 
+    mapPost: ('b -> 'd) 
+    -> Async<Result<'d list,'c>>

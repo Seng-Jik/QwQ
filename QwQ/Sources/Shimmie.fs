@@ -112,7 +112,7 @@ let mapViewPage name baseUrl id =
 
 let mapPage source rating baseUrl (page: HtmlDocument) =
     page.CssSelect ".shm-image-list a"
-    |> Seq.choose (fun node -> 
+    |> List.choose (fun node -> 
         let tags = 
             node.TryGetAttribute "data-tags"
             |> Option.map (fun x -> x.Value().Split(' '))
@@ -134,7 +134,7 @@ let mapPage source rating baseUrl (page: HtmlDocument) =
               Source = source
               Rating = rating 
               SourceUrl = asyncSeq { let! _, s = mapViewPage source.Name baseUrl id in yield! AsyncSeq.ofSeq s }
-              Tags = tags |> Option.defaultValue [||]
+              Tags = tags |> Option.map Array.toList |> Option.defaultValue []
               PreviewImage = img |> Option.map (mapHttpsContent HttpsOptions.Default)
               Content = asyncSeq { let! a, _ = mapViewPage source.Name baseUrl id in yield a } } ))
 
@@ -153,11 +153,11 @@ type ShimmieSource (name, baseUrl, ratingIfNotSupportRating) =
                 | Ok doc -> 
                     return
                         match getPostByViewPage this name baseUrl doc ratingIfNotSupportRating with
-                        | Some x -> Seq.singleton x
+                        | Some x -> [x]
                         | None -> mapPage this rating baseUrl doc
                         |> Ok
-                | Error x when x.Message.Contains "No Images Found" -> return Ok Seq.empty
-                | Error x when x.Message.Contains "No posts Found" -> return Ok Seq.empty
+                | Error x when x.Message.Contains "No Images Found" -> return Ok []
+                | Error x when x.Message.Contains "No posts Found" -> return Ok []
                 | Error x -> return Error x
             }
 

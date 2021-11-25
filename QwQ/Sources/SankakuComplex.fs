@@ -33,13 +33,14 @@ let mapPost httpsOption siteUrl src (json: PostListJson.Root) =
 
       Tags = 
           json.Tags 
-          |> Array.choose (fun x -> 
+          |> Seq.choose (fun x -> 
               x.Name
               |> Option.bind String.nullOrWhitespace
               |> Option.orElse x.NameEn
               |> Option.bind String.nullOrWhitespace
               |> Option.orElse x.NameJa
               |> Option.bind String.nullOrWhitespace)
+          |> Seq.toList
             
       PreviewImage = 
           json.PreviewUrl 
@@ -76,8 +77,8 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr, addtionalHttp
                 | Error (:? System.Net.WebException as e) 
                     when e.Message.Contains "sign in to view more!"
                          || e.Message.Contains "You can only view up to"
-                         || e.Message.Contains "snackbar__account_offset-forbidden" -> Ok [||]
-                | x -> x)
+                         || e.Message.Contains "snackbar__account_offset-forbidden" -> Ok []
+                | x -> Result.map Array.toList x)
             (mapPost this.HttpsOptions siteUrl this)
 
     member this.RequestPostList urlPostfix =
@@ -108,7 +109,7 @@ type SankakuChannelSource (addtionalHttpHeaders) =
             requestPosts
                 (loadJson JsonValue.Parse this.HttpsOptions
                     $"https://capi-v2.sankakucomplex.com/tags?limit=500&page={p + 1}{urlPostfix}")
-                (Result.map JsonExtensions.AsArray)
+                (Result.map (JsonExtensions.AsArray >> Array.toList))
                 (fun json -> 
                     json.TryGetProperty "name"
                     |> Option.map JsonExtensions.AsString

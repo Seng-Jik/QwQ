@@ -4,9 +4,9 @@ open QwQ
 open FSharp.Control
 
 
-val requestTags<'a,'b,'c when 'a :> seq<Result<'b, 'c>>> : 
-    pageLoader: (int -> Async<Result<'a, 'c>>) 
-    -> AsyncSeq<Result<'b,'c>>
+val requestTags<'a,'b> :
+    pageLoader: (int -> Async<Result<Result<'a, 'b> list, 'b>>) 
+    -> AsyncSeq<Result<'a,'b>>
 
 
 val danbooru: ISource
