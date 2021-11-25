@@ -33,6 +33,7 @@ let [<Test>] ``tags: Danbooru`` () = list100Tags Sources.Danbooru.danbooru
 let [<Test>] ``tags: ATFBooru`` () = list100Tags Sources.Danbooru.atfbooru
 let [<Test>] ``tags: Sonohara`` () = list100Tags Sources.Danbooru.sonohara
 let [<Test>] ``tags: Hijiribe`` () = list100Tags Sources.Danbooru.hijiribe
+let [<Test>] ``tags: Safebooru Donmai`` () = list100Tags Sources.Danbooru.safebooruDonmai
 
 let [<Test>] ``tags: Gelbooru`` () = list100Tags Sources.Gelbooru.gelbooru
 let [<Test>] ``tags: TBIB`` () = list100Tags Sources.Gelbooru.tbib

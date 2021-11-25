@@ -156,10 +156,12 @@ let danbooru = DanbooruSource ("Danbooru", "https://danbooru.donmai.us", true) :
 let atfbooru = DanbooruSource ("ATFBooru", "https://booru.allthefallen.moe", false) :> ISource
 let sonohara = DanbooruSource ("Sonohara", "https://sonohara.donmai.us", true) :> ISource
 let hijiribe = DanbooruSource ("Hijiribe", "https://hijiribe.donmai.us", true) :> ISource
+let safebooruDonmai = DanbooruSource ("Safebooru Donmai", "https://safebooru.donmai.us", true) :> ISource
 
 
 let sources = 
     [ danbooru
       atfbooru
       sonohara
-      hijiribe ]
+      hijiribe
+      safebooruDonmai ]

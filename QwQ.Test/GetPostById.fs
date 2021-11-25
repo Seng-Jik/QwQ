@@ -25,6 +25,7 @@ let [<Test>] ``getPostById: Danbooru`` () = getPostById 4917687UL Sources.Danboo
 let [<Test>] ``getPostById: Sonohara`` () = getPostById 4918795UL Sources.Danbooru.sonohara
 let [<Test>] ``getPostById: ATFBooru`` () = getPostById 366626UL Sources.Danbooru.atfbooru
 let [<Test>] ``getPostById: Hijiribe`` () = getPostById 4918788UL Sources.Danbooru.hijiribe
+let [<Test>] ``getPostById: Safebooru Donmai`` () = getPostById 4937977UL Sources.Danbooru.safebooruDonmai
 
 let [<Test>] ``getPostById: Gelbooru`` () = getPostById 6653855UL Sources.Gelbooru.gelbooru
 let [<Test>] ``getPostById: TBIB`` () = getPostById 9867580UL Sources.Gelbooru.tbib

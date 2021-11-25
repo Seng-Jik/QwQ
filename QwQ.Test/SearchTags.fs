@@ -22,6 +22,7 @@ let [<Test>] ``searchTag: Danbooru`` () = search100Tags Sources.Danbooru.danboor
 let [<Test>] ``searchTag: ATFBooru`` () = search100Tags Sources.Danbooru.atfbooru
 let [<Test>] ``searchTag: Sonohara`` () = search100Tags Sources.Danbooru.sonohara
 let [<Test>] ``searchTag: Hijiribe`` () = search100Tags Sources.Danbooru.hijiribe
+let [<Test>] ``searchTag: Safebooru Donmai`` () = search100Tags Sources.Danbooru.safebooruDonmai
 
 let [<Test>] ``searchTag: Gelbooru`` () = search100Tags Sources.Gelbooru.gelbooru
 let [<Test>] ``searchTag: TBIB`` () = search100Tags Sources.Gelbooru.tbib

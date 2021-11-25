@@ -13,6 +13,7 @@ val danbooru: ISource
 val atfbooru: ISource
 val sonohara: ISource
 val hijiribe: ISource 
+val safebooruDonmai: ISource
 
 
 val sources: ISource list

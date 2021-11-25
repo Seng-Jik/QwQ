@@ -86,6 +86,7 @@ let [<Test>] ``download: Danbooru`` () = downloadTest Sources.Danbooru.danbooru
 let [<Test>] ``download: ATFBooru`` () = downloadTest Sources.Danbooru.atfbooru
 let [<Test>] ``download: Sonohara`` () = downloadTest Sources.Danbooru.sonohara
 let [<Test>] ``download: Hijiribe`` () = downloadTest Sources.Danbooru.hijiribe
+let [<Test>] ``download: Safebooru Donmai`` () = downloadTest Sources.Danbooru.safebooruDonmai
 
 let [<Test>] ``download: Gelbooru`` () = downloadTest Sources.Gelbooru.gelbooru
 let [<Test>] ``download: TBIB`` () = downloadTest Sources.Gelbooru.tbib

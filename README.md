@@ -17,6 +17,7 @@ Danbooru  | [Danbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Dan
 ATFBooru  | [Danbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Danbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Sonnohara | [Danbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Danbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Hijiribe  | [Danbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Danbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
+Safebooru Donmai  | [Danbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Danbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Gelbooru  | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 The Big ImageBoard (TBIB)  | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Safebooru | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag

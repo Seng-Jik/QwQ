@@ -31,6 +31,10 @@ let [<Test>] ``search: Danbooru`` () = search10Pages danbooruSearch Sources.Danb
 let [<Test>] ``search: Sonohara`` () = search10Pages danbooruSearch Sources.Danbooru.sonohara 
 let [<Test>] ``search: ATFBooru`` () = search10Pages searchOpt Sources.Danbooru.atfbooru 
 let [<Test>] ``search: Hijiribe`` () = search10Pages danbooruSearch Sources.Danbooru.hijiribe 
+let [<Test>] ``search: Safebooru Donmai`` () = 
+    search10Pages 
+        { danbooruSearch with Rating = set [Safe]; Order = Default }
+        Sources.Danbooru.safebooruDonmai
 
 let [<Test>] ``search: Gelbooru`` () = search10Pages searchOpt Sources.Gelbooru.gelbooru
 let [<Test>] ``search: TBIB`` () = search10Pages searchOpt Sources.Gelbooru.tbib
@@ -74,5 +78,5 @@ let [<Test>] ``search: Tentacle Rape`` () = search10Pages { searchOpt2 with Tags
 let [<Test>] ``search: Fan Service`` () = 
     search10Pages { searchOpt2 with Tags = ["Series:Yumeria"] } Sources.Shimmie.fanservice
 
-let [<Test>] ``search: NHentai`` () = search10Pages { searchOpt2 with Tags = ["loli"] } Sources.NHentaiSharp.nhentai
+let [<Test>] ``search: NHentai`` () = search10Pages { searchOpt2 with Tags = ["touhou"] } Sources.NHentaiSharp.nhentai
 
