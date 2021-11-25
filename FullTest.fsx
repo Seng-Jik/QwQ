@@ -7,11 +7,11 @@ open System.Diagnostics
 open FSharp.Control
 
 
-if not <| File.Exists "./QwQ/bin/Release/netstandard2.0/publish/QwQ.Core.dll" 
+if not <| File.Exists "./QwQ/bin/Release/net6.0/publish/QwQ.Core.dll" 
 then Process.Start("dotnet", "publish ./QwQ/QwQ.fsproj -c Release -f netstandard2.0").WaitForExit()
 
 
-#r "./QwQ/bin/Release/netstandard2.0/publish/QwQ.Core.dll"
+#r "./QwQ/bin/Release/net6.0/publish/QwQ.Core.dll"
 
 
 let sourceName = 
