@@ -57,5 +57,7 @@ let [<Test>] ``list: Hina`` () = list10Pages Sources.TheBooruProject.hina
 let [<Test>] ``list: RuleXXX`` () = list10Pages Sources.TheBooruProject.rulexxx
 
 let [<Test>] ``list: Nekobooru`` () = list10Pages Sources.Shimmie.nekobooru
+let [<Test>] ``list: Tentacle Rape`` () = list10Pages Sources.Shimmie.tentacleRape
+let [<Test>] ``list: Fan Service`` () = list10Pages Sources.Shimmie.fanservice
 
 let [<Test>] ``list: NHentai`` () = list10Pages Sources.NHentaiSharp.nhentai

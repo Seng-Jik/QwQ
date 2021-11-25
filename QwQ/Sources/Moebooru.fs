@@ -139,7 +139,7 @@ let mapSearchRating r =
     then Some <| mapRatingToMetaTag (Seq.exactlyOne r)
     elif Set.isEmpty r
     then None
-    elif Set.exists (function Rating' x -> true | _ -> false) r
+    elif Set.exists (function Rating' _ -> true | _ -> false) r
     then Seq.pick (function Rating' x -> Some x | _ -> None) r
          |> DoNotSupportRatingException
          |> raise

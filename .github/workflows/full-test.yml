@@ -37,6 +37,8 @@ jobs:
           - 'Hina'
           - 'RuleXXX'
           - 'Nekobooru'
+          - 'Tentacle Rape'
+          - 'Fan Service'
           # - 'NHentai'
 
     steps:
@@ -79,6 +81,8 @@ jobs:
         # - 'Sankaku Channel'
           - 'Idol Complex'
           - 'Nekobooru'
+          - 'Tentacle Rape'
+          - 'Fan Service'
 
     steps:
     - uses: actions/checkout@v2

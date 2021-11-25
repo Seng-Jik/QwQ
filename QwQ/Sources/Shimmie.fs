@@ -29,17 +29,16 @@ let getContentAndSourceUrl name baseUrl fullUrl postId (page: HtmlDocument) =
                 |> (=) "Source")
             |> List.exactlyOne
             |> fun x -> CssSelectorExtensions.CssSelect (x, "a")
-            |> List.exactlyOne
-            |> HtmlNode.tryGetAttribute "href"
-            |> Option.unwrap
-            |> HtmlAttributeExtensions.Value)
-        |> Option.bind String.nullOrWhitespace
-
+            |> List.tryExactlyOne
+            |> Option.bind (HtmlNode.tryGetAttribute "href")
+            |> Option.map (fun x -> x.Value())
+            |> Option.bind String.nullOrWhitespace)
+        |> Option.flatten
 
     AsyncSeq.ofSeq <| Option.toList img, [fullUrl] @ Option.toList source
 
 
-let getPostByViewPage source name baseUrl (page: HtmlDocument) =
+let getPostByViewPage source name baseUrl (page: HtmlDocument) ratingIfNotSupportRating =
     Option.protect (fun () ->
         let postId =
             page.CssSelect "input"
@@ -60,15 +59,24 @@ let getPostByViewPage source name baseUrl (page: HtmlDocument) =
             |> dict
 
         let tags = 
-            infoTable.["Tags"]
-            |> List.map (fun x -> x.InnerText ())
+            Option.protect (fun () ->
+                let table = infoTable.["Tags"]
+                if table.[0].Name() <> "td"
+                then table
+                else table |> List.collect (fun x -> x.Elements ())
+                |> List.map (fun x -> x.InnerText ()))
+            |> Option.toList
+            |> List.concat
 
         let rating =
-            match infoTable.["Rating"].Head.InnerText().Trim() with
-            | "Safe" -> Safe
-            | "Questionable" -> Questionable
-            | "Explicit" -> Explicit
-            | x -> Rating' x
+            Option.protect (fun () ->
+                match infoTable.["Rating"].Head.InnerText().Trim() with
+                | "Safe" -> Safe
+                | "Questionable" -> Questionable
+                | "Explicit" -> Explicit
+                | x -> Rating' x)
+            |> Option.orElse ratingIfNotSupportRating
+            |> Option.defaultValue (Rating' "Unknown")
 
         let preview = 
             page.Html().CssSelect "head meta"
@@ -131,7 +139,7 @@ let mapPage source rating baseUrl (page: HtmlDocument) =
               Content = asyncSeq { let! a, _ = mapViewPage source.Name baseUrl id in yield a } } ))
 
 
-type ShimmieSource (name, baseUrl) =
+type ShimmieSource (name, baseUrl, ratingIfNotSupportRating) =
 
     let requestPostList this rating search =
         enumAllPages <| fun pageId ->
@@ -144,11 +152,12 @@ type ShimmieSource (name, baseUrl) =
                 match doc with
                 | Ok doc -> 
                     return
-                        match getPostByViewPage this name baseUrl doc with
+                        match getPostByViewPage this name baseUrl doc ratingIfNotSupportRating with
                         | Some x -> Seq.singleton x
                         | None -> mapPage this rating baseUrl doc
                         |> Ok
                 | Error x when x.Message.Contains "No Images Found" -> return Ok Seq.empty
+                | Error x when x.Message.Contains "No posts Found" -> return Ok Seq.empty
                 | Error x -> return Error x
             }
 
@@ -172,24 +181,32 @@ type ShimmieSource (name, baseUrl) =
         member _.Name = name
         member this.AllPosts =
             asyncSeq {
-                yield! requestPostList this Safe ""
-                yield! requestPostList this Questionable ""
-                yield! requestPostList this Explicit ""
-                yield! requestPostList this (Rating' "unknown") ""
+                yield! requestPostList this (Rating' "unknown") "/rating:unknown"
+                yield! requestPostList this Explicit "/rating:explicit"
+                yield! requestPostList this Questionable "/rating:questionable"
+                yield! requestPostList this Safe "/rating:safe"
             }
 
     interface ISearch with
         member this.Search search =
-            search.Rating
-            |> AsyncSeq.ofSeq
-            |> AsyncSeq.collect (fun rating ->
-                mapSearchOptions 
-                    { search with 
-                        Rating = set [rating]
-                        Order = Default
-                        NonTags = [] }
+            match ratingIfNotSupportRating with
+            | None ->
+                match search.Rating with
+                | x when x = Set.empty -> set [ Safe; Questionable; Explicit; Rating' "unknown" ]
+                | x -> x
+                |> AsyncSeq.ofSeq
+                |> AsyncSeq.collect (fun rating ->
+                    mapSearchOptions 
+                        { search with 
+                            Rating = set [rating]
+                            Order = Default
+                            NonTags = [] }
+                    |> (+) "/"
+                    |> requestPostList this rating)
+            | Some rating ->
+                mapSearchOptions { search with Rating = Set.empty }
                 |> (+) "/"
-                |> requestPostList this rating)
+                |>requestPostList this rating
             |> AntiGuro.antiThat search.NonTags
 
     interface ITags with
@@ -207,13 +224,17 @@ type ShimmieSource (name, baseUrl) =
             async {
                 let fullUrl = $"{baseUrl}/post/view/{id}"
                 let! html = HtmlDocument.AsyncLoad fullUrl
-                return getPostByViewPage x name baseUrl html
+                return getPostByViewPage x name baseUrl html ratingIfNotSupportRating
             }
             |> Async.protect
 
 
-let nekobooru = ShimmieSource ("Nekobooru", "https://neko-booru.com") :> ISource
+let nekobooru = ShimmieSource ("Nekobooru", "https://neko-booru.com", None) :> ISource
+let tentacleRape = ShimmieSource ("Tentacle Rape", "https://tentaclerape.net", Some Explicit) :> ISource
+let fanservice = ShimmieSource ("Fan Service", "https://fanservice.fan", Some <| Rating' "Unknown") :> ISource
 
 
 let sources = 
-    [ nekobooru ]
+    [ nekobooru
+      tentacleRape
+      fanservice ]

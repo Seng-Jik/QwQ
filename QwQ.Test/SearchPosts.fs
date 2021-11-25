@@ -65,7 +65,14 @@ let [<Test>] ``search: Ecchi Booru`` () = search10Pages searchOpt2 Sources.TheBo
 let [<Test>] ``search: Hina`` () = search10Pages { searchOpt2 with Tags = ["nsfw"] } Sources.TheBooruProject.hina
 let [<Test>] ``search: RuleXXX`` () = search10Pages { searchOpt2 with Tags = ["tagme"] } Sources.TheBooruProject.rulexxx
 
-let [<Test>] ``search: Nekobooru`` () = search10Pages { searchOpt2 with Tags = ["touhou"] } Sources.Shimmie.nekobooru
+let [<Test>] ``search: Nekobooru`` () = 
+    search10Pages 
+        { searchOpt2 with Tags = ["touhou"]; Rating = set [] } 
+        Sources.Shimmie.nekobooru
+
+let [<Test>] ``search: Tentacle Rape`` () = search10Pages { searchOpt2 with Tags = ["touhou"] } Sources.Shimmie.tentacleRape
+let [<Test>] ``search: Fan Service`` () = 
+    search10Pages { searchOpt2 with Tags = ["Series:Yumeria"] } Sources.Shimmie.fanservice
 
 let [<Test>] ``search: NHentai`` () = search10Pages searchOpt2 Sources.NHentaiSharp.nhentai
 

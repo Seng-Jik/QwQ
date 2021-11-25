@@ -102,5 +102,8 @@ let [<Test>] ``download: Hina`` () = downloadTest Sources.TheBooruProject.hina
 let [<Test>] ``download: RuleXXX`` () = downloadTest Sources.TheBooruProject.rulexxx
 
 let [<Test>] ``download: Nekobooru`` () = downloadTest Sources.Shimmie.nekobooru
+let [<Test>] ``download: Tentacle Rape`` () = downloadTest Sources.Shimmie.tentacleRape
+let [<Test>] ``download: Fan Service`` () = downloadTest Sources.Shimmie.fanservice
+
 let [<Test>] ``download: NHentai`` () = downloadTest Sources.NHentaiSharp.nhentai
 

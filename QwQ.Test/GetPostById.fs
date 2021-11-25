@@ -11,6 +11,7 @@ let getPostById id (source: ISource) =
         Source.getPostById source id
         |> Async.RunSynchronously
         |> Result.unwrap
+        |> Option.unwrap
         |> printfn "%A"
     | _ -> failwith "Not supported."
 
@@ -31,12 +32,12 @@ let [<Test>] ``getPostById: Safebooru`` () = getPostById 3722213UL Sources.Gelbo
 let [<Test>] ``getPostById: XBooru`` () = getPostById 885166UL Sources.Gelbooru.xbooru
 let [<Test>] ``getPostById: Rule34`` () = getPostById 5289582UL Sources.Gelbooru.rule34
 
-let [<Test>] ``getPostById: Sankaku Channel`` () = 
-    getPostById 28595183UL Sources.SankakuComplex.sankakuChannel
+let [<Test>] ``getPostById: Sankaku Channel`` () = getPostById 28595183UL Sources.SankakuComplex.sankakuChannel
 
-let [<Test>] ``getPostById: Nekobooru`` () =
-    getPostById 1796UL Sources.Shimmie.nekobooru
+let [<Test>] ``getPostById: Nekobooru`` () = getPostById 1796UL Sources.Shimmie.nekobooru
+let [<Test>] ``getPostById: Fan Service`` () = getPostById 43355UL Sources.Shimmie.fanservice
+let [<Test>] ``getPostById: Tentacle Rape`` () = getPostById 87343UL Sources.Shimmie.tentacleRape
 
-let [<Test>] ``getPostById: NHentai`` () =
-    getPostById 374305UL Sources.NHentaiSharp.nhentai
+let [<Test>] ``getPostById: NHentai`` () = getPostById 374305UL Sources.NHentaiSharp.nhentai
     
+

@@ -4,10 +4,13 @@ open NUnit.Framework
 open QwQ
 
 
-let search100Tags (source: ISource) =
+let search100Tags' (tagName: string) (source: ISource) =
     match source with
-    | :? ISearchTag as x -> Tags.searchTag "touhou" x |> ListTags.show100Tags
+    | :? ISearchTag as x -> Tags.searchTag tagName x |> ListTags.show100Tags
     | _ -> failwith "Do not support tags."
+
+
+let search100Tags = search100Tags' "touhou"
 
 
 let [<Test>] ``searchTag: Konachan`` () = search100Tags Sources.Moebooru.konachan
@@ -27,5 +30,7 @@ let [<Test>] ``searchTag: XBooru`` () = search100Tags Sources.Gelbooru.xbooru
 let [<Test>] ``searchTag: Rule34`` () = search100Tags Sources.Gelbooru.rule34
 
 let [<Test>] ``searchTag: Sankaku Channel`` () = search100Tags Sources.SankakuComplex.sankakuChannel
+let [<Test>] ``searchTag: Tentacle Rape`` () = search100Tags Sources.Shimmie.tentacleRape
 
 let [<Test>] ``searchTag: Nekobooru`` () = search100Tags Sources.Shimmie.nekobooru
+let [<Test>] ``searchTag: Fan Service`` () = search100Tags' "Series:" Sources.Shimmie.fanservice
