@@ -1,4 +1,4 @@
-﻿module QwQ.Sources.Nekobooru
+﻿module QwQ.Sources.Shimmie
 
 open QwQ
 open QwQ.Utils
@@ -131,7 +131,7 @@ let mapPage source rating baseUrl (page: HtmlDocument) =
               Content = asyncSeq { let! a, _ = mapViewPage source.Name baseUrl id in yield a } } ))
 
 
-type Nekobooru (name, baseUrl) =
+type ShimmieSource (name, baseUrl) =
 
     let requestPostList this rating search =
         enumAllPages <| fun pageId ->
@@ -212,7 +212,7 @@ type Nekobooru (name, baseUrl) =
             |> Async.protect
 
 
-let nekobooru = Nekobooru ("Nekobooru", "https://neko-booru.com") :> ISource
+let nekobooru = ShimmieSource ("Nekobooru", "https://neko-booru.com") :> ISource
 
 
 let sources = 

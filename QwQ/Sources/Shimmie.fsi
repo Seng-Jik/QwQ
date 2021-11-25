@@ -1,4 +1,4 @@
-﻿module QwQ.Sources.Nekobooru
+﻿module QwQ.Sources.Shimmie
 
 open QwQ
 

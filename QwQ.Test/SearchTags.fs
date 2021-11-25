@@ -28,4 +28,4 @@ let [<Test>] ``searchTag: Rule34`` () = search100Tags Sources.Gelbooru.rule34
 
 let [<Test>] ``searchTag: Sankaku Channel`` () = search100Tags Sources.SankakuComplex.sankakuChannel
 
-let [<Test>] ``searchTag: Nekobooru`` () = search100Tags Sources.Nekobooru.nekobooru
+let [<Test>] ``searchTag: Nekobooru`` () = search100Tags Sources.Shimmie.nekobooru

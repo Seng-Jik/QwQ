@@ -26,10 +26,10 @@
     <Content Include="Sources/SankakuComplexSample.json" />
     <Compile Include="Sources/TheBooruProject.fsi" />
     <Compile Include="Sources/TheBooruProject.fs" />
-    <Compile Include="Sources\Nekobooru.fsi" />
-    <Compile Include="Sources\Nekobooru.fs" />
-    <Compile Include="Sources\NHentaiSharp.fsi" />
-    <Compile Include="Sources\NHentaiSharp.fs" />
+    <Compile Include="Sources/Shimmie.fsi" />
+    <Compile Include="Sources/Shimmie.fs" />
+    <Compile Include="Sources/NHentaiSharp.fsi" />
+    <Compile Include="Sources/NHentaiSharp.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>

@@ -33,7 +33,7 @@ Character Library | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/mai
 Ecchi Booru       | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
 Hina              | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
 RuleXXX           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-Nekobooru         | [Nekobooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nekobooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
+Nekobooru         | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 NHentai           | [NHentaiSharp](https://github.com/Xwilarg/NHentaiSharp) | IGetPostById, ISearch
 
 ## 安装QwQ命令行
