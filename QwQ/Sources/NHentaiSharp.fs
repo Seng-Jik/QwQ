@@ -45,6 +45,7 @@ let processErrs def : Result<'a, exn> -> Result<'a, exn> =
     | Error (:? NHentaiSharp.Exception.EmptySearchException) -> Ok def
     | Error e when e.Message.Contains "Your search didn't return any result, that probably mean one of the argument you provided is invalid" -> 
         Ok def
+    | Error e when e.Message.Contains """Invalid format '0'""" -> Ok def
     | Error x -> Error x
 
 
