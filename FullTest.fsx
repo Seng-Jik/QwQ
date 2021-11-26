@@ -8,7 +8,7 @@ open FSharp.Control
 
 
 if not <| File.Exists "./QwQ/bin/Release/net6.0/publish/QwQ.Core.dll" 
-then Process.Start("dotnet", "publish ./QwQ/QwQ.fsproj -c Release -f netstandard2.0").WaitForExit()
+then Process.Start("dotnet", "publish ./QwQ/QwQ.fsproj -c Release").WaitForExit()
 
 
 #r "./QwQ/bin/Release/net6.0/publish/QwQ.Core.dll"
