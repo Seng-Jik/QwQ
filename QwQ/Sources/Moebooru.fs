@@ -14,7 +14,7 @@ let mapRating =
     | "s" -> Safe
     | "q" -> Questionable
     | "e" -> Explicit
-    | x -> Rating' x
+    | _ -> Unrated
 
 
 let normalizeFileName (x: string) = 
@@ -121,42 +121,16 @@ let enumAllPages getPageByIndex =
 
 let mapRatingToMetaTag =
     function
-    | Explicit -> "explicit"
-    | Safe -> "safe"
-    | Questionable -> "questionable"
-    | Rating' x -> x
-    >> (+) "rating:"
+    | Explicit -> Some "rating:explicit"
+    | Safe -> Some "rating:safe"
+    | Questionable -> Some "rating:questionable"
+    | Unrated -> None
 
 
 let nonTag = (+) "-"
 
 
 exception DoNotSupportRatingException of string
-
-
-let mapSearchRating r =
-    if Set.count r = 1
-    then Some <| mapRatingToMetaTag (Seq.exactlyOne r)
-    elif Set.isEmpty r
-    then None
-    elif Set.exists (function Rating' _ -> true | _ -> false) r
-    then Seq.pick (function Rating' x -> Some x | _ -> None) r
-         |> DoNotSupportRatingException
-         |> raise
-    elif Set.contains Explicit r
-      && Set.contains Questionable r
-      && Set.contains Safe r
-    then None
-    elif Set.contains Safe r
-      && Set.contains Questionable r
-    then mapRatingToMetaTag Explicit |> nonTag |> Some
-    elif Set.contains Safe r
-      && Set.contains Explicit r
-    then mapRatingToMetaTag Questionable |> nonTag |> Some
-    elif Set.contains Questionable r
-      && Set.contains Explicit r
-    then mapRatingToMetaTag Safe |> nonTag |> Some
-    else raise <| exn $"Can not process {r}"
 
 
 let mapOrder =
@@ -171,7 +145,7 @@ let mapSearchOptions searchOpt =
     searchOpt.NonTags
     |> Seq.map nonTag
     |> Seq.append searchOpt.Tags
-    |> Seq.append (mapSearchRating searchOpt.Rating |> Option.toList)
+    |> Seq.append (mapRatingToMetaTag searchOpt.Rating |> Option.toList)
     |> Seq.append (mapOrder searchOpt.Order |> Option.toList)
     |> Seq.fold (fun a b -> a + " " + b) ""
     |> String.trim

@@ -14,7 +14,7 @@ let search10Pages searchOpt source =
 let searchOpt =
     { Tags = ["ke-ta"; "uncensored"]
       NonTags = ["sex"; "rape"]
-      Rating = set [Explicit]
+      Rating = Explicit
       Order = Popular }
 
 
@@ -33,14 +33,14 @@ let [<Test>] ``search: ATFBooru`` () = search10Pages searchOpt Sources.Danbooru.
 let [<Test>] ``search: Hijiribe`` () = search10Pages danbooruSearch Sources.Danbooru.hijiribe 
 let [<Test>] ``search: Safebooru Donmai`` () = 
     search10Pages 
-        { danbooruSearch with Rating = set [Safe]; Order = Default }
+        { danbooruSearch with Rating = Safe; Order = Default }
         Sources.Danbooru.safebooruDonmai
 
 let [<Test>] ``search: Gelbooru`` () = search10Pages searchOpt Sources.Gelbooru.gelbooru
 let [<Test>] ``search: TBIB`` () = search10Pages searchOpt Sources.Gelbooru.tbib
 let [<Test>] ``search: Safebooru`` () = 
     search10Pages 
-        { searchOpt with Tags = ["ke-ta"]; Rating = set [Safe] } 
+        { searchOpt with Tags = ["ke-ta"]; Rating = Safe } 
         Sources.Gelbooru.safebooru
 
 let [<Test>] ``search: XBooru`` () = search10Pages searchOpt Sources.Gelbooru.xbooru
@@ -51,12 +51,12 @@ let [<Test>] ``search: Idol Complex`` () =
     search10Pages
         { Tags = ["cosplay"; "asian"]
           NonTags = ["touhou"]
-          Rating = set [Explicit]
+          Rating = Explicit
           Order = Popular }
         Sources.SankakuComplex.idolComplex
 
 
-let searchOpt2 = { Tags = ["touhou"]; NonTags = []; Rating = set [Explicit;Safe;Questionable]; Order = Default }
+let searchOpt2 = { Tags = ["touhou"]; NonTags = []; Rating = Unrated; Order = Default }
 
 
 let [<Test>] ``search: All Girl`` () = search10Pages searchOpt2 Sources.TheBooruProject.allgirl
@@ -71,7 +71,7 @@ let [<Test>] ``search: RuleXXX`` () = search10Pages { searchOpt2 with Tags = ["t
 
 let [<Test>] ``search: Nekobooru`` () = 
     search10Pages 
-        { searchOpt2 with Tags = ["touhou"]; Rating = set [] } 
+        { searchOpt2 with Tags = ["touhou"]; Rating = Unrated } 
         Sources.Shimmie.nekobooru
 
 let [<Test>] ``search: Tentacle Rape`` () = search10Pages { searchOpt2 with Tags = ["touhou"] } Sources.Shimmie.tentacleRape

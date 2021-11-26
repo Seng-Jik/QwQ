@@ -131,7 +131,7 @@ type SankakuChannelSource (addtionalHttpHeaders) =
                         { Tags = [$"id:{id}"]
                           NonTags = []
                           Order = Default
-                          Rating = set [ Safe; Questionable; Explicit ] }
+                          Rating = Unrated }
                     |> AsyncSeq.tryFirst
                 with
                 | Some p -> return Result.map Seq.tryHead p

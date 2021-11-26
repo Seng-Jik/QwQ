@@ -51,7 +51,7 @@ let processData (x: string) =
         | "Safe" -> Safe
         | "Questionable" -> Questionable
         | "Explicit" -> Explicit
-        | x -> Rating' x
+        | _ -> Unrated
 
     id, rating, tags
 

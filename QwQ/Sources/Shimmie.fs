@@ -74,9 +74,9 @@ let getPostByViewPage source name baseUrl (page: HtmlDocument) ratingIfNotSuppor
                 | "Safe" -> Safe
                 | "Questionable" -> Questionable
                 | "Explicit" -> Explicit
-                | x -> Rating' x)
+                | _ -> Unrated)
             |> Option.orElse ratingIfNotSupportRating
-            |> Option.defaultValue (Rating' "Unknown")
+            |> Option.defaultValue Unrated
 
         let preview = 
             page.Html().CssSelect "head meta"
@@ -110,7 +110,7 @@ let mapViewPage name baseUrl id =
     }
 
 
-let mapPage source rating baseUrl (page: HtmlDocument) =
+let mapPage source baseUrl (page: HtmlDocument) =
     page.CssSelect ".shm-image-list a"
     |> List.choose (fun node -> 
         let tags = 
@@ -132,16 +132,16 @@ let mapPage source rating baseUrl (page: HtmlDocument) =
               Title = None 
           
               Source = source
-              Rating = rating 
+              Rating = Unrated 
               SourceUrl = asyncSeq { let! _, s = mapViewPage source.Name baseUrl id in yield! AsyncSeq.ofSeq s }
               Tags = tags |> Option.map Array.toList |> Option.defaultValue []
               PreviewImage = img |> Option.map (mapHttpsContent HttpsOptions.Default)
               Content = asyncSeq { let! a, _ = mapViewPage source.Name baseUrl id in yield a } } ))
 
 
-type ShimmieSource (name, baseUrl, ratingIfNotSupportRating) =
+type ShimmieSource (name, baseUrl) =
 
-    let requestPostList this rating search =
+    let requestPostList this search =
         enumAllPages <| fun pageId ->
             async {
                 let! doc = 
@@ -152,9 +152,9 @@ type ShimmieSource (name, baseUrl, ratingIfNotSupportRating) =
                 match doc with
                 | Ok doc -> 
                     return
-                        match getPostByViewPage this name baseUrl doc ratingIfNotSupportRating with
+                        match getPostByViewPage this name baseUrl doc <| Some Unrated with
                         | Some x -> [x]
-                        | None -> mapPage this rating baseUrl doc
+                        | None -> mapPage this baseUrl doc
                         |> Ok
                 | Error x when x.Message.Contains "No Images Found" -> return Ok []
                 | Error x when x.Message.Contains "No posts Found" -> return Ok []
@@ -180,36 +180,13 @@ type ShimmieSource (name, baseUrl, ratingIfNotSupportRating) =
     interface ISource with
         member _.Name = name
         member this.AllPosts =
-            match ratingIfNotSupportRating with
-            | None ->
-                asyncSeq {
-                    yield! requestPostList this Explicit "/rating:explicit"
-                    yield! requestPostList this (Rating' "unknown") "/rating:unknown"
-                    yield! requestPostList this Questionable "/rating:questionable"
-                    yield! requestPostList this Safe "/rating:safe"
-                }
-            | Some r -> requestPostList this r ""
+            requestPostList this ""
 
     interface ISearch with
         member this.Search search =
-            match ratingIfNotSupportRating with
-            | None ->
-                match search.Rating with
-                | x when x = Set.empty -> set [ Safe; Questionable; Explicit; Rating' "unknown" ]
-                | x -> x
-                |> AsyncSeq.ofSeq
-                |> AsyncSeq.collect (fun rating ->
-                    mapSearchOptions 
-                        { search with 
-                            Rating = set [rating]
-                            Order = Default
-                            NonTags = [] }
-                    |> (+) "/"
-                    |> requestPostList this rating)
-            | Some rating ->
-                mapSearchOptions { search with Rating = Set.empty }
-                |> (+) "/"
-                |>requestPostList this rating
+            mapSearchOptions { search with Rating = Unrated; Order = Default }
+            |> (+) "/"
+            |> requestPostList this
             |> AntiGuro.antiThat search.NonTags
 
     interface ITags with
@@ -227,14 +204,14 @@ type ShimmieSource (name, baseUrl, ratingIfNotSupportRating) =
             async {
                 let fullUrl = $"{baseUrl}/post/view/{id}"
                 let! html = HtmlDocument.AsyncLoad fullUrl
-                return getPostByViewPage x name baseUrl html ratingIfNotSupportRating
+                return getPostByViewPage x name baseUrl html (Some Unrated)
             }
             |> Async.protect
 
 
-let nekobooru = ShimmieSource ("Nekobooru", "https://neko-booru.com", None) :> ISource
-let tentacleRape = ShimmieSource ("Tentacle Rape", "https://tentaclerape.net", Some Explicit) :> ISource
-let fanservice = ShimmieSource ("Fan Service", "https://fanservice.fan", Some <| Rating' "Unknown") :> ISource
+let nekobooru = ShimmieSource ("Nekobooru", "https://neko-booru.com") :> ISource
+let tentacleRape = ShimmieSource ("Tentacle Rape", "https://tentaclerape.net") :> ISource
+let fanservice = ShimmieSource ("Fan Service", "https://fanservice.fan") :> ISource
 
 
 let sources = 

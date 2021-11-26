@@ -107,7 +107,7 @@ let commands = [
             let search = 
                 { Tags = tags
                   NonTags = []
-                  Rating = set [Safe; Questionable; Explicit]
+                  Rating = Unrated
                   Order = Default }
 
             let dir = 

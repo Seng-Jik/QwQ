@@ -13,7 +13,7 @@ type Rating =
     | Safe
     | Questionable
     | Explicit
-    | Rating' of string
+    | Unrated
 
 
 type HttpsOptions =
