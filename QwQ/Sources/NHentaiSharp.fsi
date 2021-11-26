@@ -5,5 +5,3 @@ open QwQ
 
 val nhentai: ISource
 
-
-val sources: ISource list

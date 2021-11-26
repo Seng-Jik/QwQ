@@ -38,7 +38,7 @@ Nekobooru         | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sour
 Tentacle Rape     | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Fan Service       | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 NHentai           | [NHentaiSharp](https://github.com/Xwilarg/NHentaiSharp) | IGetPostById, ISearch
-
+Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nozomi.fs) | 
 ## 安装QwQ命令行
 
 首先确保已经安装.NET 6 SDK。

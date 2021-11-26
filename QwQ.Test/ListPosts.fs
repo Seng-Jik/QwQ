@@ -68,3 +68,5 @@ let [<Test>] ``list: Tentacle Rape`` () = list10Pages Sources.Shimmie.tentacleRa
 let [<Test>] ``list: Fan Service`` () = list10Pages Sources.Shimmie.fanservice
 
 let [<Test>] ``list: NHentai`` () = list10Pages Sources.NHentaiSharp.nhentai
+
+let [<Test>] ``list: Nozomi`` () = list10Pages Sources.Nozomi.nozomi

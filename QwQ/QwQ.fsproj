@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>QwQ.Core</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Utils.fs" />
@@ -30,6 +31,8 @@
     <Compile Include="Sources/Shimmie.fs" />
     <Compile Include="Sources/NHentaiSharp.fsi" />
     <Compile Include="Sources/NHentaiSharp.fs" />
+    <Compile Include="Sources/Nozomi.fsi" />
+    <Compile Include="Sources/Nozomi.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>
