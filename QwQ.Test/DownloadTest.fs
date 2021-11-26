@@ -16,12 +16,18 @@ let ensureDir x =
 let downloadToDir content dir =
     match content.DownloadMethod with
     | Https (url, { Headers = h }) ->
-        use ws = new HttpClient ()
-        for (k, v) in h do 
-            ws.DefaultRequestHeaders.Add(k, v)
+        try
+            use ws = new HttpClient ()
+            for (k, v) in h do 
+                ws.DefaultRequestHeaders.Add(k, v)
         
-        let b = ws.GetByteArrayAsync(url).Result
-        File.WriteAllBytes (dir + "/" + content.FileName, b)
+            let b = ws.GetByteArrayAsync(url).Result
+            File.WriteAllBytes (dir + "/" + content.FileName, b)
+        with e ->
+            lock stdout (fun () -> 
+                printfn $"Warning: {dir}/{content.FileName} download failed:"
+                printfn $"{e}"
+            )
 
     lock stdout (fun () -> printfn $"{dir}/{content.FileName}")
 

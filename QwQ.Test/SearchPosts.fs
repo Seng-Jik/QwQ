@@ -33,7 +33,7 @@ let [<Test>] ``search: ATFBooru`` () = search10Pages searchOpt Sources.Danbooru.
 let [<Test>] ``search: Hijiribe`` () = search10Pages danbooruSearch Sources.Danbooru.hijiribe 
 let [<Test>] ``search: Safebooru Donmai`` () = 
     search10Pages 
-        { danbooruSearch with Rating = Safe; Order = Default }
+        { danbooruSearch with Rating = Unrated; Order = Default }
         Sources.Danbooru.safebooruDonmai
 
 let [<Test>] ``search: Gelbooru`` () = search10Pages searchOpt Sources.Gelbooru.gelbooru

@@ -107,19 +107,19 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
         let tags = 
             mapOrder searchOpts.Order 
             |> Option.toList
-            |> fun x -> Seq.append x searchOpts.Tags
+            |> fun x -> List.append x <| Seq.toList searchOpts.Tags
 
-        let firstTwoTags = Seq.truncate 2 tags
-        let otherTags = Seq.skip 2 tags
+        let firstTwoTags = List.truncate 2 tags
+        let otherTags = try List.skip 2 tags with _ -> []
 
-        Seq.fold (fun a b -> a + " " + b) "" firstTwoTags
+        List.fold (fun a b -> a + " " + b) "" firstTwoTags
         |> (+) "&tags="
         |> requestPostsWithUrlPostfix this 
         |> AntiGuro.antiThat searchOpts.NonTags
         |> AsyncSeq.map (
             Result.map (
                 List.filter (fun x -> 
-                    x.Rating = searchOpts.Rating
+                    if searchOpts.Rating = Unrated then true else x.Rating = searchOpts.Rating
                     && Seq.forall (fun tagNeedToHave -> List.contains tagNeedToHave x.Tags) otherTags)
             )
         )

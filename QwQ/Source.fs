@@ -20,7 +20,7 @@ type HttpsOptions =
     { Headers: (string * string) list }
     with 
         static member DefaultUserAgent = 
-            """Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.63"""
+            """Mozilla/5.0 (Windows NT 10.0; Win64; x64)"""
         static member Default = 
             { Headers = [ "User-Agent", HttpsOptions.DefaultUserAgent ] }
 
