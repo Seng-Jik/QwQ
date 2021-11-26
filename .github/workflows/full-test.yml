@@ -40,7 +40,7 @@ jobs:
           - 'Nekobooru'
           - 'Tentacle Rape'
           - 'Fan Service'
-          # - 'NHentai'
+          - 'NHentai'
 
     steps:
     - uses: actions/checkout@v2
