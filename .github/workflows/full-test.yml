@@ -94,7 +94,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    - name: List All Tags
+    - name: Test
       run: dotnet fsi FullTest.fsx "${{ matrix.source }}" --list-tags
       
 
