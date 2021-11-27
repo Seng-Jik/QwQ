@@ -41,7 +41,7 @@ jobs:
           - 'Tentacle Rape'
           - 'Fan Service'
           - 'NHentai'
-          - 'Nozomi'
+        # - 'Nozomi'
 
     steps:
     - uses: actions/checkout@v2

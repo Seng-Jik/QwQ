@@ -32,18 +32,19 @@ let parseNozomiBin (nozomi: byte[]) =
                 stackSpan.[3] <- span.[0]
                 BitConverter.ToUInt32(stackSpan)
             else BitConverter.ToUInt32(span))
-    |> Seq.map (fun postId -> 
-        let postId = string postId
-        if String.length postId < 3
-        then postId
-        else $"https://j.nozomi.la/post/{postId.[^0]}/{postId.[^2 .. ^1]}/{postId}.json")
 
 
 type NozomiPostJson = JsonProvider<"https://j.nozomi.la/post/1/17/28749171.json">
 
 
-let requestPost src (jsonUrl: string) =
+let requestPost src (postId: uint32) =
     async {
+        let jsonUrl = 
+            let postId = string postId
+            if String.length postId < 3
+            then postId
+            else $"https://j.nozomi.la/post/{postId.[^0]}/{postId.[^2 .. ^1]}/{postId}.json"
+
         let! json = NozomiPostJson.AsyncLoad jsonUrl
         
         return
@@ -78,12 +79,12 @@ type NozomiSource () =
 
     let mutable cachedNozomiBins = Map.empty
 
-    let requestNozomiBin path =
+    let requestNozomiBin subDomain path =
         async {
             match Map.tryFind path cachedNozomiBins with
             | Some x -> return x
             | None ->
-                let! response = Http.AsyncRequestStream ($"https://n.nozomi.la/{path}.nozomi")
+                let! response = Http.AsyncRequestStream ($"https://{subDomain}.nozomi.la/{path}.nozomi")
                 use byteStream = new IO.MemoryStream ()
                 response.ResponseStream.CopyTo byteStream
                 return 
@@ -95,7 +96,7 @@ type NozomiSource () =
         member _.Name = "Nozomi"
         member this.AllPosts = 
             asyncSeq {
-                let! nozomiBin = requestNozomiBin "index"
+                let! nozomiBin = requestNozomiBin 'n' "index"
                 let posts = 
                     nozomiBin 
                     |> Seq.map (
@@ -105,6 +106,75 @@ type NozomiSource () =
                 
                 yield! AsyncSeq.ofSeqAsync posts
             }
+
+    interface IGetPostById with
+        member this.GetPostById id =
+            uint32 id
+            |> requestPost this
+            |> Async.protect
+            |> Async.map (function
+                | Ok x -> Ok <| Some x
+                | Error e when e.Message.Contains "404" -> Ok <| None
+                | Error x -> Error <| x)
+
+    interface ISearch with
+        member this.Search opt =
+            let mapNozomi nozomi =
+                match opt.Order with
+                | Default | Date -> "nozomi/" + nozomi
+                | Popular | Score -> $"nozomi/popular/{nozomi}-Popular"
+                |> requestNozomiBin 'j'
+                |> Async.protect
+
+            let firstTag, nextTags =
+                match opt.Tags |> Seq.toList with
+                | [] -> "index", [] : Tag * Tag list
+                | a :: ls -> a, ls
+
+            let firstTag, nextTags = 
+                mapNozomi firstTag,
+                AsyncSeq.ofSeq nextTags |> AsyncSeq.mapAsyncParallel mapNozomi
+            
+            let nozomiExcepts =
+                AsyncSeq.ofSeq (Seq.map ((+) "nozomi/") opt.NonTags)
+                |> AsyncSeq.mapAsyncParallel (requestNozomiBin 'j' >> Async.protect)
+                |> AsyncSeq.choose (function Ok x -> Some x | _ -> None)
+                |> AsyncSeq.concatSeq
+            
+            asyncSeq {
+                let! excepts = 
+                    Async.StartChild <|
+                        async {
+                            let enum = AsyncSeq.toBlockingSeq nozomiExcepts
+                            return 
+                                Collections.Generic.HashSet<uint32>(enum) 
+                                :> Collections.Generic.IReadOnlySet<uint32>
+                        }
+
+                let! firstTag = Async.StartChild firstTag
+                let! nextTags = Async.StartChild <| AsyncSeq.toListAsync nextTags
+
+                match! firstTag with
+                | Error x -> yield Error x
+                | Ok src -> 
+                    let! nextTags = nextTags
+                    let nextTags, nextTagErrs =
+                        nextTags |> List.choose (function Ok x -> Some x | _ -> None),
+                        nextTags |> List.choose (function Error x -> Some <| Error x | _ -> None)
+
+                    match nextTagErrs with
+                    | _ :: _ -> yield! AsyncSeq.ofSeq nextTagErrs
+                    | [] ->
+                        let! excepts = excepts
+                        yield! 
+                            src
+                            |> Seq.filter (fun postId ->
+                                not (excepts.Contains postId)
+                                && List.forall (Seq.exists ((=) postId)) nextTags)
+                            |> AsyncSeq.ofSeq
+                            |> AsyncSeq.mapAsyncParallel (requestPost this >> Async.map List.singleton >> Async.protect)
+            }
+                
 
 
 let nozomi = NozomiSource () :> ISource

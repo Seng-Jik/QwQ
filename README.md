@@ -38,7 +38,8 @@ Nekobooru         | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sour
 Tentacle Rape     | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Fan Service       | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 NHentai           | [NHentaiSharp](https://github.com/Xwilarg/NHentaiSharp) | IGetPostById, ISearch
-Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nozomi.fs) | 
+Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nozomi.fs) | IGetPostById, ISearch
+
 ## 安装QwQ命令行
 
 首先确保已经安装.NET 6 SDK。
@@ -71,7 +72,6 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 
 * EHentai / ExHentai
 * Pixiv
-* https://nozomi.la/
 * https://www.hbrowse.com/
 * https://www.luscious.net/
 * https://www.lolibaka.com/

@@ -80,3 +80,4 @@ let [<Test>] ``search: Fan Service`` () =
 
 let [<Test>] ``search: NHentai`` () = search10Pages { searchOpt2 with Tags = ["touhou"] } Sources.NHentaiSharp.nhentai
 
+let [<Test>] ``search: Nozomi`` () = search10Pages searchOpt Sources.Nozomi.nozomi

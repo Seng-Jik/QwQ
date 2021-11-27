@@ -41,4 +41,4 @@ let [<Test>] ``getPostById: Tentacle Rape`` () = getPostById 87343UL Sources.Shi
 
 let [<Test>] ``getPostById: NHentai`` () = getPostById 374305UL Sources.NHentaiSharp.nhentai
     
-
+let [<Test>] ``getPostById: Nozomi`` () = getPostById 22567701UL Sources.Nozomi.nozomi
