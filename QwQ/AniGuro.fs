@@ -48,7 +48,7 @@ let private isThatTag thoseTags (tag: string) =
     let tag = tag.Trim().ToLower()
 
     thoseTags
-    |> Seq.exists (fun x -> tag.Contains (x: string))
+    |> Seq.exists (fun x -> tag.Contains ((x: string).Trim().ToLower()))
 
 
 let hasThatTag thoseTags = Seq.exists <| isThatTag thoseTags
