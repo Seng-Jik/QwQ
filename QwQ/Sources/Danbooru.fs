@@ -71,7 +71,7 @@ let requestTagsJson tagKey jsonUrlFromPage =
     requestTags <| fun pageId ->
         requestPosts 
             (async {
-                let! str = Http.AsyncRequestString (jsonUrlFromPage pageId, headers = HttpsOptions.Default.Headers)
+                let! str = Http.AsyncRequestString (jsonUrlFromPage pageId, headers = [])
                 return JsonValue.Parse str })
             (function
                 | Ok x -> Ok <| Array.toList (x.AsArray())
@@ -91,7 +91,7 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
     let requestPosts' this url =
         requestPosts 
             (async {
-                let! str = Http.AsyncRequestString (url, headers = HttpsOptions.Default.Headers)
+                let! str = Http.AsyncRequestString (url, headers = [])
                 return PostListJson.Parse str })
             mapJson
             (mapPost this baseUrl)
