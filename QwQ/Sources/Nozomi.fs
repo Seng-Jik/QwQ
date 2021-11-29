@@ -21,17 +21,14 @@ let parseNozomiBin (nozomi: byte[]) =
     Seq.init 
         (Array.length nozomi / 4)
         (fun i -> 
-            let span = ReadOnlySpan<byte>(nozomi, i * 4, 4)
-            if BitConverter.IsLittleEndian
-            then 
-                let mem = NativeInterop.NativePtr.stackalloc<byte>(4)
-                let stackSpan = Span<byte> (NativeInterop.NativePtr.toVoidPtr mem, 4)
-                stackSpan.[0] <- span.[3]
-                stackSpan.[1] <- span.[2]
-                stackSpan.[2] <- span.[1]
-                stackSpan.[3] <- span.[0]
-                BitConverter.ToUInt32(stackSpan)
-            else BitConverter.ToUInt32(span))
+            let span = nozomi.[i * 4 .. i * 4 + 3]
+
+            let span =
+                if BitConverter.IsLittleEndian
+                then Array.rev span
+                else span
+            
+            BitConverter.ToUInt32(span, 0))
 
 
 type NozomiPostJson = JsonProvider<"https://j.nozomi.la/post/1/17/28749171.json">
@@ -148,7 +145,7 @@ type NozomiSource () =
                             let enum = AsyncSeq.toBlockingSeq nozomiExcepts
                             return 
                                 Collections.Generic.HashSet<uint32>(enum) 
-                                :> Collections.Generic.IReadOnlySet<uint32>
+                                :> Collections.Generic.ISet<uint32>
                         }
 
                 let! firstTag = Async.StartChild firstTag
