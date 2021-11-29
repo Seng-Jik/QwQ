@@ -6,7 +6,7 @@ open QwQ
 open QwQ.Utils
 
 
-type PostListJson = JsonProvider<"https://konachan.net/post.json">
+type PostListJson = JsonProvider<"./Sources/MoebooruSample.json">
 
 
 let mapRating =

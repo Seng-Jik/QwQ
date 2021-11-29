@@ -15,6 +15,7 @@
     <Compile Include="AniGuro.fs" />
     <Compile Include="Sources/Moebooru.fsi" />
     <Compile Include="Sources/Moebooru.fs" />
+    <Content Include="Sources\MoebooruSample.json" />
     <Compile Include="Sources/Danbooru.fsi" />
     <Compile Include="Sources/Danbooru.fs" />
     <Content Include="Sources/DanbooruSample.json" />

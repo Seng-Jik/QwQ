@@ -112,8 +112,11 @@ type TheBooruProjectSource (name, baseUrl) =
 
     interface ISearch with
         member x.Search s = 
-            requestPostUrl' x $"&tags={mapSearchOptions { s with Order = Default; NonTags =[] } }"
-            |> AntiGuro.antiThat s.NonTags
+            if s.Tags |> Seq.isEmpty && s.Rating = Unrated
+            then (x :> ISource).AllPosts |> AntiGuro.antiThat s.NonTags
+            else
+                requestPostUrl' x $"&tags={mapSearchOptions { s with Order = Default; NonTags =[] } }"
+                |> AntiGuro.antiThat s.NonTags
 
      
 let allgirl = TheBooruProjectSource ("All Girl", "https://allgirl.booru.org") :> ISource
