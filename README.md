@@ -25,21 +25,22 @@ XBooru    | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gel
 Rule34    | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Sankaku Channel   | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>, ITags, ISearchTag, IGetPostById
 Idol Complex      | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>
-All Girl          | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-Foot Fetish Booru | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-CGBooru           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-Touhou            | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-Anime Girls 2020  | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-Character Library | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-Ecchi Booru       | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-Hina              | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
-RuleXXX           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch
+All Girl          | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+Foot Fetish Booru | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+CGBooru           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+Touhou            | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+Anime Girls 2020  | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+Character Library | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+Ecchi Booru       | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+Hina              | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
+RuleXXX           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
 Nekobooru         | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Tentacle Rape     | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Fan Service       | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 NHentai           | [NHentaiSharp](https://github.com/Xwilarg/NHentaiSharp) | IGetPostById, ISearch
 Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nozomi.fs) | IGetPostById, ISearch
 Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Lolibaka.fs) | IGetPostById, ISearch
+
 ## 安装QwQ命令行
 
 首先确保已经安装.NET 6 SDK。
@@ -73,6 +74,7 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 * EHentai / ExHentai
 * Pixiv
 * PicACG
+* https://booru.io/
 * https://www.hbrowse.com/
 * https://thehentaiworld.com/
 * https://rule34.paheal.net/

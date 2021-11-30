@@ -28,7 +28,8 @@ let processViewPage (url: string) =
             |> Option.bind String.nullOrWhitespace
             |> Option.toList
 
-        return Option.map (mapHttpsContent HttpsOptions.Default) image, (url :: source)
+        return 
+            (Option.map (mapHttpsContent HttpsOptions.Default) image, (url :: source)), html
     }
 
 
@@ -77,21 +78,62 @@ let mapPostPage' (page: HtmlDocument) =
         script |> Option.map (fun script -> previewUrl, script))
 
 
+let getViewUrlById baseUrl id = $"{baseUrl}/index.php?page=post&s=view&id={id}"
+
+
+let mapViewPage baseUrl this postId =
+    async {
+        let! (content, srcs), html = 
+            getViewUrlById baseUrl postId
+            |> processViewPage
+
+        let tags =
+            html.CssSelect "#tag_list li span a"
+            |> List.choose (fun x -> 
+                x.InnerText().Replace(' ', '_') 
+                |> String.nullOrWhitespace)
+            |> List.map String.trim
+
+        let rating =
+            html.CssSelect "#tag_list ul"
+            |> List.tryHead
+            |> Option.map (function
+                | x when x.InnerText().Contains "Rating: Safe" -> Safe
+                | x when x.InnerText().Contains "Rating: Questionable" -> Questionable
+                | x when x.InnerText().Contains "Rating: Explicit" -> Explicit
+                | _ -> Unrated)
+            |> Option.defaultValue Unrated
+
+        return 
+            content
+            |> Option.map (fun content -> 
+                { Id = postId 
+                  Rating = rating
+                  Title = None
+                  Source = this
+                  SourceUrl = AsyncSeq.ofSeq srcs
+                  Tags = tags
+                  PreviewImage = None
+                  Content = 
+                      AsyncSeq.singleton content
+                      |> AsyncSeq.singleton})
+    }
+
+
 let mapPostPage baseUrl source (page: HtmlDocument) =
     mapPostPage' page
     |> List.map (fun (preview, (id, rating, tags)) ->
-        let details = processViewPage $"{baseUrl}/index.php?page=post&s=view&id={id}"
+        let details = processViewPage <| getViewUrlById baseUrl id
 
         { Id = id
           Rating = rating
           Tags = tags
           Title = None
           Source = source
-          SourceUrl = asyncSeq { let! _, x = details in yield! AsyncSeq.ofSeq x}
+          SourceUrl = asyncSeq { let! (_, x), _ = details in yield! AsyncSeq.ofSeq x}
           PreviewImage = Option.map (mapHttpsContent HttpsOptions.Default) preview
-          Content = asyncSeq { let! x, _ = details in yield AsyncSeq.ofSeq <| Option.toList x} })
+          Content = asyncSeq { let! (x, _), _ = details in yield AsyncSeq.ofSeq <| Option.toList x} })
     
-
 
 type TheBooruProjectSource (name, baseUrl) =
 
@@ -117,6 +159,11 @@ type TheBooruProjectSource (name, baseUrl) =
             else
                 requestPostUrl' x $"&tags={mapSearchOptions { s with Order = Default; NonTags =[] } }"
                 |> AntiGuro.antiThat s.NonTags
+
+    interface IGetPostById with
+        member x.GetPostById id =
+            mapViewPage baseUrl x id
+            |> Async.map Ok
 
      
 let allgirl = TheBooruProjectSource ("All Girl", "https://allgirl.booru.org") :> ISource
