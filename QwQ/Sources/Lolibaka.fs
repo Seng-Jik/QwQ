@@ -23,6 +23,63 @@ let getViewPageUrlFromPostId (postId: PostId) =
     $"https://www.lolibaka.com/post/show/{postId}"
 
 
+let mapViewPageToPost this srcUrl =
+    async {
+        let! viewPage = 
+            HtmlDocument.AsyncLoad srcUrl
+            |> Async.protect
+            |> Async.map Option.ofResult
+
+        return option {
+            let! viewPage = viewPage
+
+            let tags = 
+                viewPage.CssSelect ".sidebar-content li.nav-item a span"
+                |> List.filter (fun x -> not <| x.HasClass "badge")
+                |> List.choose (fun x -> 
+                    x.InnerText()
+                    |> String.nullOrWhitespace)
+                |> List.map (fun x -> x.Replace(' ', '_'))
+
+            let infos =
+                viewPage.CssSelect "ul.list-group li"
+                |> List.choose (fun x -> x.InnerText () |> String.nullOrWhitespace)
+                |> List.choose (fun x -> 
+                    let x = x.Split ':'
+                    option {
+                        let! key = Array.tryItem 0 x
+                        let! value = Array.tryItem 1 x
+                        return key.Trim(), value.Trim()
+                    })
+                |> Map.ofList
+
+            let! postId = Map.tryFind "Id" infos
+            let! postId = Option.protect (fun () -> uint64 postId)
+            return 
+                { Id = postId
+                  Title = None
+                  Source = this
+                  Rating = 
+                      Map.tryFind "Rating" infos
+                      |> Option.map (function
+                          | "Safe" -> Safe
+                          | "Questionable" -> Questionable
+                          | "Explicit" -> Explicit
+                          | _ -> Unrated)
+                      |> Option.defaultValue Unrated
+                  SourceUrl = AsyncSeq.singleton srcUrl
+                  Tags = tags
+                  PreviewImage = None
+                  Content = 
+                      getContentFromViewPage viewPage
+                      |> Option.toList
+                      |> AsyncSeq.ofSeq
+                      |> AsyncSeq.singleton }
+        }
+            
+    }
+
+
 let mapPostList this (page: HtmlDocument) =
     page.CssSelect ".lolipostlistbox"
     |> List.choose (fun li ->
@@ -108,8 +165,25 @@ type LolibakaSource () =
         member _.Name = "Lolibaka"
         member x.AllPosts = requestPostList x ""
 
-    // interface ISearch with
-    // interface IGetPostById with
+    interface ISearch with
+        member x.Search opt =
+            let firstTag = Seq.tryHead opt.Tags |> Option.defaultValue ""
+            let nextTags = 
+                if Seq.length opt.Tags > 0
+                then Seq.skip 1 opt.Tags
+                else Seq.empty
+
+            requestPostList x firstTag
+            |> AntiGuro.antiThat opt.NonTags
+            |> AsyncSeq.map (
+                Result.map (
+                    List.filter <| fun post -> 
+                        Seq.forall (fun t -> List.contains t post.Tags) nextTags))
+            
+    interface IGetPostById with
+        member x.GetPostById id =
+            mapViewPageToPost x $"https://www.lolibaka.com/post/show/{id}"
+            |> Async.map Ok
 
 
 let lolibaka = LolibakaSource () :> ISource
