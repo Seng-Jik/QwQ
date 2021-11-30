@@ -34,6 +34,8 @@
     <Compile Include="Sources/NHentaiSharp.fs" />
     <Compile Include="Sources/Nozomi.fsi" />
     <Compile Include="Sources/Nozomi.fs" />
+    <Compile Include="Sources\Lolibaka.fsi" />
+    <Compile Include="Sources\Lolibaka.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>

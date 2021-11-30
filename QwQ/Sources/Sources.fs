@@ -10,6 +10,8 @@ let sources =
       yield! SankakuComplex.sources
       yield! TheBooruProject.sources
       yield! Shimmie.sources
-      yield  NHentaiSharp.nhentai
-      yield  Nozomi.nozomi ]
+
+      NHentaiSharp.nhentai
+      Nozomi.nozomi
+      Lolibaka.lolibaka ]
 

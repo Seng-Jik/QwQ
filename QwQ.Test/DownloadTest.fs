@@ -120,3 +120,5 @@ let [<Test>] ``download: Fan Service`` () = downloadTest Sources.Shimmie.fanserv
 let [<Test>] ``download: NHentai`` () = downloadTest Sources.NHentaiSharp.nhentai
 
 let [<Test>] ``download: Nozomi`` () = downloadTest Sources.Nozomi.nozomi
+
+let [<Test>] ``download: Lolibaka`` () = downloadTest Sources.Lolibaka.lolibaka

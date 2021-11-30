@@ -72,18 +72,28 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 
 * EHentai / ExHentai
 * Pixiv
+* PicACG
 * https://www.hbrowse.com/
-* https://www.luscious.net/
-* https://www.lolibaka.com/
 * https://thehentaiworld.com/
 * https://rule34.paheal.net/
 * https://hentai-cosplays.com/
 * https://kawaiihentai.com/category/animepics
-* https://sukebei.nyaa.si/
-* https://aryion.com/
 * http://www.booru.realmofastra.ca/
-* https://e-shuushuu.net/
-* https://www.zerochan.net/
-* https://anime-pictures.net/
+* https://hitomi.la/
+* https://www.tsumino.com/
+* https://hentai2read.com/
+* https://imhentai.xxx/
+* https://manytoon.com/
+* https://hentairead.com/
+* https://www.simply-hentai.com/
+* https://hentaifox.com/
+* https://asmhentai.com/
+* https://hentaihand.com/
+* https://pururin.to/
+* https://m-hentai.net/
+* https://nhentai.xxx/ (using same system with NHentai.net?)
+* https://nhentai.com/
+* https://9hentai.to/
+* https://doujins.com/
 * iwara.tv / ecchi.iwara.tv
 
