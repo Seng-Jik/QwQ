@@ -150,9 +150,9 @@ let mapPostList this (page: HtmlDocument) =
 let requestPostList this tags =
     enumAllPages <| fun pageId ->
         async {
+            let url = $"https://www.lolibaka.com/post/list/{tags}/{pageId + 1}"
             let! page =
-                HtmlDocument.AsyncLoad    
-                    $"https://www.lolibaka.com/post/list#post/list/{tags}/{pageId + 1}"
+                HtmlDocument.AsyncLoad url
                 |> Async.protect
             
             return Result.map (mapPostList this) page
