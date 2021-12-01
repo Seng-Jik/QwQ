@@ -20,6 +20,12 @@ val mapSearchOptions: SearchOptions -> string
 val parseTags: string -> Tag list
 
 
+val enumAllPagesWithState<'s, 'a, 'b> :
+    initState: 's ->
+    getPageByIndex: ('s -> int -> Async<Result<'s * 'a list, 'b>>)
+    -> AsyncSeq<Result<'a list, 'b>>
+
+
 val enumAllPages<'a,'b> : 
     getPageByIndex: (int -> Async<Result<'a list,'b>>) 
     -> AsyncSeq<Result<'a list,'b>>

@@ -44,6 +44,7 @@ jobs:
           - 'NHentai'
         # - 'Nozomi'
         # - 'Lolibaka'
+          - 'Booru.io'
 
     steps:
     - uses: actions/checkout@v2

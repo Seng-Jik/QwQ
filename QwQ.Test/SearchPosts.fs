@@ -89,3 +89,6 @@ let [<Test>] ``search: Lolibaka`` () =
         { searchOpt2 with 
             Tags = [ "flandre_scarlet"; "touhou" ] } 
         Sources.Lolibaka.lolibaka
+
+let [<Test>] ``search: Booru io`` () = search10Pages searchOpt2 Sources.BooruIO.booruio
+

@@ -74,3 +74,5 @@ let [<Test>] ``list: Nozomi`` () = list10Pages Sources.Nozomi.nozomi
 
 let [<Test>] ``list: Lolibaka`` () = list10Pages Sources.Lolibaka.lolibaka
 
+let [<Test>] ``list: Booru io`` () = list10Pages Sources.BooruIO.booruio
+

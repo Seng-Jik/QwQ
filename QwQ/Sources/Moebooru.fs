@@ -99,24 +99,32 @@ type MoebooruSourceOptions =
     StartPageIndex: int }
 
 
-let enumAllPages getPageByIndex =
-    let rec enumPages errors curPage =
+let enumAllPagesWithState initState getPageByIndex =
+    let rec enumPages prevState errors curPage =
         asyncSeq {
-            match! getPageByIndex curPage with
-            | Ok x when List.isEmpty x && errors < 5 -> 
+            match! getPageByIndex prevState curPage with
+            | Ok (nextState, x) when List.isEmpty x && errors < 5 -> 
                 yield Ok x
-                yield! enumPages (errors + 1) (curPage + 1)
-            | Ok x when List.isEmpty x -> yield Ok x
-            | Ok x -> 
+                yield! enumPages nextState (errors + 1) (curPage + 1)
+            | Ok (_, x) when List.isEmpty x -> yield Ok x
+            | Ok (nextState, x) -> 
                 yield Ok x
-                yield! enumPages 0 (curPage + 1)
+                yield! enumPages nextState 0 (curPage + 1)
             | Error x when errors < 3 -> 
                 yield Error x
-                yield! enumPages (errors + 1) curPage
+                yield! enumPages prevState (errors + 1) curPage
             | Error x -> yield Error x
         }
     
-    enumPages 0 0
+    enumPages initState 0 0
+
+
+let enumAllPages getPageByIndex =
+    enumAllPagesWithState 
+        () 
+        (fun () -> 
+            getPageByIndex 
+            >> Async.map (Result.map (fun x -> (), x)))
 
 
 let mapRatingToMetaTag =

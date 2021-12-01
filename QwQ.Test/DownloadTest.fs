@@ -125,3 +125,5 @@ let [<Test>] ``download: NHentai`` () = downloadTest Sources.NHentaiSharp.nhenta
 let [<Test>] ``download: Nozomi`` () = downloadTest Sources.Nozomi.nozomi
 
 let [<Test>] ``download: Lolibaka`` () = downloadTest Sources.Lolibaka.lolibaka
+
+let [<Test>] ``download: Booru io`` () = downloadTest Sources.BooruIO.booruio
