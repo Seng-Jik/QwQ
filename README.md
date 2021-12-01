@@ -37,6 +37,7 @@ RuleXXX           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/mai
 Nekobooru         | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Tentacle Rape     | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Fan Service       | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
+Rule34 Paheal     | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Shimmie.fs) | IGetPostById, ISearch, ITags, ISearchTag
 NHentai           | [NHentaiSharp](https://github.com/Xwilarg/NHentaiSharp) | IGetPostById, ISearch
 Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nozomi.fs) | IGetPostById, ISearch
 Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Lolibaka.fs) | IGetPostById, ISearch
@@ -77,7 +78,6 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 * https://booru.io/
 * https://www.hbrowse.com/
 * https://thehentaiworld.com/
-* https://rule34.paheal.net/
 * https://hentai-cosplays.com/
 * https://kawaiihentai.com/category/animepics
 * https://hitomi.la/

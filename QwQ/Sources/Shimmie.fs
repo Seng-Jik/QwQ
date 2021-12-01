@@ -12,11 +12,14 @@ let getContentAndSourceUrl name baseUrl fullUrl postId (page: HtmlDocument) =
         page.CssSelect "#main_image"
         |> List.tryExactlyOne
         |> Option.bind (fun x -> x.TryGetAttribute "src")
-        |> Option.map (fun x -> x.Value())
+        |> Option.map (fun x -> 
+            let x = x.Value ()
+            if x.ToLower().StartsWith("https://")
+            then x
+            else baseUrl + x)
         |> Option.bind String.nullOrWhitespace
         |> Option.map (
-            (+) baseUrl 
-            >> mapHttpsContent HttpsOptions.Default 
+            mapHttpsContent HttpsOptions.Empty 
             >> fun x -> { x with FileName = $"{name} {postId}{System.IO.Path.GetExtension x.FileName}"})
 
     let source =
@@ -62,11 +65,21 @@ let getPostByViewPage source name baseUrl (page: HtmlDocument) ratingIfNotSuppor
             Option.protect (fun () ->
                 let table = infoTable.["Tags"]
                 if table.[0].Name() <> "td"
-                then table
-                else table |> List.collect (fun x -> x.Elements ())
-                |> List.map (fun x -> x.InnerText ()))
-            |> Option.toList
-            |> List.concat
+                then List.map (fun (x: HtmlNode) -> x.InnerText ()) table
+                else
+                    match List.tryExactlyOne table with
+                    | Some input when List.tryExactlyOne (input.Elements()) |> Option.map (fun x -> x.HasName "input") = Some true ->
+                        input.Elements ()
+                        |> List.tryExactlyOne 
+                        |> Option.bind (fun x -> x.TryGetAttribute "value")
+                        |> Option.map (fun x -> x.Value().Split ' ')
+                        |> Option.defaultValue [||]
+                        |> Array.toList
+                    | _ -> 
+                        table 
+                        |> List.collect (fun x -> x.Elements ())
+                        |> List.map (fun x -> x.InnerText ()))
+            |> Option.defaultValue []
 
         let rating =
             Option.protect (fun () ->
@@ -93,7 +106,7 @@ let getPostByViewPage source name baseUrl (page: HtmlDocument) ratingIfNotSuppor
           Rating = rating
           SourceUrl = AsyncSeq.ofSeq sourceUrls
           Tags = tags
-          PreviewImage = preview |> Option.map (mapHttpsContent HttpsOptions.Default)
+          PreviewImage = preview |> Option.map (mapHttpsContent HttpsOptions.Empty)
           Content = AsyncSeq.singleton content } )
 
 
@@ -111,7 +124,10 @@ let mapViewPage name baseUrl id =
 
 
 let mapPage source baseUrl (page: HtmlDocument) =
-    page.CssSelect ".shm-image-list a"
+    page.CssSelect ".shm-image-list"
+    |> List.tryHead
+    |> Option.map (fun x -> x.Elements())
+    |> Option.defaultValue []
     |> List.choose (fun node -> 
         let tags = 
             node.TryGetAttribute "data-tags"
@@ -125,7 +141,11 @@ let mapPage source baseUrl (page: HtmlDocument) =
             node.CssSelect "img"
             |> List.tryExactlyOne
             |> Option.bind (fun x -> x.TryGetAttribute "src")
-            |> Option.map (fun x -> baseUrl + x.Value())
+            |> Option.map (fun x -> 
+                let x = x.Value ()
+                if x.ToLower().StartsWith("https://")
+                then x
+                else baseUrl + x)
             
         id |> Option.map (fun id ->
             { Id = id 
@@ -135,11 +155,11 @@ let mapPage source baseUrl (page: HtmlDocument) =
               Rating = Unrated 
               SourceUrl = asyncSeq { let! _, s = mapViewPage source.Name baseUrl id in yield! AsyncSeq.ofSeq s }
               Tags = tags |> Option.map Array.toList |> Option.defaultValue []
-              PreviewImage = img |> Option.map (mapHttpsContent HttpsOptions.Default)
+              PreviewImage = img |> Option.map (mapHttpsContent HttpsOptions.Empty)
               Content = asyncSeq { let! a, _ = mapViewPage source.Name baseUrl id in yield a } } ))
 
 
-type ShimmieSource (name, baseUrl) =
+type ShimmieSource (name, baseUrl: string, rule34PahealTags) =
 
     let requestPostList this search =
         enumAllPages <| fun pageId ->
@@ -164,7 +184,7 @@ type ShimmieSource (name, baseUrl) =
     let tags =
         asyncSeq {
             match!
-                HtmlDocument.AsyncLoad $"{baseUrl}/tags"
+                HtmlDocument.AsyncLoad ($"{baseUrl}/tags" + if rule34PahealTags then "?starts_with" else "")
                 |> Async.protect
                 |> Async.retryResult 3 1500
             with
@@ -209,12 +229,14 @@ type ShimmieSource (name, baseUrl) =
             |> Async.protect
 
 
-let nekobooru = ShimmieSource ("Nekobooru", "https://neko-booru.com") :> ISource
-let tentacleRape = ShimmieSource ("Tentacle Rape", "https://tentaclerape.net") :> ISource
-let fanservice = ShimmieSource ("Fan Service", "https://fanservice.fan") :> ISource
+let nekobooru = ShimmieSource ("Nekobooru", "https://neko-booru.com", false) :> ISource
+let tentacleRape = ShimmieSource ("Tentacle Rape", "https://tentaclerape.net", false) :> ISource
+let fanservice = ShimmieSource ("Fan Service", "https://fanservice.fan", false) :> ISource
+let rule34paheal = ShimmieSource("Rule34 Paheal", "https://rule34.paheal.net", true) :> ISource
 
 
 let sources = 
     [ nekobooru
       tentacleRape
-      fanservice ]
+      fanservice
+      rule34paheal ]

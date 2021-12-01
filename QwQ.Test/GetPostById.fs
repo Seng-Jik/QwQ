@@ -48,6 +48,7 @@ let [<Test>] ``getPostById: RuleXXX`` () = getPostById 17090UL Sources.TheBooruP
 let [<Test>] ``getPostById: Nekobooru`` () = getPostById 1796UL Sources.Shimmie.nekobooru
 let [<Test>] ``getPostById: Fan Service`` () = getPostById 43355UL Sources.Shimmie.fanservice
 let [<Test>] ``getPostById: Tentacle Rape`` () = getPostById 87343UL Sources.Shimmie.tentacleRape
+let [<Test>] ``getPostById: Rule34 Paheal`` () = getPostById 4721352UL Sources.Shimmie.rule34paheal
 
 let [<Test>] ``getPostById: NHentai`` () = getPostById 374305UL Sources.NHentaiSharp.nhentai
     

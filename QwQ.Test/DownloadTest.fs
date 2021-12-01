@@ -29,6 +29,8 @@ let downloadToDir content dir =
                 printfn $"{e}"
             )
 
+            Assert.Fail ()
+
     lock stdout (fun () -> printfn $"{dir}/{content.FileName}")
 
 
@@ -116,6 +118,7 @@ let [<Test>] ``download: RuleXXX`` () = downloadTest Sources.TheBooruProject.rul
 let [<Test>] ``download: Nekobooru`` () = downloadTest Sources.Shimmie.nekobooru
 let [<Test>] ``download: Tentacle Rape`` () = downloadTest Sources.Shimmie.tentacleRape
 let [<Test>] ``download: Fan Service`` () = downloadTest Sources.Shimmie.fanservice
+let [<Test>] ``download: Rule34 Paheal`` () = downloadTest Sources.Shimmie.rule34paheal
 
 let [<Test>] ``download: NHentai`` () = downloadTest Sources.NHentaiSharp.nhentai
 

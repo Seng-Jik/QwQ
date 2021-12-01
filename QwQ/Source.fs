@@ -23,6 +23,8 @@ type HttpsOptions =
             """Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.34"""
         static member Default = 
             { Headers = [ "User-Agent", HttpsOptions.DefaultUserAgent ] }
+        static member Empty = 
+            { Headers = [] }
 
 
 type DownloadMethod =
