@@ -83,6 +83,24 @@ type BooruIOSource () =
             |> (+) "&query="
             |> enumAllPosts this
 
+    interface ISearchTag with
+        member _.SearchTag tag =
+            asyncSeq {
+                let! results = 
+                    JsonValue.AsyncLoad $"https://booru.io/api/legacy/query/tag?prefix={tag}"
+                    |> Async.map (fun x -> 
+                        x.TryGetProperty "data"
+                        |> Option.map (fun x -> x.Properties())
+                        |> Option.defaultValue [||]
+                        |> Array.map fst)
+                    |> Async.protect
+                    |> Async.map (function
+                        | Ok x -> Seq.map Ok x |> AsyncSeq.ofSeq
+                        | Error x -> AsyncSeq.singleton <| Error x)
+
+                yield! results
+            }
+
 
 let booruio = BooruIOSource () :> ISource
 

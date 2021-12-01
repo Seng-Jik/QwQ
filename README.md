@@ -41,7 +41,7 @@ Rule34 Paheal     | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sour
 NHentai           | [NHentaiSharp](https://github.com/Xwilarg/NHentaiSharp) | IGetPostById, ISearch
 Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nozomi.fs) | IGetPostById, ISearch
 Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Lolibaka.fs) | IGetPostById, ISearch
-Booru.io          | [Booru.io](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/BooruIO.fs)  | ISearch
+Booru.io          | [Booru.io](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/BooruIO.fs)  | ISearch, ISearchTag
 
 ## 安装QwQ命令行
 
@@ -96,5 +96,6 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 * https://nhentai.com/
 * https://9hentai.to/
 * https://doujins.com/
+* https://zha.erocool.me/
 * iwara.tv / ecchi.iwara.tv
 
