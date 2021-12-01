@@ -24,7 +24,7 @@ let parseTransformTitleToWidth (title: string) =
 
 
 let mapPostListJson this (json: PostListJson.Root) =
-    json.Cursor,
+    json.JsonValue.TryGetProperty "cursor" |> Option.map (fun x -> x.AsInteger()),
     [ for post in json.Data ->
         let transforms = 
             post.Transforms.JsonValue.Properties()
@@ -58,14 +58,17 @@ let mapPostListJson this (json: PostListJson.Root) =
 type BooruIOSource () =
     
     let enumAllPosts this postfix =
-        enumAllPagesWithState 0 <| fun cursor _ ->
+        enumAllPagesWithState (Some 0) <| fun cursor _ ->
             async {
-                let! postJson = 
-                    PostListJson.AsyncLoad 
-                        $"https://booru.io/api/legacy/query/entity?cursor={cursor}{postfix}"
-                    |> Async.protect
+                match cursor with
+                | Some cursor ->
+                    let! postJson = 
+                        PostListJson.AsyncLoad 
+                            $"https://booru.io/api/legacy/query/entity?cursor={cursor}{postfix}"
+                        |> Async.protect
 
-                return Result.map (mapPostListJson this) postJson
+                    return Result.map (mapPostListJson this) postJson
+                | None -> return Ok (None, [])
             }
 
     interface ISource with
