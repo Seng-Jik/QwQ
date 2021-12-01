@@ -80,7 +80,6 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 * https://rule34.paheal.net/
 * https://hentai-cosplays.com/
 * https://kawaiihentai.com/category/animepics
-* http://www.booru.realmofastra.ca/
 * https://hitomi.la/
 * https://www.tsumino.com/
 * https://hentai2read.com/
@@ -93,7 +92,7 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 * https://hentaihand.com/
 * https://pururin.to/
 * https://m-hentai.net/
-* https://nhentai.xxx/ (using same system with NHentai.net?)
+* https://nhentai.xxx/
 * https://nhentai.com/
 * https://9hentai.to/
 * https://doujins.com/

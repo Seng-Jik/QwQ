@@ -42,7 +42,7 @@ jobs:
           - 'Fan Service'
           - 'NHentai'
         # - 'Nozomi'
-          - 'Lolibaka'
+        # - 'Lolibaka'
 
     steps:
     - uses: actions/checkout@v2
