@@ -35,7 +35,7 @@ let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
       Tags = parseTags json.Tags
       PreviewImage = 
           mapHttpsContent 
-              HttpsOptions.Default 
+              HttpsOptions.Empty 
               $"{imgServerBaseUrl}/thumbnails/{json.Directory}/thumbnail_{changeExtJpg json.Image}"
           |> Some
               
@@ -48,7 +48,7 @@ let mapPost src baseUrl imgServerBaseUrl (json: PostListJson.Root) =
               |> Option.defaultValue $"{imgServerBaseUrl}/images/{json.Directory}/{json.Image}"
           }
           |> AsyncSeq.choose String.nullOrWhitespace
-          |> AsyncSeq.map (mapHttpsContent HttpsOptions.Default)
+          |> AsyncSeq.map (mapHttpsContent HttpsOptions.Empty)
           |> AsyncSeq.singleton }
 
 

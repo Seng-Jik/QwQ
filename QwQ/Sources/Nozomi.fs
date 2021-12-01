@@ -13,8 +13,8 @@ open FSharp.Control
 
 
 let httpsOpt = 
-    { HttpsOptions.Default with 
-        Headers = ("referer", "https://nozomi.la/") :: HttpsOptions.Default.Headers }
+    { HttpsOptions.Empty with 
+        Headers = ("referer", "https://nozomi.la/") :: HttpsOptions.Empty.Headers }
 
 
 let parseNozomiBin (nozomi: byte[]) =

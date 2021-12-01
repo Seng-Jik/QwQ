@@ -15,7 +15,7 @@ let getContentFromViewPage (viewPage: HtmlDocument) =
 
         let! attr = img.TryGetAttribute "src"
         let url = attr.Value ()
-        return mapHttpsContent HttpsOptions.Default url
+        return mapHttpsContent HttpsOptions.Empty url
     }
 
 
@@ -128,7 +128,7 @@ let mapPostList this (page: HtmlDocument) =
                   Tags = List.ofSeq tags
                   PreviewImage = 
                       previewImgUrl
-                      |> Option.map (mapHttpsContent HttpsOptions.Default)
+                      |> Option.map (mapHttpsContent HttpsOptions.Empty)
 
                   Content = 
                       asyncSeq {

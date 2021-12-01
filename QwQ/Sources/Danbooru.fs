@@ -27,7 +27,7 @@ let mapPost src baseUrl (json: PostListJson.Root) =
       PreviewImage = 
           json.PreviewFileUrl
           |> Option.bind String.nullOrWhitespace
-          |> Option.map (mapHttpsContent HttpsOptions.Default)
+          |> Option.map (mapHttpsContent HttpsOptions.Empty)
 
       Content = 
           asyncSeq {
@@ -35,7 +35,7 @@ let mapPost src baseUrl (json: PostListJson.Root) =
               json.FileUrl
           } 
           |> AsyncSeq.choose (Option.bind String.nullOrWhitespace)
-          |> AsyncSeq.map (mapHttpsContent HttpsOptions.Default)
+          |> AsyncSeq.map (mapHttpsContent HttpsOptions.Empty)
           |> AsyncSeq.singleton
     }
 

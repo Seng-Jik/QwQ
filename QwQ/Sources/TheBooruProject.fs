@@ -29,7 +29,7 @@ let processViewPage (url: string) =
             |> Option.toList
 
         return 
-            (Option.map (mapHttpsContent HttpsOptions.Default) image, (url :: source)), html
+            (Option.map (mapHttpsContent HttpsOptions.Empty) image, (url :: source)), html
     }
 
 
@@ -131,7 +131,7 @@ let mapPostPage baseUrl source (page: HtmlDocument) =
           Title = None
           Source = source
           SourceUrl = asyncSeq { let! (_, x), _ = details in yield! AsyncSeq.ofSeq x}
-          PreviewImage = Option.map (mapHttpsContent HttpsOptions.Default) preview
+          PreviewImage = Option.map (mapHttpsContent HttpsOptions.Empty) preview
           Content = asyncSeq { let! (x, _), _ = details in yield AsyncSeq.ofSeq <| Option.toList x} })
     
 

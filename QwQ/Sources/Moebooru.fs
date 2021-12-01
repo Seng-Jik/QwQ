@@ -225,7 +225,7 @@ let konachanLike name baseUrl =
       BaseUrl = baseUrl
       PostListJson = "/post.json"
       SourceUrlGen = sprintf "%s/post/show/%d"
-      HttpsOpts = HttpsOptions.Default
+      HttpsOpts = HttpsOptions.Empty
       StartPageIndex = 1 }
 
 
