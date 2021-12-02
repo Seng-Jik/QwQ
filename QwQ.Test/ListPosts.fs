@@ -18,6 +18,8 @@ let show10Pages x =
             Result.unwrap x
             |> Seq.iter (fun post ->
                 printfn $"{post.Id} {post.Tags}"
+                if post.Title.IsSome then 
+                    printfn $"{post.Title.Value}"
                 printfn $"{post.PreviewImage}"
                 printfn ""
                 items.Value <- items.Value + 1

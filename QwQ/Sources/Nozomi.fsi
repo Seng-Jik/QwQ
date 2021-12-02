@@ -4,6 +4,6 @@ open QwQ
 
 
 val parseNozomiBin: byte[] -> uint32 seq
-
+val newNozomiCache: unit -> AsyncCache<string, uint32 seq>
 
 val nozomi: ISource

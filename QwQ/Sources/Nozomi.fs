@@ -83,22 +83,23 @@ let getTags (pageId: char) =
     |> Async.protect
 
 
-type NozomiSource () =
-
-    let mutable cachedNozomiBins = Map.empty
-
-    let requestNozomiBin subDomain path =
+let newNozomiCache () =
+    AsyncCache<string, uint32 seq> (fun url -> 
         async {
-            match Map.tryFind path cachedNozomiBins with
-            | Some x -> return x
-            | None ->
-                let! response = Http.AsyncRequestStream ($"https://{subDomain}.nozomi.la/{path}.nozomi")
-                use byteStream = new IO.MemoryStream ()
-                response.ResponseStream.CopyTo byteStream
-                return 
-                    byteStream.ToArray ()
-                    |> parseNozomiBin
-        }
+            let! response = Http.AsyncRequestStream url
+            use byteStream = new IO.MemoryStream ()
+            response.ResponseStream.CopyTo byteStream
+            return 
+                byteStream.ToArray ()
+                |> parseNozomiBin
+        })
+
+
+type NozomiSource () =
+    
+    let nozomiCache = newNozomiCache ()
+    let getNozomi subDomain path =
+        nozomiCache.GetAsync $"https://{subDomain}.nozomi.la/{path}.nozomi"
 
     interface ITags with
         member _.Tags =
@@ -139,7 +140,7 @@ type NozomiSource () =
         member _.Name = "Nozomi"
         member this.AllPosts = 
             asyncSeq {
-                let! nozomiBin = requestNozomiBin 'n' "index"
+                let! nozomiBin = getNozomi 'n' "index"
                 let posts = 
                     nozomiBin 
                     |> Seq.map (
@@ -166,7 +167,7 @@ type NozomiSource () =
                 match opt.Order with
                 | Default | Date -> "nozomi/" + nozomi
                 | Popular | Score -> $"nozomi/popular/{nozomi}-Popular"
-                |> requestNozomiBin 'j'
+                |> getNozomi 'j'
                 |> Async.protect
 
             let firstTag, nextTags =
@@ -178,23 +179,7 @@ type NozomiSource () =
                 mapNozomi firstTag,
                 AsyncSeq.ofSeq nextTags |> AsyncSeq.mapAsyncParallel mapNozomi
             
-            let nozomiExcepts =
-                AsyncSeq.ofSeq (Seq.map ((+) "nozomi/") opt.NonTags)
-                |> AsyncSeq.mapAsyncParallel (requestNozomiBin 'j' >> Async.protect)
-                |> AsyncSeq.choose (function Ok x -> Some x | _ -> None)
-                |> AsyncSeq.concatSeq
-            
             asyncSeq {
-                let! excepts = 
-                    Async.StartChild <|
-                        async {
-                            let enum = AsyncSeq.toBlockingSeq nozomiExcepts
-                            return 
-                                Collections.Generic.HashSet<uint32>(enum) 
-                                :> Collections.Generic.ISet<uint32>
-                        }
-
-                let! firstTag = Async.StartChild firstTag
                 let! nextTags = Async.StartChild <| AsyncSeq.toListAsync nextTags
 
                 match! firstTag with
@@ -208,15 +193,14 @@ type NozomiSource () =
                     match nextTagErrs with
                     | _ :: _ -> yield! AsyncSeq.ofSeq nextTagErrs
                     | [] ->
-                        let! excepts = excepts
                         yield! 
                             src
                             |> Seq.filter (fun postId ->
-                                not (excepts.Contains postId)
-                                && List.forall (Seq.exists ((=) postId)) nextTags)
+                                List.forall (Seq.exists ((=) postId)) nextTags)
                             |> AsyncSeq.ofSeq
                             |> AsyncSeq.mapAsyncParallel (requestPost this >> Async.map List.singleton >> Async.protect)
             }
+            |> AntiGuro.antiThat opt.NonTags
                 
 
 

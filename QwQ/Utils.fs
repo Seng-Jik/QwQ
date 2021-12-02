@@ -30,6 +30,11 @@ module Result =
         | Ok x -> x
         | Error x -> raise x
 
+
+    let eitherArray rs =
+        Array.choose (function Ok x -> Some x | _ -> None) rs,
+        Array.choose (function Error x -> Some x | _ -> None) rs
+
     
     type ResultBuilder () =
         member _.Bind(x, f) = Result.bind f x

@@ -5,6 +5,7 @@ open FSharp.Control
 open QwQ
 open QwQ.Utils
 open QwQ.Sources.Moebooru
+open QwQ.Sources.Nozomi
 
 
 type Json = JsonProvider<"./Sources/HitomiJsonSample.json">
@@ -121,14 +122,14 @@ let getContentsFromJson (postJson: Json.Root) =
                 Https (url, { Headers = [ "referer", "https://hitomi.la/" ] }) }))
 
 
-let parseDetailsJson (postId: uint32) =
+let requestDetailsJson (postId: uint32) =
     async {
         let! json =
             Http.AsyncRequestString $"https://ltn.hitomi.la/galleries/{postId}.js"
 
         let json = json.Replace("var galleryinfo =", "") |> Json.Parse
 
-        let title = 
+        (*let title = 
             json.JsonValue.TryGetProperty "title"
             |> Option.orElseWith (fun () -> json.JsonValue.TryGetProperty "japanese_title")
             |> Option.map (fun x -> x.AsString ())
@@ -136,9 +137,9 @@ let parseDetailsJson (postId: uint32) =
         let tags = 
             json.Tags
             |> Seq.map (fun x -> x.Tag.Replace(' ', '_'))
-            |> Seq.toList
+            |> Seq.toList*)
 
-        return title, tags, json
+        return json
     }
 
 
@@ -147,11 +148,25 @@ let parseDetailsHtml this (postId: uint32) : Async<Result<Option<Post>, exn>> =
         let! html = 
             HtmlDocument.AsyncLoad $"https://ltn.hitomi.la/galleryblock/{postId}.html"
 
-        let! json = 
-            parseDetailsJson postId
-            |> Async.protect 
+        let title = 
+            html.CssSelect "h1 a"
+            |> Seq.tryHead
+            |> Option.bind (fun x -> String.nullOrWhitespace <| x.InnerText ())
 
-        let title, tags, json = Result.unwrap json
+        let artist =
+            html.CssSelect ".artist-list a"
+
+        let tags =
+            html.CssSelect ".dj-desc td ul li a"
+            |> List.append artist
+            |> List.choose (fun x -> 
+                x
+                    .InnerText()
+                    .Replace("♀", "")
+                    .Replace("♂", "")
+                    .Trim()
+                    .Replace(' ', '_')
+                |> String.nullOrWhitespace)
 
         let preview =
             html.CssSelect ".dj-img-cont img"
@@ -177,16 +192,54 @@ let parseDetailsHtml this (postId: uint32) : Async<Result<Option<Post>, exn>> =
               Tags = tags
               PreviewImage = preview
               Content = 
-                  getContentsFromJson json
-                  |> Result.unwrap
-                  |> Seq.map AsyncSeq.singleton
-                  |> AsyncSeq.ofSeq }
+                  asyncSeq {
+                      let! json = 
+                          requestDetailsJson postId
+                          |> Async.protect
+
+                      let json = Result.unwrap json
+
+                      yield!
+                          getContentsFromJson json
+                          |> Result.unwrap
+                          |> Seq.map AsyncSeq.singleton
+                          |> AsyncSeq.ofSeq
+                  } 
+            }
     }
     |> Async.protect
     |> Async.map (function
         | Ok x -> Ok <| Some x
         | Error x when x.Message.Contains "404" -> Ok None
         | Error e -> Error e)
+
+
+let mapOrdering order =
+    match order with
+    | Popular | Score -> "popular/week/"
+    | _ -> ""
+
+
+let allPosts this (nozomiCache: AsyncCache<string, uint32 seq>) order =
+    asyncSeq {
+        let! nozomiBin = 
+            nozomiCache.GetAsyncProtected <| 
+                match order with
+                | Popular | Score -> "https://ltn.hitomi.la/popular/week-all.nozomi"
+                | _ -> "https://ltn.hitomi.la/index-all.nozomi"
+            
+        match nozomiBin with
+        | Error x -> yield Error x
+        | Ok nozomiBin -> 
+            yield!
+                nozomiBin 
+                |> AsyncSeq.ofSeq
+                |> AsyncSeq.mapAsync (parseDetailsHtml this)
+                |> AsyncSeq.choose (function
+                    | Ok (Some x) -> Some <| Ok [x]
+                    | Ok None -> None
+                    | Error x -> Some <| Error x)
+    }
 
 
 let requestTags' (cat: string) (tagPageName: string) =
@@ -209,12 +262,12 @@ let requestTags' (cat: string) (tagPageName: string) =
 
 
 let requestTags tagPageName =
-    seq { "alltags"; "allartists"; "allseries"; "allcharacters" }
-    |> Seq.map (fun cat -> requestTags' cat tagPageName)
+    seq { "allseries"; "allcharacters"; "alltags"; "allartists" }
+    |> Seq.map (fun cat -> requestTags' cat tagPageName |> Async.map (Result.map (List.map (fun x -> cat, x))))
     |> AsyncSeq.ofSeqAsync
 
 
-let convertTags: AsyncSeq<Result<string list, exn>> seq -> AsyncSeq<Result<Tag, exn>> =
+let convertTags: AsyncSeq<Result<(string * string) list, exn>> seq -> AsyncSeq<Result<string * Tag, exn>> =
     AsyncSeq.ofSeq
     >> AsyncSeq.concat
     >> AsyncSeq.map (function
@@ -223,54 +276,113 @@ let convertTags: AsyncSeq<Result<string list, exn>> seq -> AsyncSeq<Result<Tag, 
     >> AsyncSeq.concatSeq
 
 
+let allTags  =
+    seq { yield "123"; yield! seq { 'a'..'z' } |> Seq.map string }
+    |> Seq.map requestTags
+    |> convertTags
+
+
+let searchTag (tagTerm: string) =
+    match String.nullOrWhitespace <| String.trim tagTerm with
+    | None -> allTags
+    | Some x -> 
+        match System.Char.ToLower <| x.[0] with
+        | x when Seq.exists ((=) x) (seq { '0' .. '9' }) -> requestTags "123"
+        | x when Seq.exists ((=) x) (seq { 'a' .. 'z' }) -> requestTags <| string x
+        | _ -> AsyncSeq.singleton <| Ok []
+        |> Seq.singleton
+        |> convertTags
+        |> AsyncSeq.filter (function
+            | Ok (_, x) -> x.StartsWith tagTerm
+            | Error _ -> true)
+
+
 let hitomi =
+    let nozomiCache = newNozomiCache ()
     { new ISource with
           member _.Name = "Hitomi"
-          member this.AllPosts = 
-              asyncSeq {
-                  let! nozomiBin = 
-                      Http.AsyncRequestStream "https://ltn.hitomi.la/index-all.nozomi"
-                      |> Async.protect
-
-                  match nozomiBin with
-                  | Error x -> yield Error x
-                  | Ok nozomiBin -> 
-                      use bs = new System.IO.MemoryStream ()
-                      nozomiBin.ResponseStream.CopyTo bs
-                      let ids = bs.ToArray() |> Nozomi.parseNozomiBin
-
-                      yield!
-                          ids 
-                          |> AsyncSeq.ofSeq
-                          |> AsyncSeq.mapAsync (parseDetailsHtml this)
-                          |> AsyncSeq.choose (function
-                              | Ok (Some x) -> Some <| Ok [x]
-                              | Ok None -> None
-                              | Error x -> Some <| Error x)
-              }
+          member this.AllPosts = allPosts this nozomiCache Date              
 
       interface IGetPostById with
           member this.GetPostById id =
               parseDetailsHtml (this :?> ISource) (id |> uint32)
 
+      interface ISearch with
+          member this.Search opt = 
+              let requestNozomiFromTag (cat, tag: string) =
+                  let cat = 
+                      match cat with
+                      | "alltags" -> "tag"
+                      | "allartists" -> "artist"
+                      | "allseries" -> "series"
+                      | "allcharacters" -> "character"
+                      | x -> failwith $"What is cat of {x}???"
+
+                  $"https://ltn.hitomi.la/{cat}/{mapOrder opt.Order}{tag.Replace('_', ' ')}-all.nozomi"
+                  |> nozomiCache.GetAsyncProtected
+                  |> Async.map (function
+                      | Ok x -> Ok x
+                      | Error e when e.Message.Contains "404" -> Ok Seq.empty
+                      | Error e -> Error e)
+
+              if Seq.length opt.Tags = 0 
+              then this.AllPosts
+              else
+                  let tags = opt.Tags |> Seq.map searchTag |> AsyncSeq.ofSeq
+
+                  let processOrGroup (orGroup: AsyncSeq<Result<string * Tag, exn>>) : Async<Result<uint32 seq, exn>> =
+                      async {
+                          let! postIds =
+                              orGroup
+                              |> AsyncSeq.map (Result.map (requestNozomiFromTag))
+                              |> AsyncSeq.toArrayAsync
+                          
+                          let postIdOks, errs1 = Result.eitherArray postIds
+                          let! postIdOks = postIdOks |> Async.Parallel
+                          let postIdOks, errs2 = Result.eitherArray postIdOks
+                          
+                          if Array.forall (Seq.isEmpty >> not) postIdOks
+                          then return Ok <| Seq.concat postIdOks
+                          else 
+                              if errs1 |> Array.isEmpty |> not then return Error errs1.[0]
+                              elif errs2 |> Array.isEmpty |> not then return Error errs2.[0]
+                              else return Ok Seq.empty
+                      }
+
+                  asyncSeq {
+                        let! tags = AsyncSeq.map processOrGroup tags |> AsyncSeq.toArrayAsync
+                        let! tags = tags |> Async.Parallel
+
+                        let tagOks, tagErrs = Result.eitherArray tags
+
+                        if Array.isEmpty tagErrs |> not
+                        then yield! tagErrs |> Array.map Error |> AsyncSeq.ofSeq
+                        else 
+                            let first = Array.head tagOks
+                            let tail = Seq.tail tagOks 
+                                  
+                            yield!
+                                first
+                                |> Seq.filter (fun postId ->
+                                    Seq.forall (fun x -> Seq.exists ((=) postId) x) tail)
+                                |> Seq.map (parseDetailsHtml this)
+                                |> AsyncSeq.ofSeqAsync
+                                |> AsyncSeq.choose (function
+                                    | Ok None -> None
+                                    | Ok (Some x) -> Some <| Ok [x]
+                                    | Error x -> Some <| Error x)
+                  }
+              |> AntiGuro.antiThat opt.NonTags
+
+
       interface ITags with
           member _.Tags =
-              seq { yield "123"; yield! seq { 'a'..'z' } |> Seq.map string }
-              |> Seq.map requestTags
-              |> convertTags
+              allTags
+              |> AsyncSeq.map (Result.map snd)
 
       interface ISearchTag with
-          member x.SearchTag s = 
-              match String.nullOrWhitespace <| String.trim s with
-              | None -> (x :?> ITags).Tags
-              | Some x -> 
-                  match System.Char.ToLower <| x.[0] with
-                  | x when Seq.exists ((=) x) (seq { '0' .. '9' }) -> requestTags "123"
-                  | x when Seq.exists ((=) x) (seq { 'a' .. 'z' }) -> requestTags <| string x
-                  | _ -> AsyncSeq.singleton <| Ok []
-                  |> Seq.singleton
-                  |> convertTags
-                  |> AsyncSeq.filter (function
-                      | Ok x -> x.StartsWith s
-                      | Error _ -> true)
+          member _.SearchTag s = 
+              searchTag s
+              |> AsyncSeq.map (Result.map snd)
+
     }

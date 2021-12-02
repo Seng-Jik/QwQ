@@ -7,12 +7,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Utils.fs" />
+    <Compile Include="AsyncCache.fs" />
     <Compile Include="Source.fs" />
     <Compile Include="Tags.fs" />
+    <Compile Include="AniGuro.fs" />
     <Compile Include="Search.fs" />
     <Compile Include="Favorite.fs" />
     <Compile Include="Login.fs" />
-    <Compile Include="AniGuro.fs" />
     <Compile Include="Sources/Moebooru.fsi" />
     <Compile Include="Sources/Moebooru.fs" />
     <Content Include="Sources\MoebooruSample.json" />
