@@ -176,6 +176,7 @@ type ShimmieSource (name, baseUrl: string, rule34PahealTags) =
                         | Some x -> [x]
                         | None -> mapPage this baseUrl doc
                         |> Ok
+                | Error x when x.Message.Contains "Search limit hit" -> return Ok []
                 | Error x when x.Message.Contains "No Images Found" -> return Ok []
                 | Error x when x.Message.Contains "No posts Found" -> return Ok []
                 | Error x -> return Error x
