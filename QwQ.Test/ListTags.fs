@@ -48,4 +48,5 @@ let [<Test>] ``tags: Tentacle Rape`` () = list100Tags Sources.Shimmie.tentacleRa
 let [<Test>] ``tags: Fan Service`` () = list100Tags Sources.Shimmie.fanservice
 let [<Test>] ``tags: Rule34 Paheal`` () = list100Tags Sources.Shimmie.rule34paheal
 
+let [<Test>] ``tags: Nozomi`` () = list100Tags Sources.Nozomi.nozomi
 let [<Test>] ``tags: Hitomi`` () = list100Tags Sources.Hitomi.hitomi

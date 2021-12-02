@@ -72,6 +72,17 @@ let requestPost src (postId: uint32) =
     } 
 
 
+let getTags (pageId: char) =
+    async {
+        let! json = JsonValue.AsyncLoad $"https://j.nozomi.la/search-{pageId}.json"
+
+        return 
+            json.Properties ()
+            |> Seq.map fst
+    }
+    |> Async.protect
+
+
 type NozomiSource () =
 
     let mutable cachedNozomiBins = Map.empty
@@ -88,6 +99,41 @@ type NozomiSource () =
                     byteStream.ToArray ()
                     |> parseNozomiBin
         }
+
+    interface ITags with
+        member _.Tags =
+            '0' :: ['a' .. 'z']
+            |> List.map getTags
+            |> AsyncSeq.ofSeqAsync
+            |> AsyncSeq.map (function
+                | Ok x -> Seq.map Ok x
+                | Error x -> Seq.singleton <| Error x)
+            |> AsyncSeq.concatSeq
+
+    interface ISearchTag with
+        member this.SearchTag s =
+            let x = String.nullOrWhitespace s |> Option.map String.trim
+
+            let getTags first = 
+                asyncSeq {
+                    let! s =
+                        getTags first
+                        |> Async.map (function
+                            | Ok x -> Seq.map Ok x
+                            | Error x -> Seq.singleton <| Error x)
+
+                    yield! AsyncSeq.ofSeq s
+                }
+
+            match x with
+            | None -> (this :> ITags).Tags
+            | Some x when Seq.exists ((=) (System.Char.ToLower x.[0])) (seq { 'a' .. 'z' }) ->
+                getTags (System.Char.ToLower x.[0])
+            | Some _ -> getTags '0'
+            |> AsyncSeq.filter (function
+                | Ok x -> x.StartsWith s
+                | _ -> true)
+                
 
     interface ISource with
         member _.Name = "Nozomi"
