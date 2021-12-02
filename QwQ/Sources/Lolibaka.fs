@@ -165,6 +165,25 @@ type LolibakaSource () =
         member _.Name = "Lolibaka"
         member x.AllPosts = requestPostList x ""
 
+    interface ISearchTag with
+        member _.SearchTag term =
+            asyncSeq {
+                match!
+                    JsonValue.AsyncLoad $"https://www.lolibaka.com/search.php?term={term}"
+                    |> Async.protect
+                with
+                | Ok json ->
+                    yield!
+                        json.AsArray ()
+                        |> Seq.choose (fun x -> 
+                            x.TryGetProperty "value"
+                            |> Option.orElseWith (fun () -> x.TryGetProperty "label"))
+                        |> Seq.choose (fun x -> String.nullOrWhitespace <| x.AsString())
+                        |> Seq.map Ok
+                        |> AsyncSeq.ofSeq
+                | Error e -> yield Error e
+            }
+
     interface ISearch with
         member x.Search opt =
             let firstTag = Seq.tryHead opt.Tags |> Option.defaultValue ""

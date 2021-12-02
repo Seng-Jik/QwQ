@@ -41,7 +41,7 @@ Rule34 Paheal     | [Shimmie](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sour
 NHentai           | [NHentaiSharp](https://github.com/Xwilarg/NHentaiSharp) | IGetPostById, ISearch
 Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Nozomi.fs) | IGetPostById, ITags, ISearchTag, ISearch
 Hitomi            | [Hitomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Hitomi.fs) | IGetPostById, ITags, ISearchTag
-Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Lolibaka.fs) | IGetPostById, ISearch
+Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Lolibaka.fs) | IGetPostById, ISearch, ISearchTag
 Booru.io          | [Booru.io](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/BooruIO.fs)  | ISearch, ISearchTag
 
 ## 安装QwQ命令行
