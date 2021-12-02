@@ -31,6 +31,7 @@ let [<Test>] ``searchTag: XBooru`` () = search100Tags Sources.Gelbooru.xbooru
 let [<Test>] ``searchTag: Rule34`` () = search100Tags Sources.Gelbooru.rule34
 
 let [<Test>] ``searchTag: Sankaku Channel`` () = search100Tags Sources.SankakuComplex.sankakuChannel
+let [<Test>] ``searchTag: Idol Complex`` () = search100Tags' "cosplay" Sources.SankakuComplex.idolComplex
 let [<Test>] ``searchTag: Tentacle Rape`` () = search100Tags Sources.Shimmie.tentacleRape
 
 let [<Test>] ``searchTag: Nekobooru`` () = search100Tags Sources.Shimmie.nekobooru

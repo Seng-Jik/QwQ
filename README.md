@@ -24,7 +24,7 @@ Safebooru | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gel
 XBooru    | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Rule34    | [Gelbooru](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Gelbooru.fs) | IGetPostById, ISearch, ITags, ISearchTag
 Sankaku Channel   | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>, ITags, ISearchTag, IGetPostById
-Idol Complex      | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>
+Idol Complex      | [Sankaku Complex](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/SankakuComplex.fs) | ISearch, ILogin<Username, Password>, ISearchTag
 All Girl          | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
 Foot Fetish Booru | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById
 CGBooru           | [The Booru Project](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheBooruProject.fs) | ISearch, IGetPostById

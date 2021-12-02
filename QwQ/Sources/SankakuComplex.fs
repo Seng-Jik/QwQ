@@ -197,27 +197,44 @@ type SankakuChannelSourceGuest () =
             }
 
 
-type IdolComplexSourceLoggedIn (username, loginStr) =
+type IdolComplexSource (loginStr) =
     inherit SankakuComplexSource (
-        "Idol Complex", 
+        "Idol Complex",
         "https://idol.sankakucomplex.com/",
         "https://iapi.sankakucomplex.com/post/index.json",
         60,
         loginStr,
-        []) 
+        [])
+
+    interface ISearchTag with
+        member _.SearchTag term =
+            asyncSeq {
+                match! 
+                    $"https://idol.sankakucomplex.com/tag/autosuggest?tag={term}"
+                    |> JsonValue.AsyncLoad
+                    |> Async.protect
+                with
+                | Error x -> yield Error x
+                | Ok x -> 
+                    yield!
+                        x.AsArray ()
+                        |> Seq.collect (function
+                            | JsonValue.Array a -> a
+                            | _ -> [||])
+                        |> Seq.map (fun x -> Ok <| x.AsString ())
+                        |> AsyncSeq.ofSeq
+            }
+
+
+type IdolComplexSourceLoggedIn (username, loginStr) =
+    inherit IdolComplexSource (loginStr)
 
     interface ILoggedIn<Username> with
         member _.LoginInfo = async { return username }
 
 
-type IdolComplexSource () =
-    inherit SankakuComplexSource (
-        "Idol Complex", 
-        "https://idol.sankakucomplex.com/",
-        "https://iapi.sankakucomplex.com/post/index.json",
-        60,
-        "",
-        [])
+type IdolComplexSourceGuest () =
+    inherit IdolComplexSource ("")
 
     interface ILogin<Username, Password> with
         member _.Login username password =
@@ -242,7 +259,7 @@ type IdolComplexSource () =
 
 
 let sankakuChannel = SankakuChannelSourceGuest () : ISource
-let idolComplex = IdolComplexSource () :> ISource
+let idolComplex = IdolComplexSourceGuest () :> ISource
 
 
 let sources =
