@@ -13,6 +13,7 @@ let sources =
 
       NHentaiSharp.nhentai
       Nozomi.nozomi
+      Hitomi.hitomi
       Lolibaka.lolibaka
       BooruIO.booruio ]
 

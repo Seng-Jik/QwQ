@@ -123,6 +123,7 @@ let [<Test>] ``download: Rule34 Paheal`` () = downloadTest Sources.Shimmie.rule3
 let [<Test>] ``download: NHentai`` () = downloadTest Sources.NHentaiSharp.nhentai
 
 let [<Test>] ``download: Nozomi`` () = downloadTest Sources.Nozomi.nozomi
+let [<Test>] ``download: Hitomi`` () = downloadTest Sources.Hitomi.hitomi
 
 let [<Test>] ``download: Lolibaka`` () = downloadTest Sources.Lolibaka.lolibaka
 

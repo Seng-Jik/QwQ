@@ -71,6 +71,7 @@ let [<Test>] ``list: Rule34 Paheal`` () = list10Pages Sources.Shimmie.rule34pahe
 let [<Test>] ``list: NHentai`` () = list10Pages Sources.NHentaiSharp.nhentai
 
 let [<Test>] ``list: Nozomi`` () = list10Pages Sources.Nozomi.nozomi
+let [<Test>] ``list: Hitomi`` () = list10Pages Sources.Hitomi.hitomi
 
 let [<Test>] ``list: Lolibaka`` () = list10Pages Sources.Lolibaka.lolibaka
 
