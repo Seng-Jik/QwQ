@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
-    <PackageReference Include="FSharp.Data" Version="4.2.5" />
+    <PackageReference Include="FSharp.Data" Version="4.2.6" />
     <PackageReference Include="NHentaiSharp" Version="1.1.1" />
   </ItemGroup>
 </Project>
