@@ -189,6 +189,40 @@ let parseDetailsHtml this (postId: uint32) : Async<Result<Option<Post>, exn>> =
         | Error e -> Error e)
 
 
+let requestTags' (cat: string) (tagPageName: string) =
+    async {
+        let! html =
+            $"https://hitomi.la/{cat}-{tagPageName}.html"
+            |> HtmlDocument.AsyncLoad
+
+        return
+            html.CssSelect "ul.posts li a"
+            |> List.map (fun x -> 
+                x
+                    .InnerText()
+                    .Replace("♀", "")
+                    .Replace("♂", "")
+                    .Trim()
+                    .Replace(' ', '_'))
+    }
+    |> Async.protect
+
+
+let requestTags tagPageName =
+    seq { "alltags"; "allartists"; "allseries"; "allcharacters" }
+    |> Seq.map (fun cat -> requestTags' cat tagPageName)
+    |> AsyncSeq.ofSeqAsync
+
+
+let convertTags: AsyncSeq<Result<string list, exn>> seq -> AsyncSeq<Result<Tag, exn>> =
+    AsyncSeq.ofSeq
+    >> AsyncSeq.concat
+    >> AsyncSeq.map (function
+        | Ok x -> Seq.map Ok x
+        | Error x -> Seq.singleton <| Error x)
+    >> AsyncSeq.concatSeq
+
+
 let hitomi =
     { new ISource with
           member _.Name = "Hitomi"
@@ -218,4 +252,25 @@ let hitomi =
       interface IGetPostById with
           member this.GetPostById id =
               parseDetailsHtml (this :?> ISource) (id |> uint32)
+
+      interface ITags with
+          member _.Tags =
+              seq { yield "123"; yield! seq { 'a'..'z' } |> Seq.map string }
+              |> Seq.map requestTags
+              |> convertTags
+
+      interface ISearchTag with
+          member x.SearchTag s = 
+              match String.nullOrWhitespace <| String.trim s with
+              | None -> (x :?> ITags).Tags
+              | Some x -> 
+                  match System.Char.ToLower <| x.[0] with
+                  | x when Seq.exists ((=) x) (seq { '0' .. '9' }) -> requestTags "123"
+                  | x when Seq.exists ((=) x) (seq { 'a' .. 'z' }) -> requestTags <| string x
+                  | _ -> AsyncSeq.singleton <| Ok []
+                  |> Seq.singleton
+                  |> convertTags
+                  |> AsyncSeq.filter (function
+                      | Ok x -> x.StartsWith s
+                      | Error _ -> true)
     }

@@ -84,6 +84,7 @@ jobs:
           - 'Nekobooru'
           - 'Tentacle Rape'
           - 'Fan Service'
+          - 'Hitomi'
 
     steps:
     - uses: actions/checkout@v2

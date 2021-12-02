@@ -38,3 +38,5 @@ let [<Test>] ``searchTag: Fan Service`` () = search100Tags' "Series:" Sources.Sh
 let [<Test>] ``searchTag: Rule34 Paheal`` () = search100Tags' "Touhou" Sources.Shimmie.rule34paheal
 
 let [<Test>] ``searchTag: Booru io`` () = search100Tags Sources.BooruIO.booruio
+
+let [<Test>] ``searchTag: Hitomi`` () = search100Tags Sources.Hitomi.hitomi
