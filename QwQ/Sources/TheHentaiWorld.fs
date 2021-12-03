@@ -127,7 +127,7 @@ let getPostsFromPostListPage this (url: string) =
                             return result {
                                 let! post = post
                                 return 
-                                    { Id = 0UL
+                                    { Id = uint64 <| x.Title.GetHashCode()
                                       Title = x.Title
                                       Source = this 
                                       Rating = Unrated
