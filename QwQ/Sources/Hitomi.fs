@@ -372,7 +372,7 @@ let hitomi =
                                     | Ok (Some x) -> Some <| Ok [x]
                                     | Error x -> Some <| Error x)
                   }
-              |> AntiGuro.antiThat opt.NonTags
+              |> AntiGuro.antiThat opt.ExludeTags
 
 
       interface ITags with

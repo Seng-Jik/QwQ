@@ -175,7 +175,7 @@ let thehentaiworld =
                   |> Seq.reduce (fun a b -> a + "+" + b)
                   |> (+) "?s="
                   |> enumAllPages this
-              |> AntiGuro.antiThat opt.NonTags
+              |> AntiGuro.antiThat opt.ExludeTags
                   
       interface ITags with
           member _.Tags = tags

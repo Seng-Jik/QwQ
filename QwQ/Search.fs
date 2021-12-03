@@ -12,7 +12,7 @@ type Order =
 
 type SearchOptions =
     { Tags: Tag seq
-      NonTags: Tag seq 
+      ExludeTags: Tag seq 
       Rating: Rating
       Order: Order }
 
@@ -29,7 +29,7 @@ module Search =
 
     let slowSearch (x: ISource) searchOpt =
         x.AllPosts
-        |> AntiGuro.antiThat searchOpt.NonTags
+        |> AntiGuro.antiThat searchOpt.ExludeTags
         |> AsyncSeq.choose (function
             | Error x -> Some <| Error x
             | Ok page -> 

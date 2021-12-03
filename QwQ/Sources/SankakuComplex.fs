@@ -90,9 +90,9 @@ type SankakuComplexSource (name, siteUrl, apiUrl, limit, loginStr, addtionalHttp
 
     interface ISearch with
         member x.Search search = 
-            "&tags=" + mapSearchOptions { search with NonTags = [] }
+            "&tags=" + mapSearchOptions { search with ExludeTags = [] }
             |> x.RequestPostList
-            |> AntiGuro.antiThat search.NonTags
+            |> AntiGuro.antiThat search.ExludeTags
 
 
 type SankakuChannelSource (addtionalHttpHeaders) =
@@ -129,7 +129,7 @@ type SankakuChannelSource (addtionalHttpHeaders) =
                 match!
                     (x :> ISearch).Search 
                         { Tags = [$"id:{id}"]
-                          NonTags = []
+                          ExludeTags = []
                           Order = Default
                           Rating = Unrated }
                     |> AsyncSeq.tryFirst

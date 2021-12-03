@@ -208,7 +208,7 @@ type ShimmieSource (name, baseUrl: string, rule34PahealTags) =
             mapSearchOptions { search with Rating = Unrated; Order = Default }
             |> (+) "/"
             |> requestPostList this
-            |> AntiGuro.antiThat search.NonTags
+            |> AntiGuro.antiThat search.ExludeTags
 
     interface ITags with
         member _.Tags = tags

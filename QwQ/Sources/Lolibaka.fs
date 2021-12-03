@@ -193,7 +193,7 @@ type LolibakaSource () =
                 else Seq.empty
 
             requestPostList x firstTag
-            |> AntiGuro.antiThat opt.NonTags
+            |> AntiGuro.antiThat opt.ExludeTags
             |> AsyncSeq.map (
                 Result.map (
                     List.filter <| fun post -> 

@@ -13,7 +13,7 @@ let search10Pages searchOpt source =
 // booru tags: order:popular rating:e ke-ta uncensored -sex -nipples
 let searchOpt =
     { Tags = ["ke-ta"; "uncensored"]
-      NonTags = ["sex"; "rape"]
+      ExludeTags = ["sex"; "rape"]
       Rating = Explicit
       Order = Popular }
 
@@ -23,7 +23,7 @@ let [<Test>] ``search: Yandere`` () = search10Pages searchOpt Sources.Moebooru.y
 let [<Test>] ``search: Lolibooru`` () = search10Pages searchOpt Sources.Moebooru.lolibooru 
 let [<Test>] ``search: HypnoHub`` () = 
     search10Pages
-        { searchOpt with Tags = ["ke-ta"]; NonTags = ["ass"] }
+        { searchOpt with Tags = ["ke-ta"]; ExludeTags = ["ass"] }
         Sources.Moebooru.hypnohub 
         
 let danbooruSearch = { searchOpt with Tags = ["ke-ta"] } 
@@ -50,13 +50,13 @@ let [<Test>] ``search: Sankaku Channel`` () = search10Pages searchOpt Sources.Sa
 let [<Test>] ``search: Idol Complex`` () = 
     search10Pages
         { Tags = ["cosplay"; "asian"]
-          NonTags = ["touhou"]
+          ExludeTags = ["touhou"]
           Rating = Explicit
           Order = Popular }
         Sources.SankakuComplex.idolComplex
 
 
-let searchOpt2 = { Tags = ["touhou"]; NonTags = []; Rating = Unrated; Order = Default }
+let searchOpt2 = { Tags = ["touhou"]; ExludeTags = []; Rating = Unrated; Order = Default }
 
 
 let [<Test>] ``search: All Girl`` () = search10Pages searchOpt2 Sources.TheBooruProject.allgirl

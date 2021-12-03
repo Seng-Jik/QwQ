@@ -155,10 +155,10 @@ type TheBooruProjectSource (name, baseUrl) =
     interface ISearch with
         member x.Search s = 
             if s.Tags |> Seq.isEmpty && s.Rating = Unrated
-            then (x :> ISource).AllPosts |> AntiGuro.antiThat s.NonTags
+            then (x :> ISource).AllPosts |> AntiGuro.antiThat s.ExludeTags
             else
-                requestPostUrl' x $"&tags={mapSearchOptions { s with Order = Default; NonTags =[] } }"
-                |> AntiGuro.antiThat s.NonTags
+                requestPostUrl' x $"&tags={mapSearchOptions { s with Order = Default; ExludeTags =[] } }"
+                |> AntiGuro.antiThat s.ExludeTags
 
     interface IGetPostById with
         member x.GetPostById id =

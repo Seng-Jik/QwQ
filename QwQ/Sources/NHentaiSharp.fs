@@ -79,7 +79,7 @@ type NHentaiSharp () =
                 seq {
                     yield! x.Tags
                     yield! 
-                        x.NonTags
+                        x.ExludeTags
                         |> Seq.map SearchClient.GetExcludeTag
                 } |> Array.ofSeq
 

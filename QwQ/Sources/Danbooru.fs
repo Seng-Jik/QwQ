@@ -115,7 +115,7 @@ type DanbooruSource (name, baseUrl, danbooruLimit) =
         List.fold (fun a b -> a + " " + b) "" firstTwoTags
         |> (+) "&tags="
         |> requestPostsWithUrlPostfix this 
-        |> AntiGuro.antiThat searchOpts.NonTags
+        |> AntiGuro.antiThat searchOpts.ExludeTags
         |> AsyncSeq.map (
             Result.map (
                 List.filter (fun x -> 

@@ -106,7 +106,7 @@ let commands = [
         Body = fun state tags ->
             let search = 
                 { Tags = tags
-                  NonTags = []
+                  ExludeTags = []
                   Rating = Unrated
                   Order = Default }
 

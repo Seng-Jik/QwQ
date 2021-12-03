@@ -150,7 +150,7 @@ let mapOrder =
 
 
 let mapSearchOptions searchOpt =
-    searchOpt.NonTags
+    searchOpt.ExludeTags
     |> Seq.map nonTag
     |> Seq.append searchOpt.Tags
     |> Seq.append (mapRatingToMetaTag searchOpt.Rating |> Option.toList)

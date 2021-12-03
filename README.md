@@ -69,33 +69,21 @@ Full Test用于对整个图源中全部的内容和Tag进行测试以检查其�
 你可以使用下方命令行手动执行Full Test。
 
 ```shell
-dotnet publish ./QwQ/QwQ.fsproj -c Release -f netstandard2.0
 dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-preview ]
 ```
 
 ### 后续支持计划
 
-* EHentai / ExHentai
-* Pixiv
-* PicACG
-* https://www.hbrowse.com/
 * https://hentai-cosplays.com/
-* https://kawaiihentai.com/category/animepics
-* https://www.tsumino.com/
-* https://hentai2read.com/
-* https://imhentai.xxx/
-* https://manytoon.com/
-* https://hentairead.com/
+* iwara.tv / ecchi.iwara.tv
+* Pixiv
+* EHentai / ExHentai
+* PicACG
+* https://zha.erocool.me/
 * https://www.simply-hentai.com/
-* https://hentaifox.com/
 * https://asmhentai.com/
 * https://hentaihand.com/
-* https://pururin.to/
-* https://m-hentai.net/
+* https://amanmi.com/
 * https://nhentai.xxx/
 * https://nhentai.com/
-* https://9hentai.to/
-* https://doujins.com/
-* https://zha.erocool.me/
-* iwara.tv / ecchi.iwara.tv
 

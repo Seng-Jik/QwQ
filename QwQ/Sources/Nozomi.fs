@@ -200,7 +200,7 @@ type NozomiSource () =
                             |> AsyncSeq.ofSeq
                             |> AsyncSeq.mapAsyncParallel (requestPost this >> Async.map List.singleton >> Async.protect)
             }
-            |> AntiGuro.antiThat opt.NonTags
+            |> AntiGuro.antiThat opt.ExludeTags
                 
 
 
