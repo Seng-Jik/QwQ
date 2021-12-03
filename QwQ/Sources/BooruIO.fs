@@ -39,8 +39,8 @@ let mapPostListJson this (json: PostListJson.Root) =
 
         let content = 
             if Array.length transforms >= 1 
-            then Seq.skip 1 transforms
-            else Seq.empty
+            then Array.skip 1 transforms
+            else Array.empty
 
         { Id = post.Key.GetHashCode() |> uint64
           Title = None

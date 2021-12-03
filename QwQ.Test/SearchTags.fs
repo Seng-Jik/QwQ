@@ -44,3 +44,5 @@ let [<Test>] ``searchTag: Lolibaka`` () = search100Tags Sources.Lolibaka.lolibak
 
 let [<Test>] ``searchTag: Nozomi`` () = search100Tags Sources.Nozomi.nozomi
 let [<Test>] ``searchTag: Hitomi`` () = search100Tags Sources.Hitomi.hitomi
+
+let [<Test>] ``searchTag: The Hentai World`` () = search100Tags Sources.TheHentaiWorld.thehentaiworld

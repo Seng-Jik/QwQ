@@ -15,5 +15,6 @@ let sources =
       Nozomi.nozomi
       Hitomi.hitomi
       Lolibaka.lolibaka
-      BooruIO.booruio ]
+      BooruIO.booruio
+      TheHentaiWorld.thehentaiworld ]
 

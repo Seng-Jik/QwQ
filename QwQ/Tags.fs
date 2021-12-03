@@ -12,7 +12,15 @@ type ISearchTag =
 
 
 module Tags =
+
     let allTags (x: ITags) = x.Tags
-    let searchTag tagName (x: ISearchTag) = x.SearchTag tagName
+    let searchTag term (x: ISearchTag) = x.SearchTag term
+
+
+    let slowSearchTag (term: string) (x: ITags) = 
+        x.Tags
+        |> AsyncSeq.filter (function
+            | Ok x when not <| x.ToLower().Contains (term.ToLower()) -> false
+            | _ -> true)
 
     

@@ -31,9 +31,19 @@ module Result =
         | Error x -> raise x
 
 
-    let eitherArray rs =
-        Array.choose (function Ok x -> Some x | _ -> None) rs,
-        Array.choose (function Error x -> Some x | _ -> None) rs
+    let either rs =
+        Seq.choose (function Ok x -> Some x | _ -> None) rs,
+        Seq.choose (function Error x -> Some x | _ -> None) rs
+
+
+    let eitherArray rs = either rs |> fun (a, b) -> Seq.toArray a, Seq.toArray b
+    let eitherList rs = either rs |> fun (a, b) -> Seq.toList a, Seq.toList b
+
+
+    let flattenAsync =
+        function
+        | Ok x -> x
+        | Error x -> async { return Error x }
 
     
     type ResultBuilder () =

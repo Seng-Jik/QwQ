@@ -42,6 +42,8 @@
     <Compile Include="Sources/Lolibaka.fs" />
     <Compile Include="Sources/BooruIO.fsi" />
     <Compile Include="Sources/BooruIO.fs" />
+    <Compile Include="Sources\TheHentaiWorld.fsi" />
+    <Compile Include="Sources\TheHentaiWorld.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>

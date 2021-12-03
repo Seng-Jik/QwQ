@@ -50,3 +50,5 @@ let [<Test>] ``tags: Rule34 Paheal`` () = list100Tags Sources.Shimmie.rule34pahe
 
 let [<Test>] ``tags: Nozomi`` () = list100Tags Sources.Nozomi.nozomi
 let [<Test>] ``tags: Hitomi`` () = list100Tags Sources.Hitomi.hitomi
+
+let [<Test>] ``tags: The Hentai World`` () = list100Tags Sources.TheHentaiWorld.thehentaiworld

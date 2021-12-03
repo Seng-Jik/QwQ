@@ -43,6 +43,7 @@ Nozomi            | [Nozomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sourc
 Hitomi            | [Hitomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Hitomi.fs) | IGetPostById, ITags, ISearchTag, ISearch
 Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Lolibaka.fs) | IGetPostById, ISearch, ISearchTag
 Booru.io          | [Booru.io](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/BooruIO.fs)  | ISearch, ISearchTag
+The Hentai World  | [The Hentai World](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheHentaiWorld.fs) | ISearch, ISeatchTag, ITags
 
 ## 安装QwQ命令行
 
@@ -78,7 +79,6 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 * Pixiv
 * PicACG
 * https://www.hbrowse.com/
-* https://thehentaiworld.com/
 * https://hentai-cosplays.com/
 * https://kawaiihentai.com/category/animepics
 * https://www.tsumino.com/

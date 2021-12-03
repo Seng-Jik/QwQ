@@ -128,3 +128,5 @@ let [<Test>] ``download: Hitomi`` () = downloadTest Sources.Hitomi.hitomi
 let [<Test>] ``download: Lolibaka`` () = downloadTest Sources.Lolibaka.lolibaka
 
 let [<Test>] ``download: Booru io`` () = downloadTest Sources.BooruIO.booruio
+
+let [<Test>] ``download: The Hentai World`` () = downloadTest Sources.TheHentaiWorld.thehentaiworld

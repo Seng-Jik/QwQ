@@ -19,7 +19,6 @@ let private guroTags =
         "eye_fuck"
         "eyes_rolled_back"
         "blood_on_face"
-        "drill"
         "evil_grin"
         "evil_smile"
         "tongue_out"
@@ -30,7 +29,6 @@ let private guroTags =
         "bloody_hair"
         "gua61"
         "dismemberment"
-        "cut"   // cuts
         "grin"
         "bruise"
         "cum_inflation"

@@ -214,11 +214,7 @@ type ShimmieSource (name, baseUrl: string, rule34PahealTags) =
         member _.Tags = tags
 
     interface ISearchTag with
-        member _.SearchTag s =
-            tags 
-            |> AsyncSeq.filter (function
-                | Ok x when not <| x.Contains s -> false
-                | _ -> true)
+        member this.SearchTag s = Tags.slowSearchTag s this
 
     interface IGetPostById with
         member x.GetPostById id =

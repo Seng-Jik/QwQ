@@ -46,6 +46,7 @@ jobs:
           - 'Hitomi'
         # - 'Lolibaka'
           - 'Booru.io'
+          - 'The Hentai World'
 
     steps:
     - uses: actions/checkout@v2
@@ -85,7 +86,8 @@ jobs:
           - 'Tentacle Rape'
           - 'Fan Service'
           - 'Nozomi'
-          - 'Hitomi'
+        # - 'Hitomi'
+          - 'The Hentai World'
 
     steps:
     - uses: actions/checkout@v2
