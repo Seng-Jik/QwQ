@@ -234,7 +234,7 @@ let allPosts this (nozomiCache: AsyncCache<string, uint32 seq>) order =
             yield!
                 nozomiBin 
                 |> AsyncSeq.ofSeq
-                |> AsyncSeq.mapAsync (parseDetailsHtml this)
+                |> AsyncSeq.mapAsyncParallel (parseDetailsHtml this)
                 |> AsyncSeq.choose (function
                     | Ok (Some x) -> Some <| Ok [x]
                     | Ok None -> None

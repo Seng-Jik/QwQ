@@ -44,6 +44,7 @@ Hitomi            | [Hitomi](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sourc
 Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/Lolibaka.fs) | IGetPostById, ISearch, ISearchTag
 Booru.io          | [Booru.io](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/BooruIO.fs)  | ISearch, ISearchTag
 The Hentai World  | [The Hentai World](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheHentaiWorld.fs) | ISearch, ISeatchTag, ITags
+Hentai Cosplay    | [Hentai Cosplay](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/HentaiCosplay.fs)    | ISearch, ITags
 
 ## 安装QwQ命令行
 
@@ -74,7 +75,6 @@ dotnet fsi FullTest.fsx <图源> [--list-tags | --list-posts | --download-previe
 
 ### 后续支持计划
 
-* https://hentai-cosplays.com/
 * iwara.tv / ecchi.iwara.tv
 * Pixiv
 * EHentai / ExHentai

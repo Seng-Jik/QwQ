@@ -80,3 +80,5 @@ let [<Test>] ``list: Lolibaka`` () = list10Pages Sources.Lolibaka.lolibaka
 let [<Test>] ``list: Booru io`` () = list10Pages Sources.BooruIO.booruio
 
 let [<Test>] ``list: The Hentai World`` () = list10Pages Sources.TheHentaiWorld.thehentaiworld
+
+let [<Test>] ``list: Hentai Cosplay`` () = list10Pages Sources.HentaiCosplay.hentaicosplay

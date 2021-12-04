@@ -47,6 +47,7 @@ jobs:
         # - 'Lolibaka'
           - 'Booru.io'
           - 'The Hentai World'
+          - 'Hentai Cosplay'
 
     steps:
     - uses: actions/checkout@v2
@@ -88,6 +89,7 @@ jobs:
           - 'Nozomi'
         # - 'Hitomi'
           - 'The Hentai World'
+          - 'Hentai Cosplay'
 
     steps:
     - uses: actions/checkout@v2

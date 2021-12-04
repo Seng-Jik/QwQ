@@ -94,3 +94,5 @@ let [<Test>] ``search: Lolibaka`` () =
 let [<Test>] ``search: Booru io`` () = search10Pages searchOpt2 Sources.BooruIO.booruio
 
 let [<Test>] ``search: The Hentai World`` () = search10Pages searchOpt2 Sources.TheHentaiWorld.thehentaiworld
+
+let [<Test>] ``search: Hentai Cosplay`` () = search10Pages searchOpt2 Sources.HentaiCosplay.hentaicosplay
