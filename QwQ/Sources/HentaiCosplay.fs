@@ -75,8 +75,21 @@ let parseDetailsPage (url: string) =
                 |> String.nullOrWhitespace)
             |> List.distinct
 
+        let video = 
+            html.CssSelect "#video source"
+            |> List.tryHead
+            |> Option.bind (fun x -> x.TryGetAttribute "src")
+            |> Option.bind (fun x -> x.Value () |> String.nullOrWhitespace)
+            |> Option.map (mapHttpsContent httpsOption)
+            |> Option.toList
+            |> AsyncSeq.ofSeq
+            |> AsyncSeq.singleton
 
-        return {| ContentPages = contentPage; Tags = tags |}
+        let! contentPage = contentPage
+        let  allContents = AsyncSeq.append contentPage video
+
+
+        return {| ContentPages = allContents; Tags = tags |}
     }
 
 
@@ -126,7 +139,7 @@ let parsePostList' this (url: string) =
             |> AsyncSeq.mapAsyncParallel (fun post -> 
                 async {
                     let! details = parseDetailsPage post.Details
-                    let! content = details.ContentPages
+                    let  content = details.ContentPages
                     return
                         { Id = post.Title.GetHashCode () |> uint64 
                           Title = post.Title
@@ -199,3 +212,18 @@ let hentaicosplay =
                       $"https://hentai-cosplays.com/search/keyword/{term}/page/{pageId + 1}/"
               |> AntiGuro.antiThat opt.ExludeTags }
 
+
+let hentaicosplayvideo =
+    { new ISource with
+        member _.Name = "Hentai Cosplay Video"
+        member x.AllPosts = 
+            enumAllPosts x <| fun pageId ->
+                $"https://hentai-cosplays.com/search-video/page/{pageId + 1}"
+                
+      interface ITags with
+          member _.Tags = hentaicosplay :?> ITags |> Tags.allTags }
+
+
+let sources = 
+    [ hentaicosplay
+      hentaicosplayvideo ]

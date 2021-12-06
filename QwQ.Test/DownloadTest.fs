@@ -132,3 +132,4 @@ let [<Test>] ``download: Booru io`` () = downloadTest Sources.BooruIO.booruio
 let [<Test>] ``download: The Hentai World`` () = downloadTest Sources.TheHentaiWorld.thehentaiworld
 
 let [<Test>] ``download: Hentai Cosplay`` () = downloadTest Sources.HentaiCosplay.hentaicosplay
+let [<Test>] ``download: Hentai Cosplay Video`` () = downloadTest Sources.HentaiCosplay.hentaicosplayvideo

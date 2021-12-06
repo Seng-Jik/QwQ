@@ -4,3 +4,7 @@ open QwQ
 
 
 val hentaicosplay: ISource
+val hentaicosplayvideo: ISource
+
+
+val sources: ISource list

@@ -45,6 +45,7 @@ Lolibaka          | [Lolibaka](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sou
 Booru.io          | [Booru.io](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/BooruIO.fs)  | ISearch, ISearchTag
 The Hentai World  | [The Hentai World](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/TheHentaiWorld.fs) | ISearch, ISeatchTag, ITags
 Hentai Cosplay    | [Hentai Cosplay](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/HentaiCosplay.fs)    | ISearch, ITags
+Hentai Cosplay Video   | [Hentai Cosplay](https://github.com/Seng-Jik/QwQ/blob/main/QwQ/Sources/HentaiCosplay.fs)    | ITags
 
 ## 安装QwQ命令行
 

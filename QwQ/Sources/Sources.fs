@@ -10,6 +10,7 @@ let sources =
       yield! SankakuComplex.sources
       yield! TheBooruProject.sources
       yield! Shimmie.sources
+      yield! HentaiCosplay.sources
 
       NHentaiSharp.nhentai
       Nozomi.nozomi
