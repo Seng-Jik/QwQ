@@ -47,7 +47,7 @@ jobs:
         # - 'Lolibaka'
           - 'Booru.io'
           - 'The Hentai World'
-          - 'Hentai Cosplay'
+        # - 'Hentai Cosplay'
 
     steps:
     - uses: actions/checkout@v2
