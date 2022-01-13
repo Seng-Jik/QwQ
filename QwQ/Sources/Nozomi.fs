@@ -83,10 +83,10 @@ let getTags (pageId: char) =
     |> Async.protect
 
 
-let newNozomiCache () =
+let newNozomiCache referer =
     AsyncCache<string, uint32 seq> (fun url -> 
         async {
-            let! response = Http.AsyncRequestStream url
+            let! response = Http.AsyncRequestStream (url, headers = [ "referer", referer ])
             use byteStream = new IO.MemoryStream ()
             response.ResponseStream.CopyTo byteStream
             return 
@@ -97,7 +97,7 @@ let newNozomiCache () =
 
 type NozomiSource () =
     
-    let nozomiCache = newNozomiCache ()
+    let nozomiCache = newNozomiCache "https://nozomi.la/"
     let getNozomi subDomain path =
         nozomiCache.GetAsync $"https://{subDomain}.nozomi.la/{path}.nozomi"
 

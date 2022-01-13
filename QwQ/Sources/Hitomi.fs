@@ -298,7 +298,7 @@ let searchTag (tagTerm: string) =
 
 
 let hitomi =
-    let nozomiCache = newNozomiCache ()
+    let nozomiCache = newNozomiCache "https://hitomi.la/"
     { new ISource with
           member _.Name = "Hitomi"
           member this.AllPosts = allPosts this nozomiCache Date              
