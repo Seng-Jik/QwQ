@@ -11,6 +11,9 @@ open QwQ.Sources.Nozomi
 type Json = JsonProvider<"./Sources/HitomiJsonSample.json">
 
 
+let referer = "https://hitomi.la/"
+
+
 module private MagicJS =
     open System.Text.RegularExpressions
     // Magic JS Code
@@ -111,6 +114,9 @@ module private MagicJS =
 //  url_from_url_from_hash(galleryid, image);
 
 
+let hitomiHttpOption = { Headers = [ "referer", referer ]}
+
+
 let getContentsFromJson (postJson: Json.Root) =
     Result.protect (fun () ->
         let postId = uint32 postJson.Id
@@ -119,13 +125,14 @@ let getContentsFromJson (postJson: Json.Root) =
             let url = MagicJS.urlFromUrlFromHash postId x
             { FileName = x.Name
               DownloadMethod = 
-                Https (url, { Headers = [ "referer", "https://hitomi.la/" ] }) }))
+                Https (url, hitomiHttpOption) }))
 
 
 let requestDetailsJson (postId: uint32) =
     async {
         let! json =
-            Http.AsyncRequestString $"https://ltn.hitomi.la/galleries/{postId}.js"
+            Http.AsyncRequestString 
+                ($"https://ltn.hitomi.la/galleries/{postId}.js", headers = hitomiHttpOption.Headers)
 
         let json = json.Replace("var galleryinfo =", "") |> Json.Parse
 
@@ -145,8 +152,13 @@ let requestDetailsJson (postId: uint32) =
 
 let parseDetailsHtml this (postId: uint32) : Async<Result<Option<Post>, exn>> =
     async {
-        let! html = 
-            HtmlDocument.AsyncLoad $"https://ltn.hitomi.la/galleryblock/{postId}.html"
+        let! htmlStr = 
+            Http.AsyncRequestString 
+                ($"https://ltn.hitomi.la/galleryblock/{postId}.html", 
+                 headers = [ "referer", "https://hitomi.la"])
+
+        let html = 
+            HtmlDocument.Parse htmlStr
 
         let title = 
             html.CssSelect "h1 a"
@@ -174,7 +186,7 @@ let parseDetailsHtml this (postId: uint32) : Async<Result<Option<Post>, exn>> =
             |> Seq.map (fun x -> x.Value())
             |> Seq.choose String.nullOrWhitespace
             |> Seq.tryHead
-            |> Option.map ((+) "https:" >> Moebooru.mapHttpsContent HttpsOptions.Empty)
+            |> Option.map ((+) "https:" >> Moebooru.mapHttpsContent hitomiHttpOption)
 
         let hitomiViewPage = 
             html.CssSelect "a" 
@@ -234,7 +246,7 @@ let allPosts this (nozomiCache: AsyncCache<string, uint32 seq>) order =
             yield!
                 nozomiBin 
                 |> AsyncSeq.ofSeq
-                |> AsyncSeq.mapAsyncParallel (parseDetailsHtml this)
+                |> AsyncSeq.mapAsync (parseDetailsHtml this)
                 |> AsyncSeq.choose (function
                     | Ok (Some x) -> Some <| Ok [x]
                     | Ok None -> None

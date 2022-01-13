@@ -43,11 +43,10 @@ jobs:
           - 'Rule34 Paheal'
           - 'NHentai'
         # - 'Nozomi'
-          - 'Hitomi'
+        # - 'Hitomi'
         # - 'Lolibaka'
           - 'Booru.io'
           - 'The Hentai World'
-        # - 'Hentai Cosplay'
 
     steps:
     - uses: actions/checkout@v2

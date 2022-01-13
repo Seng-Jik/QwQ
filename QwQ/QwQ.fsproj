@@ -44,8 +44,6 @@
     <Compile Include="Sources/BooruIO.fs" />
     <Compile Include="Sources\TheHentaiWorld.fsi" />
     <Compile Include="Sources\TheHentaiWorld.fs" />
-    <Compile Include="Sources\HentaiCosplay.fsi" />
-    <Compile Include="Sources\HentaiCosplay.fs" />
     <Compile Include="Sources/Sources.fs" />
   </ItemGroup>
   <ItemGroup>

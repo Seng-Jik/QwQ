@@ -66,9 +66,9 @@ let requestPost src (postId: uint32) =
               Content = 
                   json.Imageurls
                   |> Array.map (fun x -> 
-                      mapHttpsContent httpsOpt <| fixUrlPrefix x.Imageurl)
-                  |> AsyncSeq.ofSeq
-                  |> AsyncSeq.singleton }
+                      mapHttpsContent httpsOpt <| fixUrlPrefix x.Imageurl
+                      |> AsyncSeq.singleton)
+                  |> AsyncSeq.ofSeq }
     } 
 
 
@@ -177,7 +177,7 @@ type NozomiSource () =
 
             let firstTag, nextTags = 
                 mapNozomi firstTag,
-                AsyncSeq.ofSeq nextTags |> AsyncSeq.mapAsyncParallel mapNozomi
+                AsyncSeq.ofSeq nextTags |> AsyncSeq.mapAsync mapNozomi
             
             asyncSeq {
                 let! nextTags = Async.StartChild <| AsyncSeq.toListAsync nextTags
@@ -198,7 +198,7 @@ type NozomiSource () =
                             |> Seq.filter (fun postId ->
                                 List.forall (Seq.exists ((=) postId)) nextTags)
                             |> AsyncSeq.ofSeq
-                            |> AsyncSeq.mapAsyncParallel (requestPost this >> Async.map List.singleton >> Async.protect)
+                            |> AsyncSeq.mapAsync (requestPost this >> Async.map List.singleton >> Async.protect)
             }
             |> AntiGuro.antiThat opt.ExludeTags
                 

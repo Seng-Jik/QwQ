@@ -231,9 +231,18 @@ let konachanLike name baseUrl =
 
 let konachan = create <| konachanLike "Konachan" "https://konachan.com"
 let yandere = create <| konachanLike "Yandere" "https://yande.re"
-let lolibooru = create <| konachanLike "Lolibooru" "https://lolibooru.moe"
+let lolibooru' = create <| konachanLike "Lolibooru" "https://lolibooru.moe"
 let hypnohub = create { konachanLike "HypnoHub" "https://hypnohub.net" with PostListJson = "/post/index.json" }
 
+let lolibooru = 
+    let inner = create <| konachanLike "Lolibooru" "https://lolibooru.moe"
+    { new ISource with
+        member _.Name = inner.Name
+        member _.AllPosts = inner.AllPosts
+      interface IGetPostById with
+        member _.GetPostById x = (inner :?> IGetPostById).GetPostById x
+      interface ISearch with
+        member _.Search x = (inner :?> ISearch).Search x }
 
 let sources =
     [ konachan

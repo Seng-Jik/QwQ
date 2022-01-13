@@ -26,7 +26,7 @@ let list100Tags (source: ISource) =
 
 let [<Test>] ``tags: Konachan`` () = list100Tags Sources.Moebooru.konachan
 let [<Test>] ``tags: Yandere`` () = list100Tags Sources.Moebooru.yandere
-let [<Test>] ``tags: Lolibooru`` () = list100Tags Sources.Moebooru.lolibooru
+//let [<Test>] ``tags: Lolibooru`` () = list100Tags Sources.Moebooru.lolibooru
 let [<Test>] ``tags: HypnoHub`` () = list100Tags Sources.Moebooru.hypnohub
 
 let [<Test>] ``tags: Danbooru`` () = list100Tags Sources.Danbooru.danbooru
@@ -52,5 +52,3 @@ let [<Test>] ``tags: Nozomi`` () = list100Tags Sources.Nozomi.nozomi
 let [<Test>] ``tags: Hitomi`` () = list100Tags Sources.Hitomi.hitomi
 
 let [<Test>] ``tags: The Hentai World`` () = list100Tags Sources.TheHentaiWorld.thehentaiworld
-
-let [<Test>] ``tags: Hentai Cosplay`` () = list100Tags Sources.HentaiCosplay.hentaicosplay

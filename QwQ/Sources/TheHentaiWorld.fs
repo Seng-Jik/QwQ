@@ -71,7 +71,7 @@ let parseDetailsPage (url: string) =
                 | _ :: ls ->
                     ls
                     |> AsyncSeq.ofSeq
-                    |> AsyncSeq.mapAsyncParallel (fun url -> 
+                    |> AsyncSeq.mapAsync (fun url -> 
                         HtmlDocument.AsyncLoad url
                         |> Async.map getContentFromDetailsPage)
 
@@ -120,7 +120,7 @@ let getPostsFromPostListPage this (url: string) =
                 return
                     postPageList
                     |> AsyncSeq.ofSeq
-                    |> AsyncSeq.mapAsyncParallel (fun x -> 
+                    |> AsyncSeq.mapAsync (fun x -> 
                         async {
                             let! post = parseDetailsPage x.DetailsPage
                         
